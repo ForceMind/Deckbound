@@ -101,13 +101,14 @@
 
 .card .card-rarity-gem {
   position: absolute;
-  bottom: 5px;
-  right: 7px;
-  width: 8px;
-  height: 8px;
+  bottom: calc(var(--card-w) * 0.05);
+  right: calc(var(--card-w) * 0.07);
+  width: max(3px, calc(var(--card-w) * 0.07));
+  height: max(3px, calc(var(--card-w) * 0.07));
   border-radius: 50%;
 }
-.rarity-common .card-rarity-gem    { background: #9aa3b5; }
+/* 普通品质不显示圆点，减少视觉噪音 */
+.rarity-common .card-rarity-gem    { display: none; }
 .rarity-rare .card-rarity-gem      { background: #4f9cf0; }
 .rarity-epic .card-rarity-gem      { background: #b464e8; }
 .rarity-legendary .card-rarity-gem { background: #f5a524; }
