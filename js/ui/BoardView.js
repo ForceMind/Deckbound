@@ -25,7 +25,6 @@ export class BoardView {
   /**
    * 全量渲染。
    * opts.enterFar: 新第二行播放滑入动画
-   * opts.reshuffle: 两行播放洗牌动画（Rest）
    */
   render(world, player, opts = {}) {
     this.board.innerHTML = '';
@@ -36,19 +35,17 @@ export class BoardView {
       visible: farVis,
       observed: true,
       enter: opts.enterFar,
-      reshuffle: opts.reshuffle,
       label: t('board.far', { n: world.farFloor }),
     }));
     this.board.appendChild(this._buildRow('near', world.near, {
       visible: nearVis,
       clickable: true,
-      reshuffle: opts.reshuffle,
       label: t('board.near', { n: world.nearFloor }),
     }));
     this.board.appendChild(this._buildPlayerRow(world, player));
   }
 
-  _buildRow(rowKey, cards, { visible, observed, clickable, enter, reshuffle, label }) {
+  _buildRow(rowKey, cards, { visible, observed, clickable, enter, label }) {
     const rowEl = document.createElement('div');
     rowEl.className = `board-row row-${rowKey}${enter ? ' row-enter' : ''}`;
     if (label) {
@@ -65,7 +62,7 @@ export class BoardView {
       });
       el.dataset.row = rowKey;
       el.dataset.col = col;
-      if (reshuffle) el.classList.add('reshuffle');   // 牌背也播动画：看不见的牌同样在变
+      el.dataset.cardId = card.id;   // FLIP 动画按牌追踪位置（牌背也追踪）
       if (clickable && visible.has(col)) {
         el.addEventListener('click', () => this.onCardClick?.(col));
       }
@@ -172,8 +169,22 @@ export class BoardView {
     await wait(320);
   }
 
-  /** 地图整体向下滚动一行（平滑，非瞬移） */
-  async animateScroll() {
+  /**
+   * 地图整体向下滚动一行（平滑，非瞬移）。
+   * 调用前 world 已滚动：先把新的第二行预插到视野顶部上方，
+   * 随整体下滚一起进入 —— 玩家上行后「新行出现」与「移动」连贯呈现。
+   */
+  async animateScroll(world, player) {
+    const newRow = this._buildRow('far', world.far, {
+      visible: world.farVisibleSet(player.col),
+      observed: true,
+      label: t('board.far', { n: world.farFloor }),
+    });
+    newRow.style.position = 'absolute';
+    newRow.style.top = 'calc(-1 * (var(--card-h) + var(--card-gap)))';
+    newRow.style.left = '0';
+    this.board.prepend(newRow);
+
     const playerRow = this.board.querySelector('.row-player');
     playerRow?.classList.add('row-exit');
     this.board.classList.add('scrolling');
@@ -181,6 +192,34 @@ export class BoardView {
     await wait(560);
     this.board.classList.remove('scrolling');
     this.board.style.transform = '';
+  }
+
+  /** 记录每张牌当前的横向位置（FLIP 第一步） */
+  capturePositions() {
+    const map = new Map();
+    this.board.querySelectorAll('.card[data-card-id]').forEach((el) => {
+      map.set(el.dataset.cardId, el.getBoundingClientRect().left);
+    });
+    return map;
+  }
+
+  /** 重渲染后按旧位置差值播放滑动动画（FLIP 第二步） */
+  animateFlip(oldPos) {
+    const cards = this.board.querySelectorAll('.card[data-card-id]');
+    cards.forEach((el) => {
+      const old = oldPos.get(el.dataset.cardId);
+      if (old == null) return;
+      const dx = old - el.getBoundingClientRect().left;
+      if (Math.abs(dx) < 1) return;
+      el.style.transition = 'none';
+      el.style.transform = `translateX(${dx}px)`;
+    });
+    void this.board.offsetHeight;
+    cards.forEach((el) => {
+      if (!el.style.transform) return;
+      el.style.transition = 'transform 0.45s cubic-bezier(0.35, 0.1, 0.25, 1)';
+      el.style.transform = '';
+    });
   }
 
   /** 世界演化动画：变化过的格子跳一下 */

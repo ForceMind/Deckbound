@@ -239,9 +239,9 @@ export class Game {
         return;
       }
 
-      // 4b. 前进成功：世界滚动 + 演化
+      // 4b. 前进成功：世界滚动（新行随滚动从顶部进入）+ 演化
       this.world.scroll();
-      await this.ui.boardView.animateScroll();
+      await this.ui.boardView.animateScroll(this.world, this.player);
       if (result.teleport) this.world.scroll();
 
       // 长途跋涉：每前进若干层自动消耗体力
@@ -252,7 +252,7 @@ export class Game {
 
       const changes = this.drift.apply(this.world);
       this.ui.hud.renderFloor(this.world.floor);
-      this.ui.boardView.render(this.world, this.player, { enterFar: true });
+      this.ui.boardView.render(this.world, this.player);
       this.updateQuestBar();
       if (changes.length) {
         this.ui.boardView.animateDrift(changes);
@@ -267,15 +267,17 @@ export class Game {
     }
   }
 
-  /** 原地休息：恢复体力，视野内两行（近处与远方）全部重新洗牌 */
+  /** 原地休息：恢复体力，视野内两行的牌随机挪动位置（FLIP 滑动动画） */
   async rest() {
     if (this.busy || this.over) return;
     this.busy = true;
     try {
       this.player.changeEnergy(this.config.rest.energyGain);
       if (this.player.restHeal) this.player.changeHp(this.player.restHeal);
-      this.world.reshuffleRows();
-      this.ui.boardView.render(this.world, this.player, { reshuffle: true });
+      const oldPos = this.ui.boardView.capturePositions();
+      this.world.shufflePositions();
+      this.ui.boardView.render(this.world, this.player);
+      this.ui.boardView.animateFlip(oldPos);
       this.ui.toast(t('toast.rest', { n: this.config.rest.energyGain }));
       await new Promise((r) => setTimeout(r, 500));
     } finally {
@@ -373,7 +375,7 @@ export class Game {
 
   /* ============ 道具 ============ */
 
-  useInventory(index) {
+  async useInventory(index) {
     if (this.over) return;
     const entry = this.player.inventory[index];
     if (!entry) return;
@@ -386,13 +388,30 @@ export class Game {
       this.player.removeItem(index);
       this.drinkPotion();
     } else if (entry.kind === 'weapon' || entry.kind === 'armor') {
-      // 与身上的装备互换（刚腾出的背包位正好放旧装备）
-      this.player.removeItem(index);
-      const old = entry.kind === 'weapon'
-        ? this.player.equipWeapon(entry.item)
-        : this.player.equipArmor(entry.item);
-      if (old) this.player.addItem(entry.kind, old);
-      this.ui.toast(t('toast.swapped', { name: entry.item.name }));
+      // 装备管理：换上 / 折价卖出
+      const sell = this._sellPrice(entry.item);
+      const picked = await this.ui.modal.show({
+        title: `${entry.item.emoji} ${entry.item.name}`,
+        bodyHTML: `<p>${this._gearStat(entry.kind, entry.item)}</p>`,
+        choices: [
+          { label: t('inv.equip'), value: 'equip' },
+          { label: t('inv.sell', { n: sell }), value: 'sell' },
+          { label: t('inv.close'), value: 'cancel' },
+        ],
+      });
+      if (picked === 'equip') {
+        // 与身上的装备互换（刚腾出的背包位正好放旧装备）
+        this.player.removeItem(index);
+        const old = entry.kind === 'weapon'
+          ? this.player.equipWeapon(entry.item)
+          : this.player.equipArmor(entry.item);
+        if (old) this.player.addItem(entry.kind, old);
+        this.ui.toast(t('toast.swapped', { name: entry.item.name }));
+      } else if (picked === 'sell') {
+        this.player.removeItem(index);
+        this.player.changeGold(sell);
+        this.ui.toast(t('toast.gearSold', { name: entry.item.name, n: sell }));
+      }
     } else if (entry.kind === 'key') {
       this.ui.toast(t('toast.keepKey'));
     }

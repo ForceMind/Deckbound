@@ -523,7 +523,7 @@ html, body {
   #board-wrap {
     flex: 1;
     padding: 8px 0 16px;
-    overflow: visible;
+    overflow: hidden;   /* 滚动动画干净裁切 */
     align-items: flex-end;
   }
   #sidebar { order: 2; }

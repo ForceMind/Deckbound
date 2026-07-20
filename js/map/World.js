@@ -46,10 +46,11 @@ export class World {
     bus.emit('worldScrolled', this);
   }
 
-  /** Rest：视野内两行（近处与远方，含未翻开的）全部重新随机刷新 */
-  reshuffleRows() {
-    this.near = this.generator.generateRow(this.nearFloor);
-    this.far = this.generator.generateRow(this.farFloor);
+  /** Rest：牌不变，但视野内两行的牌各自随机挪动位置（含未翻开的） */
+  shufflePositions() {
+    const rng = this.generator.rng;
+    this.near = rng.shuffle(this.near);
+    this.far = rng.shuffle(this.far);
     bus.emit('rowsReshuffled', this);
   }
 
