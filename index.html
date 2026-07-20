@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>命运牌阵 · Deckbound</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🂠</text></svg>">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/cards.css">
+  <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+  <div id="app">
+    <!-- 顶部：玩家信息 -->
+    <header id="hud">
+      <div class="hud-left">
+        <span class="game-logo" data-i18n="app.logo">🂠 命运牌阵</span>
+        <span id="hud-floor" class="hud-stat" data-i18n-title="hud.floor">🗺️ <b>1</b></span>
+      </div>
+      <div class="hud-stats">
+        <span id="hud-hp" class="hud-stat stat-hp" data-i18n-title="hud.hp">❤️ <b>30</b>/<i>30</i></span>
+        <span id="hud-atk" class="hud-stat stat-atk" data-i18n-title="hud.atk">⚔️ <b>5</b></span>
+        <span id="hud-power" class="hud-stat stat-power" data-i18n-title="hud.power">💪 <b>10</b></span>
+        <span id="hud-energy" class="hud-stat stat-energy" data-i18n-title="hud.energy">⚡ <b>10</b>/<i>10</i></span>
+        <span id="hud-gold" class="hud-stat stat-gold" data-i18n-title="hud.gold">💰 <b>0</b></span>
+      </div>
+    </header>
+
+    <!-- 目标指引 -->
+    <div id="quest-bar"></div>
+
+    <div id="middle">
+      <!-- 中央：牌阵世界 -->
+      <main id="board-wrap">
+        <div id="board"></div>
+        <div id="fx-layer"></div>
+      </main>
+
+      <!-- 右侧：装备与道具 -->
+      <aside id="sidebar">
+        <h3 data-i18n="hud.equip">装备</h3>
+        <div id="equip-weapon" class="equip-slot" data-i18n-title="hud.weaponSlot">
+          <span class="slot-icon">🗡️</span><span class="slot-name">空</span>
+        </div>
+        <div id="equip-armor" class="equip-slot" data-i18n-title="hud.armorSlot">
+          <span class="slot-icon">🛡️</span><span class="slot-name">空</span>
+        </div>
+        <h3 data-i18n="hud.items">道具</h3>
+        <div id="sidebar-inventory" class="inv-grid"></div>
+        <h3 data-i18n="hud.status">状态</h3>
+        <div id="sidebar-buffs" class="buff-list"></div>
+      </aside>
+    </div>
+
+    <!-- 底部：操作栏 -->
+    <footer id="actions">
+      <button id="btn-rest" class="action-btn" data-i18n="actions.rest">🏕️ 休息</button>
+      <button id="btn-inventory" class="action-btn" data-i18n="actions.inventory">🎒 背包</button>
+      <button id="btn-map" class="action-btn" data-i18n="actions.map">🗺️ 手记</button>
+      <button id="btn-settings" class="action-btn" data-i18n="actions.settings">⚙️ 设置</button>
+    </footer>
+
+    <!-- 模态层：战斗 / 事件 / 商店 / 职业选择 / 结算 -->
+    <div id="modal-layer" class="hidden"></div>
+    <!-- 提示浮层 -->
+    <div id="toast-layer"></div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

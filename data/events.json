@@ -1,0 +1,78 @@
+[
+  {
+    "id": "old_man",
+    "name": "神秘老人",
+    "emoji": "🧓",
+    "text": "一位白发老人拦住了你的去路。「年轻人，命运的牌阵没有回头路。我可以指点你一二……但代价呢？」",
+    "choices": [
+      { "text": "听取指点（战力 +2）", "results": [ { "weight": 70, "text": "老人的话语中蕴含真理。", "power": 2 }, { "weight": 30, "text": "老人絮絮叨叨，你听得昏昏欲睡……什么也没得到。" } ] },
+      { "text": "给他 10 金币求祝福", "cost": { "gold": 10 }, "results": [ { "weight": 60, "text": "老人微笑着为你祈福。", "maxHp": 5, "hp": 5 }, { "weight": 40, "text": "老人收了钱转身就走。「谢谢惠顾。」" } ] },
+      { "text": "无视他继续前进", "results": [ { "weight": 100, "text": "你与老人擦肩而过。" } ] }
+    ]
+  },
+  {
+    "id": "witch",
+    "name": "森林女巫",
+    "emoji": "🧙‍♀️",
+    "text": "锅炉中冒着诡异的紫色气泡。「尝一口吗，冒险者？免费的哦～」女巫咧嘴一笑。",
+    "choices": [
+      { "text": "喝下药剂", "results": [ { "weight": 45, "text": "一股暖流涌遍全身！", "power": 3 }, { "weight": 30, "text": "味道像袜子……但似乎有效。", "hp": 8 }, { "weight": 25, "text": "是毒药！", "hp": -8 } ] },
+      { "text": "买下配方（15 金币）", "cost": { "gold": 15 }, "results": [ { "weight": 100, "text": "女巫把一瓶成品塞给你。", "givePotion": true } ] },
+      { "text": "礼貌拒绝", "results": [ { "weight": 100, "text": "女巫耸耸肩，继续搅拌锅炉。" } ] }
+    ]
+  },
+  {
+    "id": "gambler",
+    "name": "赌徒",
+    "emoji": "🎲",
+    "text": "「来一局吗？双倍或者归零！」赌徒摇晃着手中的骰子，眼里闪着光。",
+    "choices": [
+      { "text": "押 10 金币", "cost": { "gold": 10 }, "results": [ { "weight": 45, "text": "骰子停下——你赢了！", "gold": 20 }, { "weight": 55, "text": "骰子停下——你输了。赌徒大笑着收走金币。" } ] },
+      { "text": "押 25 金币", "cost": { "gold": 25 }, "results": [ { "weight": 40, "text": "豪赌获胜！", "gold": 55 }, { "weight": 60, "text": "全输光了。「愿赌服输啊朋友。」" } ] },
+      { "text": "不赌", "results": [ { "weight": 100, "text": "「无趣。」赌徒收起骰子。" } ] }
+    ]
+  },
+  {
+    "id": "statue",
+    "name": "古老神像",
+    "emoji": "🗿",
+    "text": "一尊布满苔藓的神像矗立在牌面上，掌心朝上，似乎在等待供奉。",
+    "choices": [
+      { "text": "供奉 15 金币", "cost": { "gold": 15 }, "results": [ { "weight": 65, "text": "神像双眼亮起，力量灌入你的身体！", "power": 4 }, { "weight": 35, "text": "什么也没有发生。也许神明已经离开。" } ] },
+      { "text": "亵渎神像", "results": [ { "weight": 50, "text": "你从神像底座抠出了一些金币。", "gold": 12 }, { "weight": 50, "text": "神像发出愤怒的低吼！", "hp": -6, "curse": true } ] },
+      { "text": "静静离开", "results": [ { "weight": 100, "text": "你朝神像鞠了一躬，继续赶路。" } ] }
+    ]
+  },
+  {
+    "id": "bridge",
+    "name": "断桥",
+    "emoji": "🌉",
+    "text": "前方的牌面出现了裂隙，一座摇摇欲坠的绳桥横跨其上。",
+    "choices": [
+      { "text": "快速冲过去（体力 -1）", "cost": { "energy": 1 }, "results": [ { "weight": 75, "text": "有惊无险！", "gold": 5 }, { "weight": 25, "text": "绳索断裂，你摔了下去！", "hp": -7 } ] },
+      { "text": "小心翼翼地爬过去", "results": [ { "weight": 100, "text": "花了很久，但你安全通过了。" } ] }
+    ]
+  },
+  {
+    "id": "altar",
+    "name": "血祭坛",
+    "emoji": "🩸",
+    "text": "黑曜石祭坛上刻着古老的文字：「以血换力」。",
+    "choices": [
+      { "text": "献祭 8 点生命", "results": [ { "weight": 100, "text": "剧痛过后，你感到前所未有的强大！", "hp": -8, "power": 5 } ] },
+      { "text": "献祭 3 点体力", "cost": { "energy": 3 }, "results": [ { "weight": 100, "text": "疲惫换来了力量。", "power": 3 } ] },
+      { "text": "离开", "results": [ { "weight": 100, "text": "有些交易不值得。" } ] }
+    ]
+  },
+  {
+    "id": "traveler",
+    "name": "落难商旅",
+    "emoji": "🧳",
+    "text": "一名商人瘫坐在翻倒的货车旁。「强盗抢走了一切……帮帮我吧。」",
+    "choices": [
+      { "text": "给他 5 金币", "cost": { "gold": 5 }, "results": [ { "weight": 60, "text": "「恩人！这个给你！」他从怀里掏出一件宝物。", "giveWeapon": true }, { "weight": 40, "text": "商人千恩万谢地离开了。好人有好报……吧。" } ] },
+      { "text": "搜刮货车残骸", "results": [ { "weight": 55, "text": "翻出了一些值钱的东西。", "gold": 10 }, { "weight": 45, "text": "什么也没找到，商人用鄙夷的眼神看着你。" } ] },
+      { "text": "继续赶路", "results": [ { "weight": 100, "text": "这个世界自身难保的人太多了。" } ] }
+    ]
+  }
+]

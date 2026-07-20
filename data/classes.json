@@ -1,0 +1,60 @@
+[
+  {
+    "id": "knight",
+    "name": "骑士",
+    "emoji": "🛡️",
+    "desc": "生命 +10，战力 +2",
+    "bonus": { "maxHp": 10, "hp": 10, "power": 2 },
+    "unlocked": true
+  },
+  {
+    "id": "hunter",
+    "name": "猎人",
+    "emoji": "🏹",
+    "desc": "攻击 +2，开局携带猎弓",
+    "bonus": { "atk": 2, "startWeapon": "bow" },
+    "unlocked": true
+  },
+  {
+    "id": "mage",
+    "name": "法师",
+    "emoji": "🔮",
+    "desc": "战力 +4，生命 -5",
+    "bonus": { "power": 4, "maxHp": -5, "hp": -5 },
+    "unlocked": true
+  },
+  {
+    "id": "priest",
+    "name": "牧师",
+    "emoji": "📿",
+    "desc": "生命 +5，休息时额外恢复 3 生命",
+    "bonus": { "maxHp": 5, "hp": 5, "restHeal": 3 },
+    "unlocked": true
+  },
+  {
+    "id": "assassin",
+    "name": "刺客",
+    "emoji": "🗡️",
+    "desc": "攻击 +2，战斗有 15% 概率暴击",
+    "bonus": { "atk": 2, "crit": 0.15 },
+    "unlocked": true
+  },
+  {
+    "id": "berserker",
+    "name": "狂战士",
+    "emoji": "🪓",
+    "desc": "战力 +3，生命越低战力越高（解锁：单局到达 15 层）",
+    "bonus": { "power": 3, "berserk": true },
+    "unlocked": false,
+    "unlockHint": "单局到达 15 层解锁"
+  },
+  {
+    "id": "necromancer",
+    "name": "死灵法师",
+    "emoji": "☠️",
+    "desc": "击杀敌人额外 +1 战力（解锁：累计击败 3 个 Boss）",
+    "bonus": { "power": 1, "killBonus": 1 },
+    "unlocked": false,
+    "unlockHint": "累计击败 3 个 Boss 解锁"
+  }
+]

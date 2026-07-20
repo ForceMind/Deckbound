@@ -1,0 +1,420 @@
+import { bus } from './EventBus.js';
+import { RNG } from './RNG.js';
+import { t, i18n } from './I18n.js';
+import { Player } from '../entities/Player.js';
+import { MapGenerator } from '../map/MapGenerator.js';
+import { World } from '../map/World.js';
+import { WorldDrift } from '../map/WorldDrift.js';
+import { Combat } from '../combat/Combat.js';
+import { applyEffect } from '../combat/CardEffects.js';
+import { UIManager } from '../ui/UIManager.js';
+import { TutorialView } from '../ui/TutorialView.js';
+
+/**
+ * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
+ * 主线：穿过五个章节，抵达第 50 层「命运王座」击败最终首领即通关，之后可进入无尽模式。
+ */
+export class Game {
+  constructor(data, saveMeta, titleView, seed) {
+    this.data = data;
+    this.config = data.config;
+    this.story = data.story;
+    this.saveMeta = saveMeta;
+    this.titleView = titleView;
+    this.seed = seed ?? (Date.now() >>> 0);
+
+    this.rng = new RNG(this.seed);
+    this.generator = new MapGenerator(data, this.rng);
+    this.combat = new Combat(this.config, this.rng);
+    this.drift = new WorldDrift(this.config, data, this.rng);
+    this.ui = new UIManager(this.config);
+
+    this.busy = false;
+    this.over = false;
+    this.won = false;
+    this.stats = { kills: 0, bossKills: 0 };
+  }
+
+  get ctx() {
+    return {
+      game: this,
+      player: this.player,
+      world: this.world,
+      ui: this.ui,
+      rng: this.rng,
+      data: this.data,
+      config: this.config,
+    };
+  }
+
+  /* ============ 开局 ============ */
+
+  async start() {
+    const cls = await this._pickClass();
+    this.player = new Player(this.config, cls);
+    if (cls.bonus?.startWeapon) {
+      const proto = this.data.weapons.find((w) => w.id === cls.bonus.startWeapon);
+      if (proto) this.player.equipWeapon({ ...proto });
+    }
+    this.world = new World(this.config, this.generator);
+
+    this.ui.boardView.onCardClick = (col) => this.tryMoveTo(col);
+    this.ui.hud.onUseItem = (i) => this.useInventory(i);
+    this.ui.bindActions({
+      onRest: () => this.rest(),
+      onInventory: () => this.openInventory(),
+      onMap: () => this.openMap(),
+      onSettings: () => this.openSettings(),
+    });
+    this._bindKeyboard();
+
+    this.ui.hud.renderAll(this.player, this.world.floor);
+    this.ui.boardView.render(this.world, this.player, { enterFar: true });
+    this.updateQuestBar();
+
+    // 首次游玩：分步新手引导
+    if (!TutorialView.isDone()) {
+      await new TutorialView().run();
+    }
+    this.ui.toast(t('toast.runStart', { cls: cls.name }));
+  }
+
+  /** 开局随机 5 张职业牌，选择 1 张 */
+  async _pickClass() {
+    const pool = this.rng.shuffle(this.data.classes).slice(0, 5);
+    return new Promise((resolve) => {
+      const box = this.ui.modal.showRaw();
+      box.innerHTML = `<h2>${t('class.pickTitle')}</h2><p>${t('class.pickHint')}</p><div class="card-pick-row"></div>`;
+      const row = box.querySelector('.card-pick-row');
+      for (const cls of pool) {
+        const unlocked = this.saveMeta.isClassUnlocked(cls);
+        const el = document.createElement('div');
+        el.className = `card card-class${unlocked ? '' : ' locked'}`;
+        el.innerHTML = `
+          <span class="card-emoji">${cls.emoji}</span>
+          <span class="card-name">${cls.name}</span>
+          <span class="card-desc">${unlocked ? cls.desc : t('class.locked', { hint: cls.unlockHint })}</span>`;
+        if (unlocked) {
+          el.addEventListener('click', () => { this.ui.modal.hide(); resolve(cls); });
+        }
+        row.appendChild(el);
+      }
+    });
+  }
+
+  _bindKeyboard() {
+    document.addEventListener('keydown', (e) => {
+      if (this.busy || this.over) return;
+      // 模态弹窗打开时禁用地图操作
+      if (!document.getElementById('modal-layer').classList.contains('hidden')) return;
+      if (document.getElementById('tutorial-layer')) return;
+      if (e.key === 'ArrowUp' || e.key === 'w') this.tryMoveTo(this.player.col);
+      else if (e.key === 'ArrowLeft' || e.key === 'a') this.tryMoveTo(Math.max(0, this.player.col - 1));
+      else if (e.key === 'ArrowRight' || e.key === 'd') this.tryMoveTo(Math.min(this.world.cols - 1, this.player.col + 1));
+      else if (e.key === 'r') this.rest();
+    });
+  }
+
+  /* ============ 故事 / 目标 ============ */
+
+  chapterOf(floor) {
+    return this.story.chapters.find((c) => floor >= c.from && floor <= c.to) ?? null;
+  }
+
+  updateQuestBar() {
+    const floor = this.world.floor;
+    const ch = this.chapterOf(floor);
+    const bar = document.getElementById('quest-bar');
+    if (!bar) return;
+    if (ch) {
+      const goal = ch.to >= this.story.finalFloor
+        ? t('quest.goalFinal', { n: ch.to, cur: floor })
+        : t('quest.goalReach', { n: ch.to, cur: floor });
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('chapter.enter', { n: ch.n, name: ch.name })}</b>`, goal });
+    } else {
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${this.story.endless.name}</b>`, goal: t('quest.goalEndless', { cur: floor }) });
+    }
+  }
+
+  /** 滚动后检测章节推进：击败守关首领→章末故事；跨入新章→章首故事；50 层→通关 */
+  async _checkStoryProgress(beatBoss) {
+    const floor = this.world.floor;
+
+    if (beatBoss) {
+      const endedChapter = this.story.chapters.find((c) => c.to === floor);
+      if (endedChapter) {
+        await this.ui.modal.show({
+          title: t('chapter.enter', { n: endedChapter.n, name: endedChapter.name }),
+          bodyHTML: `<p class="story-text">${endedChapter.outro}</p>`,
+          choices: [{ label: t('chapter.continue'), value: 0 }],
+        });
+      }
+      if (floor === this.story.finalFloor) {
+        await this._finale();
+        return;
+      }
+    }
+
+    const enteringChapter = this.story.chapters.find((c) => c.from === floor + 1);
+    if (enteringChapter && enteringChapter.n > 1) {
+      await this.ui.modal.show({
+        title: t('chapter.enter', { n: enteringChapter.n, name: enteringChapter.name }),
+        bodyHTML: `<p class="story-text">${enteringChapter.intro}</p>`,
+        choices: [{ label: t('chapter.continue'), value: 0 }],
+      });
+    } else if (floor === this.story.finalFloor && !this._endlessShown) {
+      this._endlessShown = true;
+      await this.ui.modal.show({
+        title: this.story.endless.name,
+        bodyHTML: `<p class="story-text">${this.story.endless.intro}</p>`,
+        choices: [{ label: t('chapter.continue'), value: 0 }],
+      });
+    }
+  }
+
+  /** 第 50 层最终首领被击败：通关 */
+  async _finale() {
+    this.won = true;
+    const picked = await this.ui.modal.show({
+      title: t('over.winTitle'),
+      bodyHTML: `<p class="story-text">${t('over.winText')}</p>
+        <p>${t('over.summary', { floor: this.world.floor, kills: this.stats.kills, power: this.player.effectivePower })}</p>`,
+      choices: [
+        { label: t('chapter.finaleContinue'), value: 'endless' },
+        { label: t('chapter.finaleEnd'), value: 'end' },
+      ],
+    });
+    if (picked === 'end') {
+      await this._gameOver(false, true);
+    }
+  }
+
+  /* ============ 回合流程 ============ */
+
+  /**
+   * 移动到第一行的 col 列：正前方 freeRange(±1) 范围内免费，
+   * 更远的每格消耗 1 体力；每前进 floorDrainInterval 层因跋涉自动消耗体力。
+   */
+  async tryMoveTo(col) {
+    if (this.busy || this.over) return;
+    const move = this.config.movement;
+    const sideSteps = Math.abs(col - this.player.col);
+    const cost = Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
+
+    if (!this.world.nearVisibleSet(this.player.col).has(col)) {
+      this.ui.toast(t('toast.tooFar'));
+      return;
+    }
+    if (this.player.energy < cost) {
+      this.ui.toast(t('toast.noEnergy', { n: cost }));
+      return;
+    }
+
+    this.busy = true;
+    try {
+      // 1. 横向移动（超出免费范围的部分收体力）
+      if (sideSteps > 0) {
+        if (cost > 0) this.player.changeEnergy(-cost);
+        await this.ui.boardView.animateSideStep(this.player.col, col);
+        this.player.col = col;
+        this.ui.boardView.render(this.world, this.player);
+      }
+
+      // 2. 向前一步
+      await this.ui.boardView.animateAdvance(col, col);
+
+      // 3. 结算目标卡
+      const card = this.world.near[col];
+      const beatBoss = card.type === 'boss';
+      const result = await applyEffect(this.ctx, card);
+
+      if (this.player.hp <= 0) { await this._gameOver(); return; }
+
+      // 4a. 战败击退：留在原行
+      if (result.retreat) {
+        await this.ui.boardView.animateRetreat();
+        this.ui.boardView.render(this.world, this.player);
+        return;
+      }
+
+      // 4b. 前进成功：世界滚动 + 演化
+      this.world.scroll();
+      await this.ui.boardView.animateScroll();
+      if (result.teleport) this.world.scroll();
+
+      // 长途跋涉：每前进若干层自动消耗体力
+      if (move.floorDrainInterval > 0 && this.world.floor % move.floorDrainInterval === 0) {
+        this.player.changeEnergy(-move.floorDrainAmount);
+        this.ui.toast(t('toast.fatigue', { n: move.floorDrainAmount }));
+      }
+
+      const changes = this.drift.apply(this.world);
+      this.ui.hud.renderFloor(this.world.floor);
+      this.ui.boardView.render(this.world, this.player, { enterFar: true });
+      this.updateQuestBar();
+      if (changes.length) {
+        this.ui.boardView.animateDrift(changes);
+        this.ui.toast(t('toast.drift'));
+      }
+
+      await this._checkStoryProgress(beatBoss && !result.retreat);
+      if (this.over) return;
+      this._checkBossAhead();
+    } finally {
+      this.busy = false;
+    }
+  }
+
+  /** 原地休息：恢复体力，视野内两行（近处与远方）全部重新洗牌 */
+  async rest() {
+    if (this.busy || this.over) return;
+    this.busy = true;
+    try {
+      this.player.changeEnergy(this.config.rest.energyGain);
+      if (this.player.restHeal) this.player.changeHp(this.player.restHeal);
+      this.world.reshuffleRows();
+      this.ui.boardView.render(this.world, this.player, { reshuffle: true });
+      this.ui.toast(t('toast.rest', { n: this.config.rest.energyGain }));
+      await new Promise((r) => setTimeout(r, 500));
+    } finally {
+      this.busy = false;
+    }
+  }
+
+  _checkBossAhead() {
+    if (this.world.far.some((c) => c.type === 'boss')) {
+      this.ui.animator.screenShake();
+      this.ui.toast(t('toast.bossAhead'));
+    }
+  }
+
+  /* ============ 道具 ============ */
+
+  useInventory(index) {
+    if (this.over) return;
+    const entry = this.player.inventory[index];
+    if (!entry) return;
+    if (entry.kind === 'food') {
+      this.player.removeItem(index);
+      this.player.changeHp(entry.item.hp ?? 0);
+      this.player.changeEnergy(entry.item.energy ?? 0);
+      this.ui.toast(t('toast.eat', { name: entry.item.name, hp: entry.item.hp, energy: entry.item.energy }));
+    } else if (entry.kind === 'potion') {
+      this.player.removeItem(index);
+      this.drinkPotion();
+    } else if (entry.kind === 'key') {
+      this.ui.toast(t('toast.keepKey'));
+    }
+  }
+
+  /** 喝药水：随机效果 */
+  drinkPotion() {
+    const effect = this.rng.weighted(this.data.items.potionEffects);
+    if (effect.hp) this.player.changeHp(effect.hp);
+    if (effect.power) this.player.changePower(effect.power);
+    if (effect.energy) this.player.changeEnergy(effect.energy);
+    if (effect.atk) this.player.changeAtk(effect.atk);
+    if (effect.maxHp) this.player.changeMaxHp(effect.maxHp);
+    this.ui.toast(t('toast.potionEffect', { text: effect.text }));
+    if (this.player.hp <= 0) this._gameOver();
+  }
+
+  /* ============ 底栏面板 ============ */
+
+  async openInventory() {
+    if (this.busy || this.over) return;
+    const p = this.player;
+    const items = p.inventory.map((e, i) => ({
+      label: `${e.item.emoji} ${e.item.name}`,
+      sub: e.kind === 'food'
+        ? t('inv.foodSub', { hp: e.item.hp, energy: e.item.energy })
+        : e.kind === 'potion' ? t('inv.potionSub') : t('inv.keySub'),
+      value: i,
+    }));
+    const picked = await this.ui.modal.show({
+      title: t('inv.title'),
+      bodyHTML: `<p>${items.length ? t('inv.hint') : t('inv.emptyHint')}</p>`,
+      choices: [...items, { label: t('inv.close'), value: -1 }],
+    });
+    if (picked >= 0) this.useInventory(picked);
+  }
+
+  async openMap() {
+    if (this.busy || this.over) return;
+    const m = this.saveMeta.meta;
+    const nextBoss = Math.ceil((this.world.floor + 1) / this.config.boss.interval) * this.config.boss.interval;
+    await this.ui.modal.show({
+      title: t('map.title'),
+      bodyHTML: `
+        <p>${t('map.current', { floor: this.world.floor, kills: this.stats.kills, boss: this.stats.bossKills })}</p>
+        <p>${t('map.history', { best: Math.max(m.bestFloor, this.world.floor), runs: m.totalRuns, bossTotal: m.bossKills, wins: m.wins ?? 0 })}</p>
+        <p>${t('map.nextBoss', { n: nextBoss })}</p>`,
+      choices: [{ label: t('map.continue'), value: 0 }],
+    });
+  }
+
+  async openSettings() {
+    if (this.busy || this.over) return;
+    const picked = await this.ui.modal.show({
+      title: t('settings.title'),
+      bodyHTML: `<p>${t('settings.seed', { seed: this.seed })}</p>`,
+      choices: [
+        { label: t('settings.back'), value: 'back' },
+        { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
+        { label: t('settings.howto'), value: 'howto' },
+        { label: t('settings.replayTutorial'), value: 'tutorial' },
+        { label: t('settings.restart'), sub: t('settings.restartSub'), value: 'restart' },
+      ],
+    });
+    if (picked === 'lang') {
+      await i18n.setLang(i18n.otherLang);
+      this._refreshLanguage();
+    } else if (picked === 'howto') {
+      await this.titleView.showHowto();
+    } else if (picked === 'tutorial') {
+      await new TutorialView().run();
+    } else if (picked === 'restart') {
+      await this._gameOver(true);
+    }
+  }
+
+  /** 语言切换后无损刷新所有 UI（不重开本局） */
+  _refreshLanguage() {
+    i18n.applyStatic();
+    this.ui.hud.renderAll(this.player, this.world.floor);
+    this.ui.boardView.render(this.world, this.player);
+    this.updateQuestBar();
+    this.ui.toast(t('settings.langChanged'));
+  }
+
+  /* ============ 结束 ============ */
+
+  async _gameOver(abandoned = false, won = false) {
+    if (this.over) return;
+    this.over = true;
+    const floor = this.world.floor;
+    const newlyUnlocked = this.saveMeta.recordRun(
+      { floor, kills: this.stats.kills, bossKills: this.stats.bossKills, won: won || this.won },
+      this.config, this.data.classes,
+    );
+
+    if (!abandoned && !won) this.ui.animator.screenShake();
+    const unlockHtml = newlyUnlocked.length
+      ? `<p style="color:var(--gold)">${t('over.unlock', { names: newlyUnlocked.map((id) => this.data.classes.find((c) => c.id === id)?.name).join('、') })}</p>`
+      : '';
+    const title = won ? t('over.winTitle') : abandoned ? t('over.abandonTitle') : t('over.deathTitle');
+    const flavor = won ? t('over.winText') : t('over.deathText');
+    await this.ui.modal.show({
+      title,
+      bodyHTML: `
+        <p>${t('over.summary', { floor, kills: this.stats.kills, power: this.player.effectivePower })}</p>
+        ${unlockHtml}
+        <p>${flavor}</p>`,
+      choices: [{ label: t('over.again'), value: 0 }],
+    });
+    location.reload();
+  }
+}
+
+// bus 目前由各模块直接引用；导出以便调试
+export { bus };

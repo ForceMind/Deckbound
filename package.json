@@ -1,0 +1,10 @@
+{
+  "name": "deckbound",
+  "version": "0.1.0",
+  "description": "Deckbound — a roguelike card-world exploration game. Choose Your Path.",
+  "type": "module",
+  "scripts": {
+    "start": "npx http-server -p 8080 -c-1 ."
+  },
+  "license": "Apache-2.0"
+}

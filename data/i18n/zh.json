@@ -1,0 +1,213 @@
+{
+  "app": {
+    "logo": "🂠 命运牌阵",
+    "title": "命运牌阵",
+    "tagline": "在无尽牌阵中，走出你自己的命运之路",
+    "loadFailTitle": "启动失败",
+    "loadFailHint": "请通过本地服务器访问（如 npx http-server），直接双击 index.html 无法加载配置。"
+  },
+  "titleScreen": {
+    "start": "🂠 开始冒险",
+    "howto": "📜 游戏说明",
+    "records": "🏆 冒险手记",
+    "settings": "⚙️ 设置",
+    "bestFloor": "历史最深 {n} 层",
+    "noRecord": "尚无冒险记录"
+  },
+  "howto": {
+    "title": "📜 游戏说明",
+    "body": "<p><b>世界</b>　整个世界由无限扑克牌组成。你不是抽牌，而是在牌上移动。抵达第 50 层的「命运王座」即可通关。</p><p><b>视野</b>　永远只能看到两行：第一行（近处）中间 5 张完全可见、可以点击；第二行（远方）只能看到正前方 3 张，仅供观察。其余都是模糊的牌背。</p><p><b>移动</b>　点击第一行的牌即可移动：正前方 3 张免费通行，更远的每格消耗 1 体力。每前进 3 层会因长途跋涉自动消耗 1 体力。也可用键盘 ←→↑（或 A/D/W）。</p><p><b>体力</b>　通过休息，以及清泉、营地、食物、神龛等卡牌恢复体力。</p><p><b>休息</b>　按「休息」恢复 1 点体力，视野内的整个牌阵——近处与远方、包括没翻开的牌——都会重新洗牌。按 R 也可以。</p><p><b>战力</b>　战力是独立成长值，不由生命和攻击计算。点击怪物立即自动战斗：战力高者获胜。胜利获得战力与金币；战败按战力差扣血并被击退。</p><p><b>牌阵在变化</b>　这个世界不是静态的：怪物会游荡，商人会离开，宝箱会被其他冒险者打开，火焰会蔓延，诅咒会扩散。</p><p><b>死亡</b>　死亡失去一切，但保留档案进度：最高层数、首领击杀、解锁职业。</p>",
+    "close": "明白了"
+  },
+  "prologue": {
+    "title": "序章 · 世界成牌",
+    "text": "没有人记得那一夜发生了什么。<br><br>醒来时，大地、城镇、山川与海洋都消失了——取而代之的，是一片向北方无限延展的巨大牌阵。每一张牌都是一段路、一个敌人、一次抉择。<br><br>占卜师们在死前留下了最后的预言：<b>「向北走。穿过迷雾、白骨、烈焰与镜像，在第五十张牌之上，坐着改写这一切的『命运王座』。」</b><br><br>无数冒险者踏上牌阵，无人归来。<br><br>现在，轮到你了。",
+    "continue": "踏上牌阵"
+  },
+  "class": {
+    "pickTitle": "🂠 选择你的职业",
+    "pickHint": "命运发给你五张牌 —— 选择一张，作为你的开始",
+    "locked": "🔒 {hint}"
+  },
+  "tutorial": {
+    "skip": "跳过引导",
+    "next": "下一步",
+    "done": "开始冒险！",
+    "steps": {
+      "player": "这就是你。你站在牌阵的最底行，每回合只能向前推进一层。",
+      "near": "这是第一行（近处）。中间 5 张完全可见——正前方 3 张免费通行，最边上的两张每格多花 1 体力。",
+      "far": "这是第二行（远方）。只能看到正前方 3 张，无法点击，但可以提前观察、规划路线。",
+      "energy": "这是体力。走远路和长途跋涉（每前进 3 层）会消耗体力，靠休息和清泉、营地、食物等卡牌恢复。",
+      "power": "这是战力。战力是独立成长值——击败敌人才能提升。点击怪物会立即自动战斗，战力高者获胜。",
+      "rest": "体力不足时点「休息」：恢复 1 体力，视野内的整个牌阵——包括远方没翻开的牌——都会重新洗牌。",
+      "quest": "这里是你的目标。穿过一个个章节，抵达第 50 层的「命运王座」，改写这个世界。祝你好运。"
+    }
+  },
+  "quest": {
+    "bar": "{chapter}　·　{goal}",
+    "goalReach": "目标：抵达第 {n} 层，击败守关首领（当前第 {cur} 层）",
+    "goalFinal": "最终之战：第 {n} 层 · 命运王座（当前第 {cur} 层）",
+    "goalEndless": "无尽模式 · 已深入第 {cur} 层，走得越远，传说越响"
+  },
+  "hud": {
+    "floorLabel": "🗺️ <b>{n}</b> 层",
+    "hp": "生命",
+    "atk": "攻击",
+    "power": "战力",
+    "energy": "体力",
+    "gold": "金币",
+    "floor": "层数",
+    "equip": "装备",
+    "items": "道具",
+    "status": "状态",
+    "weaponSlot": "武器",
+    "armorSlot": "护甲",
+    "empty": "空",
+    "noStatus": "暂无状态",
+    "weaponStat": "攻+{atk} 力+{power} 暴{crit}%",
+    "armorStat": "减伤 {block}",
+    "curse": "💀 诅咒 ×{n}（战力 -{loss}）"
+  },
+  "actions": {
+    "rest": "🏕️ 休息",
+    "inventory": "🎒 背包",
+    "map": "🗺️ 手记",
+    "settings": "⚙️ 设置"
+  },
+  "board": {
+    "far": "远方 · {n} 层",
+    "near": "近处 · {n} 层",
+    "current": "当前 · {n} 层"
+  },
+  "combat": {
+    "title": "⚔️ 遭遇战",
+    "you": "你",
+    "crit": " 💥暴击!",
+    "vs": "对决",
+    "victory": "胜　利",
+    "defeat": "战　败",
+    "powerGain": "+{n} 战力"
+  },
+  "toast": {
+    "runStart": "🂠 {cls}踏上了命运牌阵。向北，去往第 50 层。",
+    "tooFar": "🌫️ 太远了，看不清那张牌……先横向移动吧",
+    "noEnergy": "⚡ 体力不足（需要 {n} 点），休息一下吧",
+    "fatigue": "⚡ 长途跋涉，体力 -{n}",
+    "spring": "⛲ 清泉甘冽：体力 +{n}",
+    "drift": "🌊 牌阵在暗中变化……",
+    "rest": "🏕️ 你原地休息：体力 +{n}，视野中的牌阵已然全部洗过",
+    "bossAhead": "⚠️ 远方传来低吼……守关首领就在前方！",
+    "fightWin": "⚔️ 击败{name}！战力 +{power}，金币 +{gold}",
+    "fightLose": "💢 不敌{name}，受到 {dmg} 点伤害，被击退！",
+    "equipWeapon": "🗡️ 装备了{name}",
+    "swapWeapon": "🗡️ 换上{name}，旧武器折价 {n} 金币",
+    "equipArmor": "🛡️ 装备了{name}",
+    "swapArmor": "🛡️ 换上{name}，旧护甲折价 {n} 金币",
+    "pickFood": "🍖 拾取了{name}",
+    "eatFoodFull": "🍖 背包已满，当场吃掉{name}（生命 +{hp}，体力 +{energy}）",
+    "pickPotion": "🧪 拾取了{name}",
+    "gotKey": "🗝️ 获得一把钥匙",
+    "keyFull": "🗝️ 背包已满，钥匙只能留在原地……",
+    "pickGold": "💰 拾取 {n} 金币",
+    "treasure": "💎 发现宝物！金币 +{n}",
+    "mimic": "📦 是宝箱怪！",
+    "mimicName": "宝箱怪",
+    "chestGold": "🎁 宝箱里有 {n} 金币",
+    "chestFood": "🎁 宝箱里有{name}",
+    "chestFull": "🎁 背包已满，换成了 6 金币",
+    "trap": "🕸️ 触发陷阱！生命 -{n}",
+    "fire": "🔥 穿过火焰！生命 -{n}",
+    "cursed": "💀 你被诅咒了！战力 -2（可在商店解除）",
+    "campfire": "🏕️ 在营地休整：生命 +{hp}，体力 +2",
+    "shrine": "⛩️ 神龛的祝福：{text}",
+    "blessingCleanse": "✨ 圣光净化了一层诅咒！",
+    "blessing": "✨ 受到祝福：战力 +1，生命 +4",
+    "doorOpen": "🚪 钥匙开启秘门！金币 +{gold}，战力 +2",
+    "doorLocked": "🚪 秘门紧锁，没有钥匙只能从门缝中窥探……",
+    "teleport": "🌀 传送门将你向前推进了一层！",
+    "eat": "🍖 吃掉{name}：生命 +{hp}，体力 +{energy}",
+    "keepKey": "🗝️ 钥匙要留着开秘门",
+    "potionEffect": "🧪 药水生效：{text}",
+    "eventDone": "❓ {name}：{text}"
+  },
+  "shrineBuffs": {
+    "power": "战力 +2",
+    "atk": "攻击 +1",
+    "maxHp": "生命上限 +4",
+    "energy": "体力全满"
+  },
+  "shop": {
+    "title": "🧙 流浪商人",
+    "greeting": "「看看货吧，旅行者。牌阵里可没有第二家。」　你的金币：",
+    "noGold": "💰 金币不够！",
+    "refresh": "🔄 刷新货架（{n} 金币）",
+    "refreshSub": "换一批商品",
+    "removeCurse": "✨ 解除诅咒（{n} 金币）",
+    "removeCurseSub": "当前诅咒：{n} 层",
+    "curseRemoved": "✨ 一层诅咒被解除了",
+    "leave": "👋 离开商店",
+    "equipped": "已装备{name}",
+    "foodDesc": "生命 +{hp}，体力 +{energy}",
+    "potionDesc": "饮用后获得随机效果",
+    "weaponDesc": "攻+{atk} 力+{power} 暴{crit}%",
+    "armorDesc": "减伤 {block}，生命上限 +{hp}",
+    "fullEaten": "背包已满，当场吃掉了"
+  },
+  "event": {
+    "continue": "继续前进",
+    "costGold": "花费 {n} 金币",
+    "costEnergy": "消耗 {n} 体力",
+    "rHp": "生命 {n}",
+    "rMaxHp": "生命上限 +{n}",
+    "rPower": "战力 +{n}",
+    "rGold": "金币 +{n}",
+    "rAtk": "攻击 +{n}",
+    "rCurse": "获得诅咒",
+    "rPotion": "获得药水",
+    "rWeapon": "获得武器"
+  },
+  "inv": {
+    "title": "🎒 背包",
+    "hint": "点击使用道具",
+    "emptyHint": "背包空空如也",
+    "close": "关闭",
+    "foodSub": "生命 +{hp}，体力 +{energy}",
+    "potionSub": "随机效果",
+    "keySub": "用于开启秘门"
+  },
+  "map": {
+    "title": "🗺️ 冒险手记",
+    "current": "当前层数：<b>{floor}</b>　本局击杀：<b>{kills}</b>（首领 ×{boss}）",
+    "history": "历史最深：<b>{best}</b> 层　总局数：<b>{runs}</b>　累计首领：<b>{bossTotal}</b>　通关：<b>{wins}</b> 次",
+    "nextBoss": "下一个守关首领在第 <b>{n}</b> 层",
+    "continue": "继续冒险"
+  },
+  "settings": {
+    "title": "⚙️ 设置",
+    "seed": "世界种子：<b>{seed}</b><br>同一种子会生成同一片牌阵（为每日挑战预留）",
+    "language": "🌐 语言：中文",
+    "languageSub": "切换为 English",
+    "howto": "📜 游戏说明",
+    "replayTutorial": "📖 重看新手引导",
+    "back": "↩️ 返回游戏",
+    "restart": "🔄 放弃本局，重新开始",
+    "restartSub": "当前进度将丢失（档案进度保留）",
+    "langChanged": "🌐 语言已切换"
+  },
+  "over": {
+    "deathTitle": "☠️ 你倒在了牌阵中",
+    "abandonTitle": "🏳️ 放弃冒险",
+    "winTitle": "👑 命运已被改写",
+    "summary": "到达 <b>{floor}</b> 层　击杀 <b>{kills}</b>　最终战力 <b>{power}</b>",
+    "unlock": "🎉 新职业解锁：{names}",
+    "deathText": "死亡即是新生。牌阵已重新洗过，命运等待下一位挑战者。",
+    "winText": "你坐上了命运王座。牌阵在你脚下缓缓合拢，世界恢复了它原本的模样——至少在下一次洗牌之前。",
+    "again": "🂠 再来一局"
+  },
+  "chapter": {
+    "enter": "第 {n} 章 · {name}",
+    "continue": "继续前进",
+    "finaleContinue": "🌌 继续深入（无尽模式）",
+    "finaleEnd": "👑 结束本局，加冕为王"
+  }
+}

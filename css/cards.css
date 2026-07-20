@@ -1,0 +1,146 @@
+/* ============ 卡牌（扑克尺寸 2.5 : 3.5） ============ */
+.card {
+  width: var(--card-w);
+  height: var(--card-h);
+  border-radius: 9px;
+  position: relative;
+  background: linear-gradient(160deg, #f6f2e8 0%, #e7e0cf 100%);
+  color: #23293c;
+  box-shadow: 0 4px 10px #0007, inset 0 1px 0 #fff8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.card.clickable { cursor: pointer; }
+.card.clickable:hover {
+  transform: translateY(-8px) scale(1.05);
+  box-shadow: 0 14px 26px #000a, 0 0 14px #f5c54255;
+  z-index: 5;
+}
+.card.clickable:active { transform: translateY(-3px) scale(0.98); }
+
+.card .card-emoji { font-size: calc(var(--card-w) * 0.41); line-height: 1; }
+.card .card-name {
+  font-size: max(8px, calc(var(--card-w) * 0.12));
+  font-weight: 600;
+  margin-top: 7px;
+  max-width: 90%;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.card .card-power {
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  font-size: max(9px, calc(var(--card-w) * 0.14));
+  font-weight: bold;
+  color: #c0392b;
+}
+.card .card-corner {
+  position: absolute;
+  top: 4px;
+  right: 7px;
+  font-size: 11px;
+  opacity: 0.65;
+}
+
+/* 牌背（模糊 / 不可见区域） */
+.card.card-back {
+  background: var(--bg-card-back);
+  border: 2px solid #3a4468;
+  color: transparent;
+}
+.card.card-back::after {
+  content: "🂠";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--card-w) * 0.46);
+  color: #4a5580;
+  filter: blur(1px);
+}
+
+/* 远行可见但不可点击 —— 只能观察 */
+.card.observed {
+  filter: saturate(0.8) brightness(0.88);
+}
+
+/* 玩家所在行走过的地面 */
+.card.card-ground {
+  background: #1c2233;
+  border: 2px dashed #2e3650;
+  box-shadow: none;
+}
+.card.card-ground::after {
+  content: "·";
+  color: #3a4468;
+  font-size: 30px;
+}
+
+/* 玩家牌 */
+.card.card-player {
+  background: linear-gradient(160deg, #fdf6d8 0%, #f0dfa8 100%);
+  border: 2px solid var(--gold);
+  box-shadow: 0 0 18px #f5c54266, 0 6px 14px #0008;
+}
+
+/* ============ 稀有度边框 ============ */
+.card.rarity-common    { border-color: #9aa3b5; }
+.card.rarity-rare      { border-color: #4f9cf0; box-shadow: 0 4px 10px #0007, 0 0 10px #4f9cf044; }
+.card.rarity-epic      { border-color: #b464e8; box-shadow: 0 4px 10px #0007, 0 0 12px #b464e855; }
+.card.rarity-legendary { border-color: #f5a524; box-shadow: 0 4px 10px #0007, 0 0 14px #f5a52466; }
+.card.rarity-mythic    { border-color: #f04f5e; box-shadow: 0 4px 10px #0007, 0 0 16px #f04f5e77; }
+
+.card .card-rarity-gem {
+  position: absolute;
+  bottom: 5px;
+  right: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+.rarity-common .card-rarity-gem    { background: #9aa3b5; }
+.rarity-rare .card-rarity-gem      { background: #4f9cf0; }
+.rarity-epic .card-rarity-gem      { background: #b464e8; }
+.rarity-legendary .card-rarity-gem { background: #f5a524; }
+.rarity-mythic .card-rarity-gem    { background: #f04f5e; }
+
+/* 类型着色微调 */
+.card.type-monster .card-emoji,
+.card.type-elite .card-emoji { filter: drop-shadow(0 0 4px #e74c3c66); }
+.card.type-boss {
+  background: linear-gradient(160deg, #3c1f28 0%, #27141c 100%);
+  color: #f2d6da;
+}
+.card.type-boss .card-emoji { font-size: 44px; filter: drop-shadow(0 0 8px #e74c3c); }
+.card.type-curse {
+  background: linear-gradient(160deg, #2c2438 0%, #1e1830 100%);
+  color: #cbb6e8;
+}
+
+/* 职业选择卡（大一号） */
+.card.card-class {
+  width: 118px;
+  height: 165px;
+  cursor: pointer;
+}
+.card.card-class .card-emoji { font-size: 48px; }
+.card.card-class .card-desc {
+  font-size: 10px;
+  color: #5a6070;
+  margin-top: 6px;
+  padding: 0 6px;
+  text-align: center;
+  white-space: normal;
+  line-height: 1.5;
+}
+.card.card-class:hover { transform: translateY(-10px) scale(1.06); box-shadow: 0 16px 30px #000b, 0 0 18px #f5c54277; }
+.card.card-class.locked { filter: grayscale(1) brightness(0.55); cursor: not-allowed; }

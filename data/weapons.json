@@ -1,0 +1,9 @@
+[
+  { "id": "sword",  "name": "长剑",     "emoji": "🗡️", "atk": 3, "power": 2, "crit": 0.05, "price": 18, "desc": "均衡可靠的选择" },
+  { "id": "bow",    "name": "猎弓",     "emoji": "🏹", "atk": 2, "power": 2, "crit": 0.15, "price": 20, "desc": "更高的暴击率" },
+  { "id": "hammer", "name": "战锤",     "emoji": "🔨", "atk": 5, "power": 3, "crit": 0.02, "price": 26, "desc": "沉重而致命" },
+  { "id": "dagger", "name": "短匕",     "emoji": "🔪", "atk": 1, "power": 1, "crit": 0.25, "price": 15, "desc": "极高的暴击率" },
+  { "id": "staff",  "name": "法杖",     "emoji": "🪄", "atk": 2, "power": 4, "crit": 0.08, "price": 28, "desc": "直接提升战力" },
+  { "id": "axe",    "name": "巨斧",     "emoji": "🪓", "atk": 4, "power": 3, "crit": 0.08, "price": 24, "desc": "劈开一切阻碍" },
+  { "id": "spear",  "name": "长枪",     "emoji": "🔱", "atk": 3, "power": 3, "crit": 0.1,  "price": 25, "desc": "攻守兼备" }
+]

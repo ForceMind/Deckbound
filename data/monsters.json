@@ -1,0 +1,26 @@
+{
+  "monster": [
+    { "id": "wolf",     "name": "野狼",   "emoji": "🐺", "basePower": 6,  "perFloor": 0.9 },
+    { "id": "bat",      "name": "蝙蝠",   "emoji": "🦇", "basePower": 5,  "perFloor": 0.8 },
+    { "id": "snake",    "name": "毒蛇",   "emoji": "🐍", "basePower": 7,  "perFloor": 0.9 },
+    { "id": "skeleton", "name": "骷髅兵", "emoji": "💀", "basePower": 8,  "perFloor": 1.0 },
+    { "id": "goblin",   "name": "哥布林", "emoji": "👺", "basePower": 7,  "perFloor": 1.0 },
+    { "id": "slime",    "name": "史莱姆", "emoji": "🟢", "basePower": 4,  "perFloor": 0.7 },
+    { "id": "spider",   "name": "巨蛛",   "emoji": "🕷️", "basePower": 8,  "perFloor": 1.0 }
+  ],
+  "elite": [
+    { "id": "ogre",     "name": "食人魔",   "emoji": "👹", "basePower": 14, "perFloor": 1.3 },
+    { "id": "knightf",  "name": "堕落骑士", "emoji": "🧟", "basePower": 15, "perFloor": 1.4 },
+    { "id": "werewolf", "name": "狼人",     "emoji": "🐗", "basePower": 16, "perFloor": 1.4 },
+    { "id": "golem",    "name": "石魔像",   "emoji": "🗿", "basePower": 18, "perFloor": 1.5 }
+  ],
+  "boss": [
+    { "id": "dragon",   "name": "远古巨龙", "emoji": "🐲", "basePower": 24, "perFloor": 1.9 },
+    { "id": "lich",     "name": "巫妖王",   "emoji": "🧛", "basePower": 22, "perFloor": 1.8 },
+    { "id": "demon",    "name": "深渊魔王", "emoji": "😈", "basePower": 26, "perFloor": 2.0 },
+    { "id": "kraken",   "name": "梦魇之主", "emoji": "🐙", "basePower": 23, "perFloor": 1.9 }
+  ],
+  "mirror": [
+    { "id": "mirror",   "name": "镜像行者", "emoji": "🪞", "basePower": 0, "perFloor": 0 }
+  ]
+}

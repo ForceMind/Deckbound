@@ -1,0 +1,213 @@
+{
+  "app": {
+    "logo": "🂠 Deckbound",
+    "title": "Deckbound",
+    "tagline": "Choose your path through the endless deck",
+    "loadFailTitle": "Failed to start",
+    "loadFailHint": "Please serve the game over HTTP (e.g. npx http-server). Opening index.html directly cannot load config files."
+  },
+  "titleScreen": {
+    "start": "🂠 Start Adventure",
+    "howto": "📜 How to Play",
+    "records": "🏆 Records",
+    "settings": "⚙️ Settings",
+    "bestFloor": "Best: floor {n}",
+    "noRecord": "No adventures yet"
+  },
+  "howto": {
+    "title": "📜 How to Play",
+    "body": "<p><b>World</b>　The world is an endless deck of cards. You don't draw cards — you walk on them. Reach the Throne of Fate on floor 50 to win.</p><p><b>Vision</b>　You only ever see two rows: in the first row (near) the middle 5 cards are visible and clickable; in the second row (far) only the 3 cards ahead are revealed, for observation only.</p><p><b>Movement</b>　Click a card in the first row to move: the 3 cards ahead are free; farther cards cost 1 energy per extra step. Every 3 floors of travel drains 1 energy. Keyboard: ←→↑ (or A/D/W).</p><p><b>Energy</b>　Recover energy by resting, and via cards like springs, camps, food and shrines.</p><p><b>Rest</b>　Rest restores 1 energy and reshuffles both visible rows — near and far, including unrevealed cards. Shortcut: R.</p><p><b>Power</b>　Power is an independent stat, not derived from HP and ATK. Clicking a monster starts an instant auto-battle: higher power wins. Victory grants power and gold; defeat costs HP and knocks you back.</p><p><b>The deck drifts</b>　The world is alive: monsters wander, merchants leave, chests get looted by other adventurers, fire spreads, curses creep.</p><p><b>Death</b>　Death loses everything, but meta progress remains: best floor, boss kills, unlocked classes.</p>",
+    "close": "Got it"
+  },
+  "prologue": {
+    "title": "Prologue · The World Became Cards",
+    "text": "No one remembers what happened that night.<br><br>When they woke, the land, the towns, the mountains and seas were gone — replaced by a vast array of cards stretching endlessly northward. Every card is a road, an enemy, a choice.<br><br>The last prophecy of the diviners: <b>\"Go north. Through mist, bone, flame and mirror — upon the fiftieth card sits the Throne of Fate that can rewrite it all.\"</b><br><br>Countless adventurers set out. None returned.<br><br>Now it is your turn.",
+    "continue": "Step onto the deck"
+  },
+  "class": {
+    "pickTitle": "🂠 Choose Your Class",
+    "pickHint": "Fate deals you five cards — pick one to begin",
+    "locked": "🔒 {hint}"
+  },
+  "tutorial": {
+    "skip": "Skip",
+    "next": "Next",
+    "done": "Let's go!",
+    "steps": {
+      "player": "This is you. You stand on the bottom row and can only advance one floor per turn.",
+      "near": "The first row (near). The middle 5 cards are visible — the 3 ahead are free to enter; the outer two cost 1 energy per extra step.",
+      "far": "The second row (far). Only the 3 cards ahead are revealed. You can't click them, but you can plan your route.",
+      "energy": "Energy. Long sidesteps and long journeys (every 3 floors) drain it. Recover via rest, springs, camps and food.",
+      "power": "Power. It only grows by defeating enemies. Clicking a monster starts an instant auto-battle — higher power wins.",
+      "rest": "Low on energy? Rest: +1 energy, and both visible rows — even unrevealed cards — reshuffle.",
+      "quest": "Your goal. Cross the chapters and reach the Throne of Fate on floor 50 to rewrite this world. Good luck."
+    }
+  },
+  "quest": {
+    "bar": "{chapter}　·　{goal}",
+    "goalReach": "Goal: reach floor {n} and defeat the warden (now floor {cur})",
+    "goalFinal": "Final battle: floor {n} · Throne of Fate (now floor {cur})",
+    "goalEndless": "Endless mode · floor {cur} — the deeper you go, the louder the legend"
+  },
+  "hud": {
+    "floorLabel": "🗺️ <b>{n}</b>F",
+    "hp": "HP",
+    "atk": "Attack",
+    "power": "Power",
+    "energy": "Energy",
+    "gold": "Gold",
+    "floor": "Floor",
+    "equip": "Equipment",
+    "items": "Items",
+    "status": "Status",
+    "weaponSlot": "Weapon",
+    "armorSlot": "Armor",
+    "empty": "Empty",
+    "noStatus": "No status",
+    "weaponStat": "ATK+{atk} PWR+{power} CRIT {crit}%",
+    "armorStat": "Block {block}",
+    "curse": "💀 Curse ×{n} (Power -{loss})"
+  },
+  "actions": {
+    "rest": "🏕️ Rest",
+    "inventory": "🎒 Bag",
+    "map": "🗺️ Journal",
+    "settings": "⚙️ Settings"
+  },
+  "board": {
+    "far": "Far · floor {n}",
+    "near": "Near · floor {n}",
+    "current": "Here · floor {n}"
+  },
+  "combat": {
+    "title": "⚔️ Encounter",
+    "you": "You",
+    "crit": " 💥Crit!",
+    "vs": "VS",
+    "victory": "VICTORY",
+    "defeat": "DEFEAT",
+    "powerGain": "+{n} Power"
+  },
+  "toast": {
+    "runStart": "🂠 The {cls} steps onto the deck. North, to floor 50.",
+    "tooFar": "🌫️ Too far to see that card… move sideways first",
+    "noEnergy": "⚡ Not enough energy (need {n}) — take a rest",
+    "fatigue": "⚡ The long journey drains you: energy -{n}",
+    "spring": "⛲ Fresh spring water: energy +{n}",
+    "drift": "🌊 The deck shifts in the dark…",
+    "rest": "🏕️ You rest: energy +{n}. Every card in sight has been reshuffled",
+    "bossAhead": "⚠️ A roar from afar… the warden is ahead!",
+    "fightWin": "⚔️ Defeated {name}! Power +{power}, gold +{gold}",
+    "fightLose": "💢 Beaten by {name}: -{dmg} HP, knocked back!",
+    "equipWeapon": "🗡️ Equipped {name}",
+    "swapWeapon": "🗡️ Swapped to {name}, old weapon sold for {n} gold",
+    "equipArmor": "🛡️ Equipped {name}",
+    "swapArmor": "🛡️ Swapped to {name}, old armor sold for {n} gold",
+    "pickFood": "🍖 Picked up {name}",
+    "eatFoodFull": "🍖 Bag full — ate {name} on the spot (HP +{hp}, energy +{energy})",
+    "pickPotion": "🧪 Picked up {name}",
+    "gotKey": "🗝️ Got a key",
+    "keyFull": "🗝️ Bag full — the key stays behind…",
+    "pickGold": "💰 Picked up {n} gold",
+    "treasure": "💎 Treasure! Gold +{n}",
+    "mimic": "📦 It's a mimic!",
+    "mimicName": "Mimic",
+    "chestGold": "🎁 The chest holds {n} gold",
+    "chestFood": "🎁 The chest holds {name}",
+    "chestFull": "🎁 Bag full — converted to 6 gold",
+    "trap": "🕸️ Trap! HP -{n}",
+    "fire": "🔥 Through the flames! HP -{n}",
+    "cursed": "💀 You are cursed! Power -2 (removable at shops)",
+    "campfire": "🏕️ Camp rest: HP +{hp}, energy +2",
+    "shrine": "⛩️ Shrine blessing: {text}",
+    "blessingCleanse": "✨ Holy light cleansed a curse!",
+    "blessing": "✨ Blessed: power +1, HP +4",
+    "doorOpen": "🚪 The key opens the hidden door! Gold +{gold}, power +2",
+    "doorLocked": "🚪 The door is locked — no key, only a peek through the crack…",
+    "teleport": "🌀 The portal pushes you one floor ahead!",
+    "eat": "🍖 Ate {name}: HP +{hp}, energy +{energy}",
+    "keepKey": "🗝️ Keep the key for hidden doors",
+    "potionEffect": "🧪 Potion: {text}",
+    "eventDone": "❓ {name}: {text}"
+  },
+  "shrineBuffs": {
+    "power": "Power +2",
+    "atk": "Attack +1",
+    "maxHp": "Max HP +4",
+    "energy": "Energy refilled"
+  },
+  "shop": {
+    "title": "🧙 Wandering Merchant",
+    "greeting": "\"Have a look, traveler. There is no other shop in the deck.\"　Your gold: ",
+    "noGold": "💰 Not enough gold!",
+    "refresh": "🔄 Refresh stock ({n} gold)",
+    "refreshSub": "A new batch of goods",
+    "removeCurse": "✨ Remove curse ({n} gold)",
+    "removeCurseSub": "Current curses: {n}",
+    "curseRemoved": "✨ A curse was removed",
+    "leave": "👋 Leave",
+    "equipped": "Equipped {name}",
+    "foodDesc": "HP +{hp}, energy +{energy}",
+    "potionDesc": "Random effect when drunk",
+    "weaponDesc": "ATK+{atk} PWR+{power} CRIT {crit}%",
+    "armorDesc": "Block {block}, max HP +{hp}",
+    "fullEaten": "Bag full — ate it on the spot"
+  },
+  "event": {
+    "continue": "Continue",
+    "costGold": "Costs {n} gold",
+    "costEnergy": "Costs {n} energy",
+    "rHp": "HP {n}",
+    "rMaxHp": "Max HP +{n}",
+    "rPower": "Power +{n}",
+    "rGold": "Gold +{n}",
+    "rAtk": "Attack +{n}",
+    "rCurse": "Cursed",
+    "rPotion": "Got a potion",
+    "rWeapon": "Got a weapon"
+  },
+  "inv": {
+    "title": "🎒 Bag",
+    "hint": "Click an item to use it",
+    "emptyHint": "Your bag is empty",
+    "close": "Close",
+    "foodSub": "HP +{hp}, energy +{energy}",
+    "potionSub": "Random effect",
+    "keySub": "Opens hidden doors"
+  },
+  "map": {
+    "title": "🗺️ Journal",
+    "current": "Current floor: <b>{floor}</b>　Kills: <b>{kills}</b> (wardens ×{boss})",
+    "history": "Best: <b>{best}</b>F　Runs: <b>{runs}</b>　Total wardens: <b>{bossTotal}</b>　Wins: <b>{wins}</b>",
+    "nextBoss": "Next warden on floor <b>{n}</b>",
+    "continue": "Continue"
+  },
+  "settings": {
+    "title": "⚙️ Settings",
+    "seed": "World seed: <b>{seed}</b><br>The same seed generates the same deck (reserved for daily challenges)",
+    "language": "🌐 Language: English",
+    "languageSub": "切换为中文",
+    "howto": "📜 How to Play",
+    "replayTutorial": "📖 Replay tutorial",
+    "back": "↩️ Back to game",
+    "restart": "🔄 Abandon run and restart",
+    "restartSub": "Current run will be lost (meta progress remains)",
+    "langChanged": "🌐 Language switched"
+  },
+  "over": {
+    "deathTitle": "☠️ You fell in the deck",
+    "abandonTitle": "🏳️ Run abandoned",
+    "winTitle": "👑 Fate Rewritten",
+    "summary": "Reached floor <b>{floor}</b>　Kills <b>{kills}</b>　Final power <b>{power}</b>",
+    "unlock": "🎉 New class unlocked: {names}",
+    "deathText": "Death is a new beginning. The deck has been reshuffled; fate awaits the next challenger.",
+    "winText": "You sit upon the Throne of Fate. The deck folds beneath you, and the world returns to what it was — at least until the next shuffle.",
+    "again": "🂠 Play again"
+  },
+  "chapter": {
+    "enter": "Chapter {n} · {name}",
+    "continue": "Continue",
+    "finaleContinue": "🌌 Go deeper (endless mode)",
+    "finaleEnd": "👑 End the run, take the crown"
+  }
+}

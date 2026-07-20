@@ -1,0 +1,10 @@
+{
+  "order": ["common", "rare", "epic", "legendary", "mythic"],
+  "common":    { "name": "普通", "color": "#9aa3b5", "statMult": 1.0 },
+  "rare":      { "name": "稀有", "color": "#4f9cf0", "statMult": 1.3 },
+  "epic":      { "name": "史诗", "color": "#b464e8", "statMult": 1.7 },
+  "legendary": { "name": "传说", "color": "#f5a524", "statMult": 2.2 },
+  "mythic":    { "name": "神话", "color": "#f04f5e", "statMult": 3.0 },
+  "baseWeights": { "common": 62, "rare": 25, "epic": 9, "legendary": 3.5, "mythic": 0.5 },
+  "floorBonus": { "rare": 0.35, "epic": 0.25, "legendary": 0.12, "mythic": 0.04 }
+}

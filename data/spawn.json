@@ -1,0 +1,26 @@
+{
+  "baseWeights": {
+    "monster": 26, "elite": 0, "mirror": 0,
+    "weapon": 5, "armor": 4,
+    "food": 9, "potion": 5,
+    "treasure": 3, "gold": 10, "chest": 5,
+    "merchant": 4, "event": 8,
+    "trap": 5, "fire": 2,
+    "campfire": 4, "shrine": 2, "spring": 4,
+    "key": 2, "door": 1,
+    "curse": 2, "blessing": 2, "teleport": 1,
+    "empty": 8
+  },
+  "floorScaling": {
+    "monster": 0.5, "elite": 0.45, "mirror": 0.08,
+    "trap": 0.15, "fire": 0.1, "curse": 0.12,
+    "weapon": 0.1, "treasure": 0.08, "event": 0.12,
+    "empty": -0.15
+  },
+  "floorMinimum": {
+    "elite": 4, "mirror": 8, "door": 3
+  },
+  "maxPerRow": {
+    "merchant": 1, "boss": 1, "door": 1, "teleport": 1, "mirror": 1
+  }
+}

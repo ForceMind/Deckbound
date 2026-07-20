@@ -1,0 +1,54 @@
+{
+  "grid": {
+    "cols": 9,
+    "playerStartCol": 4,
+    "nearVisible": 5,
+    "farVisible": 3
+  },
+  "player": {
+    "hp": 30,
+    "maxHp": 30,
+    "atk": 5,
+    "power": 10,
+    "energy": 10,
+    "maxEnergy": 10,
+    "gold": 20,
+    "inventorySize": 6
+  },
+  "movement": {
+    "freeRange": 1,
+    "sideCost": 1,
+    "forwardCost": 0,
+    "floorDrainInterval": 3,
+    "floorDrainAmount": 1
+  },
+  "rest": {
+    "energyGain": 1
+  },
+  "combat": {
+    "animMs": 3000,
+    "powerGain": { "monster": 3, "elite": 5, "boss": 10, "mirror": 6 },
+    "goldReward": { "monster": [3, 8], "elite": [10, 18], "boss": [30, 50], "mirror": [15, 25] },
+    "defeatDamageBase": 4,
+    "critMultiplier": 1.5
+  },
+  "boss": {
+    "interval": 10
+  },
+  "drift": {
+    "monsterWanderChance": 0.35,
+    "merchantLeaveChance": 0.18,
+    "chestLootedChance": 0.22,
+    "fireSpreadChance": 0.3,
+    "curseSpreadChance": 0.25
+  },
+  "shop": {
+    "stock": 5,
+    "refreshCost": 10,
+    "removeCurseCost": 25
+  },
+  "meta": {
+    "unlockFloorBerserker": 15,
+    "unlockBossKillsNecromancer": 3
+  }
+}

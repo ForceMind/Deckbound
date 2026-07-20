@@ -1,0 +1,23 @@
+{
+  "food": [
+    { "id": "meat",   "name": "烤肉",   "emoji": "🍖", "hp": 8,  "energy": 1, "price": 8 },
+    { "id": "bread",  "name": "面包",   "emoji": "🍞", "hp": 4,  "energy": 2, "price": 6 },
+    { "id": "apple",  "name": "苹果",   "emoji": "🍎", "hp": 3,  "energy": 1, "price": 4 },
+    { "id": "stew",   "name": "浓汤",   "emoji": "🍲", "hp": 10, "energy": 3, "price": 14 },
+    { "id": "cheese", "name": "奶酪",   "emoji": "🧀", "hp": 5,  "energy": 2, "price": 7 }
+  ],
+  "potion": [
+    { "id": "red",    "name": "红色药水", "emoji": "🧪", "price": 12 },
+    { "id": "blue",   "name": "蓝色药水", "emoji": "⚗️", "price": 12 },
+    { "id": "green",  "name": "绿色药水", "emoji": "🫙", "price": 12 },
+    { "id": "gold",   "name": "金色药水", "emoji": "🍯", "price": 18 }
+  ],
+  "potionEffects": [
+    { "id": "power",  "text": "战力 +2",      "power": 2,  "weight": 25 },
+    { "id": "heal",   "text": "生命 +12",     "hp": 12,    "weight": 25 },
+    { "id": "energy", "text": "体力 +4",      "energy": 4, "weight": 20 },
+    { "id": "atk",    "text": "攻击 +1",      "atk": 1,    "weight": 15 },
+    { "id": "maxhp",  "text": "生命上限 +5",  "maxHp": 5,  "weight": 10 },
+    { "id": "poison", "text": "变质了！生命 -5", "hp": -5, "weight": 5 }
+  ]
+}
