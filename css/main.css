@@ -107,6 +107,79 @@ html, body {
   display: flex;
   flex-direction: column;
   gap: var(--card-gap);
+  z-index: 1;
+}
+
+/* ============ 演出舞台（牌阵留白区） ============ */
+#stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.stage-float {
+  position: absolute;
+  top: 105%;
+  color: #3a4468;
+  opacity: 0;
+  animation: stage-rise linear infinite;
+  filter: blur(0.5px);
+}
+@keyframes stage-rise {
+  0%   { transform: translateY(0) rotate(-8deg); opacity: 0; }
+  12%  { opacity: 0.4; }
+  85%  { opacity: 0.25; }
+  100% { transform: translateY(-105vh) rotate(14deg); opacity: 0; }
+}
+
+.stage-chapter {
+  display: none;   /* 移动端媒体查询中开启 */
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+  opacity: 0.85;
+}
+.stage-chapter-emoji {
+  display: block;
+  font-size: 54px;
+  filter: drop-shadow(0 6px 18px #000a);
+  animation: chapter-breathe 4s ease-in-out infinite;
+}
+.stage-chapter-name {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  letter-spacing: 6px;
+  color: var(--text-dim);
+}
+@keyframes chapter-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%      { transform: translateY(-6px) scale(1.06); }
+}
+
+.stage-bursts { position: absolute; inset: 0; }
+.stage-burst {
+  display: none;   /* 移动端媒体查询中开启 */
+  position: absolute;
+  top: 34%;
+  left: 50%;
+  transform: translateX(calc(-50% + var(--burst-x, 0px)));
+  text-align: center;
+  animation: burst-pop 1.4s ease-out forwards;
+}
+.stage-burst .burst-emoji { display: block; font-size: 40px; filter: drop-shadow(0 4px 12px #000b); }
+.stage-burst .burst-text { font-size: 18px; font-weight: bold; text-shadow: 0 2px 8px #000c; }
+.stage-burst.gold .burst-text { color: var(--gold); }
+.stage-burst.pow .burst-text { color: var(--power); }
+.stage-burst.dmg .burst-text { color: var(--hp); }
+@keyframes burst-pop {
+  0%   { opacity: 0; transform: translateX(calc(-50% + var(--burst-x, 0px))) translateY(16px) scale(0.5); }
+  18%  { opacity: 1; transform: translateX(calc(-50% + var(--burst-x, 0px))) translateY(0) scale(1.15); }
+  30%  { transform: translateX(calc(-50% + var(--burst-x, 0px))) translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateX(calc(-50% + var(--burst-x, 0px))) translateY(-46px) scale(0.9); }
 }
 
 .board-row {
@@ -494,6 +567,10 @@ html, body {
   .card.card-class { width: 86px; height: 120px; }
   .card.card-class .card-emoji { font-size: 34px; }
   .card.card-class .card-desc { font-size: 9px; }
+
+  /* 竖屏留白区：显示章节徽章与事件演出 */
+  .stage-chapter { display: block; }
+  .stage-burst { display: block; }
 
   /* 提示放顶部，不遮挡沉底的牌阵操作区 */
   #toast-layer {

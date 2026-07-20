@@ -34,6 +34,14 @@ export class ShopView {
           if (!entry.sold) {
             el.addEventListener('click', () => {
               if (player.gold < entry.price) { ui.toast(t('shop.noGold')); return; }
+              // 装备类：槽位已占且背包满时不允许购买
+              if (entry.kind === 'weapon' || entry.kind === 'armor') {
+                const slot = entry.kind === 'weapon' ? player.weapon : player.armor;
+                if (slot && player.inventory.length >= player.inventorySize) {
+                  ui.toast(t('shop.bagFull'));
+                  return;
+                }
+              }
               player.changeGold(-entry.price);
               entry.buy(ctx);
               entry.sold = true;
@@ -84,18 +92,15 @@ export class ShopView {
         const scaled = gen._scaleGear(proto, rarity);
         const mult = data.rarities[rarity]?.statMult ?? 1;
         stock.push({
+          kind,
           emoji: proto.emoji,
           name: `${proto.name}（${data.rarities[rarity].name}）`,
           price: Math.round(proto.price * mult),
           desc: kind === 'weapon'
             ? t('shop.weaponDesc', { atk: scaled.atk, power: scaled.power, crit: Math.round(scaled.crit * 100) })
             : t('shop.armorDesc', { block: scaled.block, hp: scaled.hp }),
-          buy: (c) => {
-            const item = { ...scaled, name: proto.name, emoji: proto.emoji };
-            if (kind === 'weapon') c.player.equipWeapon(item);
-            else c.player.equipArmor(item);
-            c.ui.toast(t('shop.equipped', { name: proto.name }));
-          },
+          // 走装备栏系统：槽空装备，否则入背包
+          buy: (c) => c.game.giveGearSilent(kind, { ...scaled, name: proto.name, emoji: proto.emoji }),
         });
       } else if (kind === 'food') {
         const proto = rng.pick(data.items.food);

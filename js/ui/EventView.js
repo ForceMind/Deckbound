@@ -73,7 +73,7 @@ export class EventView {
       const proto = rng.pick(data.weapons);
       const rarity = ctx.game.generator.rollRarity(ctx.world.floor);
       const scaled = ctx.game.generator._scaleGear(proto, rarity);
-      player.equipWeapon({ ...scaled, name: proto.name, emoji: proto.emoji });
+      ctx.game.giveGearSilent('weapon', { ...scaled, name: proto.name, emoji: proto.emoji });
     }
   }
 

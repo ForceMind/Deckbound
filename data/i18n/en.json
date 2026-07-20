@@ -16,7 +16,7 @@
   },
   "howto": {
     "title": "📜 How to Play",
-    "body": "<p><b>World</b>　The world is an endless deck of cards. You don't draw cards — you walk on them. Reach the Throne of Fate on floor 50 to win.</p><p><b>Vision</b>　You only ever see two rows: in the first row (near) the middle 5 cards are visible and clickable; in the second row (far) only the 3 cards ahead are revealed, for observation only.</p><p><b>Movement</b>　Click a card in the first row to move: the 3 cards ahead are free; farther cards cost 1 energy per extra step. Every 3 floors of travel drains 1 energy. Keyboard: ←→↑ (or A/D/W).</p><p><b>Energy</b>　Recover energy by resting, and via cards like springs, camps, food and shrines.</p><p><b>Rest</b>　Rest restores 1 energy and reshuffles both visible rows — near and far, including unrevealed cards. Shortcut: R.</p><p><b>Power</b>　Power is an independent stat, not derived from HP and ATK. Clicking a monster starts an instant auto-battle: higher power wins. Victory grants power and gold; defeat costs HP and knocks you back.</p><p><b>Rarity</b>　The colored dot at a card's bottom-right shows its rarity: <span style=\"color:#4f9cf0\">blue=Rare</span>　<span style=\"color:#b464e8\">purple=Epic</span>　<span style=\"color:#f5a524\">orange=Legendary</span>　<span style=\"color:#f04f5e\">red=Mythic</span> (Common shows no dot). Higher rarity means stronger gear.</p><p><b>The deck drifts</b>　The world is alive: monsters wander, merchants leave, chests get looted by other adventurers, fire spreads, curses creep.</p><p><b>Death</b>　Death loses everything, but meta progress remains: best floor, boss kills, unlocked classes.</p>",
+    "body": "<p><b>World</b>　The world is an endless deck of cards. You don't draw cards — you walk on them. Reach the Throne of Fate on floor 50 to win.</p><p><b>Vision</b>　You only ever see two rows: in the first row (near) the middle 5 cards are visible and clickable; in the second row (far) only the 3 cards ahead are revealed, for observation only.</p><p><b>Movement</b>　Click a card in the first row to move: the 3 cards ahead are free; farther cards cost 1 energy per extra step. Every 3 floors of travel drains 1 energy. Keyboard: ←→↑ (or A/D/W).</p><p><b>Energy</b>　Recover energy by resting, and via cards like springs, camps, food and shrines.</p><p><b>Rest</b>　Rest restores 1 energy and reshuffles both visible rows — near and far, including unrevealed cards. Shortcut: R.</p><p><b>Power</b>　Power is an independent stat, not derived from HP and ATK. Clicking a monster starts an instant auto-battle: higher power wins. Victory grants power and gold; defeat costs HP and knocks you back.</p><p><b>Gear</b>　Picking up gear never overwrites what you wear: choose to equip it, bag it, or sell it; swap bagged gear anytime with a tap.</p><p><b>Rarity</b>　The colored dot at a card's bottom-right shows its rarity: <span style=\"color:#4f9cf0\">blue=Rare</span>　<span style=\"color:#b464e8\">purple=Epic</span>　<span style=\"color:#f5a524\">orange=Legendary</span>　<span style=\"color:#f04f5e\">red=Mythic</span> (Common shows no dot). Higher rarity means stronger gear.</p><p><b>The deck drifts</b>　The world is alive: monsters wander, merchants leave, chests get looted by other adventurers, fire spreads, curses creep.</p><p><b>Death</b>　Death loses everything, but meta progress remains: best floor, boss kills, unlocked classes.</p>",
     "close": "Got it"
   },
   "prologue": {
@@ -128,7 +128,21 @@
     "eat": "🍖 Ate {name}: HP +{hp}, energy +{energy}",
     "keepKey": "🗝️ Keep the key for hidden doors",
     "potionEffect": "🧪 Potion: {text}",
-    "eventDone": "❓ {name}: {text}"
+    "eventDone": "❓ {name}: {text}",
+    "gearToBag": "🎒 {name} put in bag",
+    "gearSold": "💰 Sold {name} for {n} gold",
+    "swapped": "✅ Equipped {name}"
+  },
+  "gear": {
+    "title": "Found {name}",
+    "compare": "<p>New: <b>{newStat}</b><br>Equipped ({oldName}): {oldStat}</p>",
+    "equipNew": "✅ Equip the new one",
+    "oldToBag": "{name} goes to your bag",
+    "oldSold": "Bag full — {name} will be sold (+{n} gold)",
+    "toBag": "🎒 Put in bag",
+    "toBagSub": "Swap anytime from your bag",
+    "bagFull": "Bag is full",
+    "sell": "💰 Sell (+{n} gold)"
   },
   "shrineBuffs": {
     "power": "Power +2",
@@ -146,6 +160,7 @@
     "removeCurseSub": "Current curses: {n}",
     "curseRemoved": "✨ A curse was removed",
     "leave": "👋 Leave",
+    "bagFull": "🎒 Bag full — can't buy gear",
     "equipped": "Equipped {name}",
     "foodDesc": "HP +{hp}, energy +{energy}",
     "potionDesc": "Random effect when drunk",

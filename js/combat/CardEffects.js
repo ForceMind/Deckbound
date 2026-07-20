@@ -42,27 +42,13 @@ registerEffect('elite', fightHandler);
 registerEffect('boss', fightHandler);
 registerEffect('mirror', fightHandler);
 
-/* ============ 装备 ============ */
+/* ============ 装备（装备栏系统：不顶掉，玩家选择） ============ */
 registerEffect('weapon', async (ctx, card) => {
-  const old = ctx.player.equipWeapon({ ...card.data, name: card.name, emoji: card.emoji });
-  if (old) {
-    const sell = Math.max(2, Math.floor((old.price ?? 10) / 2));
-    ctx.player.changeGold(sell);
-    ctx.ui.toast(t('toast.swapWeapon', { name: card.name, n: sell }));
-  } else {
-    ctx.ui.toast(t('toast.equipWeapon', { name: card.name }));
-  }
+  await ctx.game.acquireGear('weapon', { ...card.data, name: card.name, emoji: card.emoji });
 });
 
 registerEffect('armor', async (ctx, card) => {
-  const old = ctx.player.equipArmor({ ...card.data, name: card.name, emoji: card.emoji });
-  if (old) {
-    const sell = Math.max(2, Math.floor((old.price ?? 10) / 2));
-    ctx.player.changeGold(sell);
-    ctx.ui.toast(t('toast.swapArmor', { name: card.name, n: sell }));
-  } else {
-    ctx.ui.toast(t('toast.equipArmor', { name: card.name }));
-  }
+  await ctx.game.acquireGear('armor', { ...card.data, name: card.name, emoji: card.emoji });
 });
 
 /* ============ 消耗品 ============ */

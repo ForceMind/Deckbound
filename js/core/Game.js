@@ -131,8 +131,10 @@ export class Game {
         ? t('quest.goalFinal', { n: ch.to, cur: floor })
         : t('quest.goalReach', { n: ch.to, cur: floor });
       bar.innerHTML = t('quest.bar', { chapter: `<b>${t('chapter.enter', { n: ch.n, name: ch.name })}</b>`, goal });
+      this.ui.stageView.setChapter(ch.emoji, ch.name);
     } else {
       bar.innerHTML = t('quest.bar', { chapter: `<b>${this.story.endless.name}</b>`, goal: t('quest.goalEndless', { cur: floor }) });
+      this.ui.stageView.setChapter(this.story.endless.emoji, this.story.endless.name);
     }
   }
 
@@ -288,6 +290,87 @@ export class Game {
     }
   }
 
+  /* ============ 装备栏系统 ============ */
+
+  _gearStat(kind, item) {
+    return kind === 'weapon'
+      ? t('hud.weaponStat', { atk: item.atk ?? 0, power: item.power ?? 0, crit: Math.round((item.crit ?? 0) * 100) })
+      : t('hud.armorStat', { block: item.block ?? 0 });
+  }
+
+  _sellPrice(item) {
+    return Math.max(2, Math.floor((item.price ?? 10) / 2));
+  }
+
+  /**
+   * 拾取装备：槽位空直接装备；已有装备时弹出选择——
+   * 装备新的（旧的收入背包，满则折价卖）/ 收入背包 / 折价卖出。
+   */
+  async acquireGear(kind, item) {
+    const p = this.player;
+    const slot = kind === 'weapon' ? p.weapon : p.armor;
+    const equip = (it) => (kind === 'weapon' ? p.equipWeapon(it) : p.equipArmor(it));
+    const equipKey = kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor';
+
+    if (!slot) {
+      equip(item);
+      this.ui.toast(t(equipKey, { name: item.name }));
+      return;
+    }
+
+    const bagFree = p.inventory.length < p.inventorySize;
+    const newSell = this._sellPrice(item);
+    const oldSell = this._sellPrice(slot);
+    const picked = await this.ui.modal.show({
+      title: t('gear.title', { name: `${item.emoji} ${item.name}` }),
+      bodyHTML: t('gear.compare', {
+        newStat: this._gearStat(kind, item),
+        oldName: slot.name,
+        oldStat: this._gearStat(kind, slot),
+      }),
+      choices: [
+        {
+          label: t('gear.equipNew'),
+          sub: bagFree ? t('gear.oldToBag', { name: slot.name }) : t('gear.oldSold', { name: slot.name, n: oldSell }),
+          value: 'equip',
+        },
+        { label: t('gear.toBag'), sub: bagFree ? t('gear.toBagSub') : t('gear.bagFull'), disabled: !bagFree, value: 'bag' },
+        { label: t('gear.sell', { n: newSell }), value: 'sell' },
+      ],
+    });
+
+    if (picked === 'equip') {
+      const old = equip(item);
+      if (old && !p.addItem(kind, old)) {
+        p.changeGold(this._sellPrice(old));
+        this.ui.toast(t('toast.gearSold', { name: old.name, n: this._sellPrice(old) }));
+      }
+      this.ui.toast(t(equipKey, { name: item.name }));
+    } else if (picked === 'bag') {
+      p.addItem(kind, item);
+      this.ui.toast(t('toast.gearToBag', { name: item.name }));
+    } else {
+      p.changeGold(newSell);
+      this.ui.toast(t('toast.gearSold', { name: item.name, n: newSell }));
+    }
+  }
+
+  /** 非交互获取装备（事件奖励等场景）：槽空装备，否则入背包，满则折价卖 */
+  giveGearSilent(kind, item) {
+    const p = this.player;
+    const slot = kind === 'weapon' ? p.weapon : p.armor;
+    if (!slot) {
+      kind === 'weapon' ? p.equipWeapon(item) : p.equipArmor(item);
+      this.ui.toast(t(kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor', { name: item.name }));
+    } else if (p.addItem(kind, item)) {
+      this.ui.toast(t('toast.gearToBag', { name: item.name }));
+    } else {
+      const n = this._sellPrice(item);
+      p.changeGold(n);
+      this.ui.toast(t('toast.gearSold', { name: item.name, n }));
+    }
+  }
+
   /* ============ 道具 ============ */
 
   useInventory(index) {
@@ -302,6 +385,14 @@ export class Game {
     } else if (entry.kind === 'potion') {
       this.player.removeItem(index);
       this.drinkPotion();
+    } else if (entry.kind === 'weapon' || entry.kind === 'armor') {
+      // 与身上的装备互换（刚腾出的背包位正好放旧装备）
+      this.player.removeItem(index);
+      const old = entry.kind === 'weapon'
+        ? this.player.equipWeapon(entry.item)
+        : this.player.equipArmor(entry.item);
+      if (old) this.player.addItem(entry.kind, old);
+      this.ui.toast(t('toast.swapped', { name: entry.item.name }));
     } else if (entry.kind === 'key') {
       this.ui.toast(t('toast.keepKey'));
     }
@@ -326,9 +417,7 @@ export class Game {
     const p = this.player;
     const items = p.inventory.map((e, i) => ({
       label: `${e.item.emoji} ${e.item.name}`,
-      sub: e.kind === 'food'
-        ? t('inv.foodSub', { hp: e.item.hp, energy: e.item.energy })
-        : e.kind === 'potion' ? t('inv.potionSub') : t('inv.keySub'),
+      sub: this._invSub(e),
       value: i,
     }));
     const picked = await this.ui.modal.show({
@@ -337,6 +426,13 @@ export class Game {
       choices: [...items, { label: t('inv.close'), value: -1 }],
     });
     if (picked >= 0) this.useInventory(picked);
+  }
+
+  _invSub(entry) {
+    if (entry.kind === 'food') return t('inv.foodSub', { hp: entry.item.hp, energy: entry.item.energy });
+    if (entry.kind === 'potion') return t('inv.potionSub');
+    if (entry.kind === 'weapon' || entry.kind === 'armor') return this._gearStat(entry.kind, entry.item);
+    return t('inv.keySub');
   }
 
   async openMap() {

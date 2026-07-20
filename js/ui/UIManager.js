@@ -5,6 +5,7 @@ import { ModalView } from './ModalView.js';
 import { CombatView } from './CombatView.js';
 import { ShopView } from './ShopView.js';
 import { EventView } from './EventView.js';
+import { StageView } from './StageView.js';
 
 /**
  * UI 总管 —— 组装所有视图，提供 toast 与底栏交互绑定。
@@ -18,6 +19,7 @@ export class UIManager {
     this.combatView = new CombatView(this.modal, this.animator, config);
     this.shopView = new ShopView(this.modal);
     this.eventView = new EventView(this.modal);
+    this.stageView = new StageView();
   }
 
   bindActions({ onRest, onInventory, onMap, onSettings }) {
