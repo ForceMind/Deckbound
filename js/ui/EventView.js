@@ -62,7 +62,6 @@ export class EventView {
     if (r.maxHp) player.changeMaxHp(r.maxHp);
     if (r.power) player.changePower(r.power);
     if (r.gold) player.changeGold(r.gold);
-    if (r.atk) player.changeAtk(r.atk);
     if (r.energy) player.changeEnergy(r.energy);
     if (r.curse) player.addCurse();
     if (r.givePotion) {
@@ -83,7 +82,6 @@ export class EventView {
     if (r.maxHp) parts.push(t('event.rMaxHp', { n: r.maxHp }));
     if (r.power) parts.push(t('event.rPower', { n: r.power }));
     if (r.gold) parts.push(t('event.rGold', { n: r.gold }));
-    if (r.atk) parts.push(t('event.rAtk', { n: r.atk }));
     if (r.curse) parts.push(t('event.rCurse'));
     if (r.givePotion) parts.push(t('event.rPotion'));
     if (r.giveWeapon) parts.push(t('event.rWeapon'));

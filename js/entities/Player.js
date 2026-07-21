@@ -15,7 +15,6 @@ export class Player {
     this.exp = 0;
     this.maxHp = base.maxHp;
     this.hp = base.hp;
-    this.atk = base.atk;
     this.power = base.power;
     this.maxEnergy = base.maxEnergy;
     this.energy = base.energy;
@@ -36,7 +35,6 @@ export class Player {
       // 持久角色进入冒险：属性/装备/背包/金币全部继承，满状态出发
       this.maxHp = heroState.maxHp;
       this.hp = heroState.maxHp;
-      this.atk = heroState.atk;
       this.power = heroState.power;
       this.gold = heroState.gold;
       this.inventorySize = heroState.inventorySize;
@@ -67,7 +65,6 @@ export class Player {
     const b = cls?.bonus ?? {};
     this.maxHp += b.maxHp ?? 0;
     this.hp += b.hp ?? 0;
-    this.atk += b.atk ?? 0;
     this.power += b.power ?? 0;
   }
 
@@ -108,7 +105,6 @@ export class Player {
       this.level += 1;
       this.maxHp += c.levelUp.maxHp;
       this.hp = Math.min(this.maxHp, this.hp + c.levelUp.maxHp);
-      this.atk += c.levelUp.atk;
       if (this.level % c.levelUp.powerEvery === 0) this.power += 1;
       if (c.levelUp.maxEnergyEvery && this.level % c.levelUp.maxEnergyEvery === 0) {
         this.maxEnergy += 1;
@@ -143,11 +139,6 @@ export class Player {
     this.power = Math.max(1, this.power + delta);
     bus.emit('statsChanged', this);
     if (delta > 0) bus.emit('powerGained', delta);
-  }
-
-  changeAtk(delta) {
-    this.atk = Math.max(0, this.atk + delta);
-    bus.emit('statsChanged', this);
   }
 
   changeMaxHp(delta) {

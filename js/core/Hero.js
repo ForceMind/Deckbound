@@ -31,7 +31,6 @@ export class Hero {
       exp: 0,
       currentFloor: 1,
       maxHp: base.maxHp + (b.maxHp ?? 0),
-      atk: base.atk + (b.atk ?? 0),
       power: base.power + (b.power ?? 0),
       maxEnergy: base.maxEnergy,
       inventorySize: base.inventorySize,
@@ -66,7 +65,6 @@ export class Hero {
     this.exp = p.exp;
     this.maxEnergy = p.maxEnergy;
     this.maxHp = p.maxHp;
-    this.atk = p.atk;
     this.power = p.power;
     this.gold = p.gold;
     this.weapon = p.weapon;

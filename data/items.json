@@ -16,7 +16,7 @@
     { "id": "power",  "text": "战力 +2",      "power": 2,  "weight": 25 },
     { "id": "heal",   "text": "生命 +12",     "hp": 12,    "weight": 25 },
     { "id": "energy", "text": "体力 +4",      "energy": 4, "weight": 20 },
-    { "id": "atk",    "text": "攻击 +1",      "atk": 1,    "weight": 15 },
+    { "id": "power1", "text": "战力 +1",      "power": 1,  "weight": 15 },
     { "id": "maxhp",  "text": "生命上限 +5",  "maxHp": 5,  "weight": 10 },
     { "id": "poison", "text": "变质了！生命 -5", "hp": -5, "weight": 5 }
   ]

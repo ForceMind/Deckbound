@@ -11,8 +11,8 @@
     "id": "hunter",
     "name": "猎人",
     "emoji": "🏹",
-    "desc": "攻击 +2，开局携带猎弓",
-    "bonus": { "atk": 2, "startWeapon": "bow" },
+    "desc": "战力 +2，开局携带猎弓",
+    "bonus": { "power": 2, "startWeapon": "bow" },
     "unlocked": true
   },
   {
@@ -35,8 +35,8 @@
     "id": "assassin",
     "name": "刺客",
     "emoji": "🗡️",
-    "desc": "攻击 +2，战斗有 15% 概率暴击",
-    "bonus": { "atk": 2, "crit": 0.15 },
+    "desc": "战力 +2，战斗有 15% 概率暴击",
+    "bonus": { "power": 2, "crit": 0.15 },
     "unlocked": true
   },
   {

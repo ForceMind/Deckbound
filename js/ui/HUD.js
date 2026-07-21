@@ -34,7 +34,6 @@ export class HUD {
       lvEl.title = `${t('hud.level')} ${p.level}　${p.exp}/${p.expToNext} EXP`;
     }
     this._set('hud-hp', `❤️ <b>${p.hp}</b>/<i>${p.maxHp}</i>`);
-    this._set('hud-atk', `⚔️ <b>${p.atk + (p.weapon?.atk ?? 0)}</b>`);
     this._set('hud-power', `💪 <b>${p.effectivePower}</b>`);
     this._set('hud-energy', `⚡ <b>${p.energy}</b>/<i>${p.maxEnergy}</i>`);
     this._set('hud-gold', `💰 <b>${p.gold}</b>`);
@@ -49,7 +48,7 @@ export class HUD {
     const aEl = document.getElementById('equip-armor');
     if (p.weapon) {
       wEl.classList.add('filled');
-      const stat = t('hud.weaponStat', { atk: p.weapon.atk ?? 0, power: p.weapon.power ?? 0, crit: Math.round((p.weapon.crit ?? 0) * 100) });
+      const stat = t('hud.weaponStat', { power: p.weapon.power ?? 0, crit: Math.round((p.weapon.crit ?? 0) * 100) });
       wEl.innerHTML = `<span class="slot-icon">${p.weapon.emoji}</span><span class="slot-name">${p.weapon.displayName ?? p.weapon.name}<br><small>${stat}</small></span>`;
     } else {
       wEl.classList.remove('filled');

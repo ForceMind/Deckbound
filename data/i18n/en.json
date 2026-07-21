@@ -16,7 +16,7 @@
   },
   "howto": {
     "title": "📜 How to Play",
-    "body": "<p><b>World</b>　The world is an endless deck of cards. You don't draw cards — you walk on them. Reach the Throne of Fate on floor 50 to win.</p><p><b>Vision</b>　You only ever see two rows: in the first row (near) the middle 5 cards are visible and clickable; in the second row (far) only the 3 cards ahead are revealed, for observation only.</p><p><b>Movement</b>　Click a card in the first row to move: the 3 cards ahead are free; farther cards cost 1 energy per extra step. Every 3 floors of travel drains 1 energy. Keyboard: ←→↑ (or A/D/W).</p><p><b>Energy</b>　Recover energy by resting, and via cards like springs, camps, food and shrines.</p><p><b>Rest</b>　Rest restores 1 energy; both visible rows slide as a whole — including unrevealed backs. At most 2 effective rests per floor; after that cards still move but no energy returns. Shortcut: R.</p><p><b>Monsters</b>　Monsters have levels (Lv) and affixes: the Weak are easy prey, while the Feral and the Ancient are far deadlier — read the power number before you strike.</p><p><b>Power & EXP</b>　Power only grows from kills, scaled by enemy strength. EXP works the same — stronger monsters and higher tiers (elite ×1.5, boss ×3) give more; leveling up raises max HP and attack. A crit is a \"perfect kill\": EXP ×1.5, gold ×1.3, +1 bonus power. Defeat costs HP by the power gap and knocks you back.</p><p><b>Gear</b>　Picking up gear never overwrites what you wear: choose to equip it, bag it, or sell it; swap bagged gear anytime with a tap.</p><p><b>Rarity</b>　The colored dot at a card's bottom-right shows its rarity: <span style=\"color:#4f9cf0\">blue=Rare</span>　<span style=\"color:#b464e8\">purple=Epic</span>　<span style=\"color:#f5a524\">orange=Legendary</span>　<span style=\"color:#f04f5e\">red=Mythic</span> (Common shows no dot). Higher rarity means stronger gear.</p><p><b>The deck drifts</b>　The world is alive: monsters wander, merchants leave, chests get looted by other adventurers, fire spreads, curses creep.</p><p><b>Hero & death</b>　Your hero is persistent: power, stats, gear, gold and level save in real time. Floor progress is remembered too: retreat (via Settings) saves your spot; death costs some gold and sends you back to the chapter start.</p><p><b>The hub</b>　Adventure is the only source of growth; take your hero to the Arena (stake duels, winner takes gear), Auction House, Trial Tower, Boss Hunt, Casino and Wishing Pool. Classic runs (daily/endless/race) use a fresh character and reward your hero gold per floor.</p>",
+    "body": "<p><b>World</b>　The world is an endless deck of cards. You don't draw cards — you walk on them. Reach the Throne of Fate on floor 50 to win.</p><p><b>Vision</b>　You only ever see two rows: in the first row (near) the middle 5 cards are visible and clickable; in the second row (far) only the 3 cards ahead are revealed, for observation only.</p><p><b>Movement</b>　Click a card in the first row to move: the 3 cards ahead are free; farther cards cost 1 energy per extra step. Every 3 floors of travel drains 1 energy. Keyboard: ←→↑ (or A/D/W).</p><p><b>Energy</b>　Recover energy by resting, and via cards like springs, camps, food and shrines.</p><p><b>Rest</b>　Rest restores 1 energy; both visible rows slide as a whole — including unrevealed backs. At most 2 effective rests per floor; after that cards still move but no energy returns. Shortcut: R.</p><p><b>Monsters</b>　Monsters have levels (Lv) and affixes: the Weak are easy prey, while the Feral and the Ancient are far deadlier — read the power number before you strike.</p><p><b>Power & EXP</b>　Power is the single combat number: higher than the monster wins, lower loses — that simple. Kills grant power and EXP scaled by enemy strength (elite EXP ×1.5, boss ×3); leveling up raises max HP, +1 power every 2 levels. A crit is a \"perfect kill\": EXP ×1.5, gold ×1.3, +1 bonus power. Defeat costs HP by the power gap and knocks you back.</p><p><b>Gear</b>　Picking up gear never overwrites what you wear: choose to equip it, bag it, or sell it; swap bagged gear anytime with a tap.</p><p><b>Rarity</b>　The colored dot at a card's bottom-right shows its rarity: <span style=\"color:#4f9cf0\">blue=Rare</span>　<span style=\"color:#b464e8\">purple=Epic</span>　<span style=\"color:#f5a524\">orange=Legendary</span>　<span style=\"color:#f04f5e\">red=Mythic</span> (Common shows no dot). Higher rarity means stronger gear.</p><p><b>The deck drifts</b>　The world is alive: monsters wander, merchants leave, chests get looted by other adventurers, fire spreads, curses creep.</p><p><b>Hero & death</b>　Your hero is persistent: power, stats, gear, gold and level save in real time. Floor progress is remembered too: retreat (via Settings) saves your spot; death costs some gold and sends you back to the chapter start.</p><p><b>The hub</b>　Adventure is the only source of growth; take your hero to the Arena (stake duels, winner takes gear), Auction House, Trial Tower, Boss Hunt, Casino and Wishing Pool. Classic runs (daily/endless/race) use a fresh character and reward your hero gold per floor.</p>",
     "close": "Got it"
   },
   "prologue": {
@@ -198,7 +198,7 @@
     "armorSlot": "Armor",
     "empty": "Empty",
     "noStatus": "No status",
-    "weaponStat": "ATK+{atk} PWR+{power} CRIT {crit}%",
+    "weaponStat": "Power +{power}　Crit {crit}%",
     "armorStat": "Block {block}",
     "curse": "💀 Curse ×{n} (Power -{loss})"
   },
@@ -234,7 +234,7 @@
     "bossAhead": "⚠️ A roar from afar… the warden is ahead!",
     "fightWin": "⚔️ Defeated {name}! Power +{power}, EXP +{exp}, gold +{gold}",
     "fightWinCrit": "💥 Perfect kill on {name}! Power +{power}, EXP +{exp}, gold +{gold}",
-    "levelUp": "🎉 Level up! Lv.{n}: max HP +3, attack +1 (+1 power / 3 lv, +1 max energy / 5 lv)",
+    "levelUp": "🎉 Level up! Lv.{n}: max HP +3 (+1 power / 2 lv, +1 max energy / 5 lv)",
     "resumeFloor": "🗺️ Adventure resumes from floor {n}",
     "fightLose": "💢 Beaten by {name}: -{dmg} HP, knocked back!",
     "equipWeapon": "🗡️ Equipped {name}",
@@ -284,7 +284,7 @@
   },
   "shrineBuffs": {
     "power": "Power +2",
-    "atk": "Attack +1",
+    "gold": "Gold +15",
     "maxHp": "Max HP +4",
     "energy": "Energy refilled"
   },
@@ -308,7 +308,7 @@
     "equipped": "Equipped {name}",
     "foodDesc": "HP +{hp}, energy +{energy}",
     "potionDesc": "Random effect when drunk",
-    "weaponDesc": "ATK+{atk} PWR+{power} CRIT {crit}%",
+    "weaponDesc": "Power +{power}　Crit {crit}%",
     "armorDesc": "Block {block}, max HP +{hp}",
     "fullEaten": "Bag full — ate it on the spot"
   },

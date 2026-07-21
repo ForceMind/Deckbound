@@ -401,7 +401,7 @@ export class Game {
 
   _gearStat(kind, item) {
     return kind === 'weapon'
-      ? t('hud.weaponStat', { atk: item.atk ?? 0, power: item.power ?? 0, crit: Math.round((item.crit ?? 0) * 100) })
+      ? t('hud.weaponStat', { power: item.power ?? 0, crit: Math.round((item.crit ?? 0) * 100) })
       : t('hud.armorStat', { block: item.block ?? 0 });
   }
 
@@ -539,7 +539,6 @@ export class Game {
     if (effect.hp) this.player.changeHp(effect.hp);
     if (effect.power) this.player.changePower(effect.power);
     if (effect.energy) this.player.changeEnergy(effect.energy);
-    if (effect.atk) this.player.changeAtk(effect.atk);
     if (effect.maxHp) this.player.changeMaxHp(effect.maxHp);
     this.ui.toast(t('toast.potionEffect', { text: effect.text }));
     if (this.player.hp <= 0) this._gameOver();

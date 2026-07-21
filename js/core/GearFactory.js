@@ -10,7 +10,7 @@ export function rollGear(data, rng, opts = {}) {
   const mult = data.rarities[rarity]?.statMult ?? 1;
 
   const item = { ...proto, rarity };
-  for (const key of ['atk', 'power', 'block', 'hp']) {
+  for (const key of ['power', 'block', 'hp']) {
     if (item[key]) item[key] = Math.round(item[key] * mult);
   }
   if (item.crit) item.crit = Math.round(item.crit * (1 + (mult - 1) * 0.5) * 100) / 100;
@@ -23,6 +23,6 @@ export function rollGear(data, rng, opts = {}) {
 /** 装备一句话属性（大厅界面通用） */
 export function gearStat(kind, item, t) {
   return kind === 'weapon'
-    ? t('hud.weaponStat', { atk: item.atk ?? 0, power: item.power ?? 0, crit: Math.round((item.crit ?? 0) * 100) })
+    ? t('hud.weaponStat', { power: item.power ?? 0, crit: Math.round((item.crit ?? 0) * 100) })
     : t('hud.armorStat', { block: item.block ?? 0 });
 }

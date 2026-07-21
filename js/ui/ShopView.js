@@ -114,7 +114,7 @@ export class ShopView {
           name: `${proto.name}（${data.rarities[rarity].name}）`,
           price: Math.round(proto.price * mult),
           desc: kind === 'weapon'
-            ? t('shop.weaponDesc', { atk: scaled.atk, power: scaled.power, crit: Math.round(scaled.crit * 100) })
+            ? t('shop.weaponDesc', { power: scaled.power, crit: Math.round(scaled.crit * 100) })
             : t('shop.armorDesc', { block: scaled.block, hp: scaled.hp }),
           // 走装备栏系统：槽空装备，否则入背包
           buy: (c) => c.game.giveGearSilent(kind, { ...scaled, name: proto.name, emoji: proto.emoji }),

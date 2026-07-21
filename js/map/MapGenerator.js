@@ -126,7 +126,7 @@ export class MapGenerator {
   _scaleGear(proto, rarity) {
     const mult = this.rarities[rarity]?.statMult ?? 1;
     const scaled = { ...proto };
-    for (const key of ['atk', 'power', 'block', 'hp']) {
+    for (const key of ['power', 'block', 'hp']) {
       if (scaled[key]) scaled[key] = Math.round(scaled[key] * mult);
     }
     if (scaled.crit) scaled.crit = Math.round(scaled.crit * (1 + (mult - 1) * 0.5) * 100) / 100;

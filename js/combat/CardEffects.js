@@ -143,7 +143,7 @@ registerEffect('campfire', async (ctx) => {
 registerEffect('shrine', async (ctx) => {
   const blessing = ctx.rng.pick([
     { key: 'power', apply: (p) => p.changePower(2) },
-    { key: 'atk', apply: (p) => p.changeAtk(1) },
+    { key: 'gold', apply: (p) => p.changeGold(15) },
     { key: 'maxHp', apply: (p) => { p.changeMaxHp(4); p.changeHp(4); } },
     { key: 'energy', apply: (p) => p.changeEnergy(99) },
   ]);
