@@ -115,7 +115,7 @@ export class Hub {
     this.layer = layer;
 
     const entries = [
-      { emoji: '🗺️', key: 'hubAdventure', sub: t('hub.adventureSub', { n: hero.stats.deepestFloor }), fn: () => this._launch('adventure') },
+      { emoji: '🗺️', key: 'hubAdventure', sub: t('hub.adventureSub', { cur: hero.currentFloor ?? 1, n: hero.stats.deepestFloor }), fn: () => this._launch('adventure') },
       { emoji: '⚔️', key: 'hubArena', sub: t('hub.arenaSub', { w: hero.arenaWins, l: hero.arenaLosses }), fn: () => this._enter(this.arena) },
       { emoji: '🏛️', key: 'hubAuction', sub: t('hub.auctionSub'), fn: () => this._enter(this.auction) },
       { emoji: '🗼', key: 'hubTower', sub: t('hub.towerSub', { n: hero.towerBest }), fn: () => this._enter(this.tower) },

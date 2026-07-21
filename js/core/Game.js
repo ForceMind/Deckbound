@@ -75,7 +75,9 @@ export class Game {
         if (proto) this.player.equipWeapon({ ...proto });
       }
     }
-    this.world = new World(this.config, this.generator);
+    // 冒险主世界：从上次保存的层数继续
+    const startFloor = this.mode === 'adventure' ? (this.hero?.currentFloor ?? 1) : 1;
+    this.world = new World(this.config, this.generator, startFloor);
 
     this.ui.boardView.onCardClick = (col) => this.tryMoveTo(col);
     this.ui.hud.onUseItem = (i) => this.useInventory(i);
@@ -101,7 +103,11 @@ export class Game {
     if (!TutorialView.isDone()) {
       await new TutorialView().run();
     }
-    this.ui.toast(t('toast.runStart', { cls: cls.name }));
+    if (this.mode === 'adventure' && startFloor > 1) {
+      this.ui.toast(t('toast.resumeFloor', { n: startFloor }));
+    } else {
+      this.ui.toast(t('toast.runStart', { cls: cls.name }));
+    }
   }
 
   _bindKeyboard() {
@@ -648,7 +654,12 @@ export class Game {
         this.hero.stats.deaths += 1;
         const loss = Math.floor(this.hero.gold * this.config.adventure.deathGoldLossPct);
         this.hero.gold = Math.max(0, this.hero.gold - loss);
-        extraHtml = `<p>${t('over.heroDeathLoss', { n: loss })}</p>`;
+        // 死亡检查点：退回本章起点（撤退则原地保存）
+        const ch = this.chapterOf(floor);
+        this.hero.currentFloor = ch ? ch.from : Math.max(1, floor - 9);
+        extraHtml = `<p>${t('over.heroDeathLoss', { n: loss })}</p><p>${t('over.heroCheckpoint', { n: this.hero.currentFloor })}</p>`;
+      } else {
+        this.hero.currentFloor = floor;
       }
       this.hero.save();
       flavor = won ? t('over.winText') : abandoned ? t('over.heroRetreatText') : t('over.heroDeathText');

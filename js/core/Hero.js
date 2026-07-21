@@ -29,6 +29,7 @@ export class Hero {
       classId: cls.id,
       level: 1,
       exp: 0,
+      currentFloor: 1,
       maxHp: base.maxHp + (b.maxHp ?? 0),
       atk: base.atk + (b.atk ?? 0),
       power: base.power + (b.power ?? 0),
@@ -63,6 +64,7 @@ export class Hero {
   syncFromPlayer(p) {
     this.level = p.level;
     this.exp = p.exp;
+    this.maxEnergy = p.maxEnergy;
     this.maxHp = p.maxHp;
     this.atk = p.atk;
     this.power = p.power;

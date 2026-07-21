@@ -46,6 +46,8 @@ export class Player {
       this.curses = heroState.curses ?? 0;
       this.level = heroState.level ?? 1;
       this.exp = heroState.exp ?? 0;
+      this.maxEnergy = heroState.maxEnergy ?? base.maxEnergy;
+      this.energy = this.maxEnergy;
     } else {
       this._applyClassStats(playerClass);
     }
@@ -108,6 +110,10 @@ export class Player {
       this.hp = Math.min(this.maxHp, this.hp + c.levelUp.maxHp);
       this.atk += c.levelUp.atk;
       if (this.level % c.levelUp.powerEvery === 0) this.power += 1;
+      if (c.levelUp.maxEnergyEvery && this.level % c.levelUp.maxEnergyEvery === 0) {
+        this.maxEnergy += 1;
+        this.energy += 1;
+      }
       ups.push(this.level);
     }
     bus.emit('statsChanged', this);

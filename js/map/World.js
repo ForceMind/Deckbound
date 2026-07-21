@@ -7,12 +7,12 @@ import { bus } from '../core/EventBus.js';
  * 玩家前进后整体滚动：near 成为玩家所在行，far 变 near，顶部生成新 far。
  */
 export class World {
-  constructor(config, generator) {
+  constructor(config, generator, startFloor = 1) {
     this.config = config;
     this.generator = generator;
     this.cols = config.grid.cols;
 
-    this.floor = 1;                     // 玩家当前所在层
+    this.floor = Math.max(1, startFloor);   // 玩家当前所在层（冒险进度可续走）
     this.near = generator.generateRow(this.floor + 1);
     this.far = generator.generateRow(this.floor + 2);
   }

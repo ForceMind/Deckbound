@@ -41,7 +41,7 @@
     "tierMult": { "monster": 1.0, "elite": 1.5, "boss": 3.0, "mirror": 2.0 },
     "baseToNext": 20,
     "perLevel": 15,
-    "levelUp": { "maxHp": 3, "atk": 1, "powerEvery": 3 }
+    "levelUp": { "maxHp": 3, "atk": 1, "powerEvery": 3, "maxEnergyEvery": 5 }
   },
   "boss": {
     "interval": 10
