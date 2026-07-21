@@ -52,6 +52,12 @@ export class MapGenerator {
       const scale = this.spawn.floorScaling[type] ?? 0;
       weights[type] = Math.max(0, (base + scale * floor) * (bias?.[type] ?? 1));
     }
+    // 每周挑战的全局生成偏移
+    if (this.extraBias) {
+      for (const [type, mult] of Object.entries(this.extraBias)) {
+        if (weights[type] != null) weights[type] *= mult;
+      }
+    }
     // 女巫委托激活时，月光草会出现在牌阵中
     if (this.hero?.eventMemory?.witchQuest?.active) weights.herb = 6;
     return this.rng.weighted(weights) ?? 'empty';
@@ -121,7 +127,7 @@ export class MapGenerator {
       name: `${mod.prefix}${proto.name}`,
       emoji: proto.emoji,
       rarity,
-      data: { power, tier, level },
+      data: { power, tier, level, protoId: proto.id },
     });
   }
 
@@ -132,7 +138,7 @@ export class MapGenerator {
       name: proto.name,
       emoji: proto.emoji,
       rarity: 'legendary',
-      data: { power, tier: 'boss', level: floor, skill: proto.skill ?? null },
+      data: { power, tier: 'boss', level: floor, skill: proto.skill ?? null, protoId: proto.id },
     });
   }
 

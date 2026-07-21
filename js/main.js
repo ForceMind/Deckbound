@@ -54,6 +54,9 @@ async function boot() {
     let seed;
     if (mode === 'daily') {
       seed = Number(new Date().toISOString().slice(0, 10).replace(/-/g, '')) >>> 0;
+    } else if (mode === 'weekly') {
+      // 每周同一种子：全球同图同规则
+      seed = (Math.floor(Date.now() / (7 * 86400e3)) * 7919) >>> 0;
     }
     const game = new Game(data, saveMeta, titleView, seed, mode, hero);
     window.__game = game;   // 调试入口

@@ -27,8 +27,8 @@
   },
   "combat": {
     "animMs": 3000,
-    "powerGain": { "monster": 3, "elite": 5, "boss": 10, "mirror": 6 },
-    "powerGainStrengthDiv": 15,
+    "powerGain": { "monster": 2, "elite": 4, "boss": 10, "mirror": 5 },
+    "powerGainStrengthDiv": 25,
     "goldReward": { "monster": [3, 8], "elite": [10, 18], "boss": [30, 50], "mirror": [15, 25] },
     "defeatDamageBase": 4,
     "critMultiplier": 1.5,

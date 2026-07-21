@@ -141,7 +141,9 @@
     "daily": "📅 每日挑战",
     "dailyDesc": "每天一张全球同图（{date} 最佳：{n}）",
     "versus": "🤖 对战模式",
-    "versusDesc": "与 AI 冒险者竞速，先到第 {n} 层者胜（{w} 胜 {l} 负）"
+    "versusDesc": "与 AI 冒险者竞速，先到第 {n} 层者胜（{w} 胜 {l} 负）",
+    "weekly": "每周挑战",
+    "weeklyDesc": "本周规则【{name}】：{desc}（本周最佳：{best}）"
   },
   "versus": {
     "rivalName": "影子行者",
@@ -182,7 +184,18 @@
     "goalEndless": "无尽模式 · 已深入第 {cur} 层，走得越远，传说越响",
     "goalEndlessRun": "当前第 {cur} 层 · 最深纪录 {best} 层",
     "goalDaily": "{date} · 当前第 {cur} 层 · 今日最佳 {best}",
-    "goalVersus": "先抵达第 {n} 层　你 <b>{p}</b> 层 ⚡ {name} <b>{r}</b> 层"
+    "goalVersus": "先抵达第 {n} 层　你 <b>{p}</b> 层 ⚡ {name} <b>{r}</b> 层",
+    "goalWeekly": "{desc} · 当前第 {cur} 层 · 本周最佳 {best}"
+  },
+  "weekly": {
+    "noRest": "👁️ 不眠者规则：本周无法休息，用食物与清泉撑下去"
+  },
+  "codex": {
+    "title": "图鉴",
+    "monsters": "🐺 怪物图鉴",
+    "gear": "⚔️ 装备图鉴",
+    "relics": "🏺 神器图鉴",
+    "kills": "击杀 ×{n}"
   },
   "hud": {
     "floorLabel": "🗺️ <b>{n}</b> 层",

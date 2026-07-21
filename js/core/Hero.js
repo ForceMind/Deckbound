@@ -42,6 +42,7 @@ export class Hero {
       relics: [],
       achievements: [],
       eventMemory: {},
+      codex: { monsters: {}, gear: [] },
       stats: { adventures: 0, deaths: 0, deepestFloor: 0, kills: 0, bossKills: 0, throneWins: 0, crits: 0 },
       towerBest: 0,
       arenaWins: 0,
@@ -83,6 +84,24 @@ export class Hero {
     return (this.relics ?? []).includes(id);
   }
 
+  /** 图鉴：记录击杀的怪物种类 */
+  recordMonsterKill(protoId) {
+    if (!protoId) return;
+    if (!this.codex) this.codex = { monsters: {}, gear: [] };
+    this.codex.monsters[protoId] = (this.codex.monsters[protoId] ?? 0) + 1;
+    this.save();
+  }
+
+  /** 图鉴：记录获得过的装备种类 */
+  recordGear(id) {
+    if (!id) return;
+    if (!this.codex) this.codex = { monsters: {}, gear: [] };
+    if (!this.codex.gear.includes(id)) {
+      this.codex.gear.push(id);
+      this.save();
+    }
+  }
+
   /** 有效战力（大厅玩法用；与 Player.effectivePower 同口径，不含濒死加成） */
   get effectivePower() {
     return Math.max(1, this.power + (this.weapon?.power ?? 0) - this.curses * 2);
@@ -99,6 +118,7 @@ export class Hero {
 
   /** 大厅内获得装备：空槽装备 / 入背包 / 满则按售价折算。返回处理方式 */
   giveGear(kind, item) {
+    this.recordGear(item.id);
     const slot = kind === 'weapon' ? this.weapon : this.armor;
     if (!slot) {
       if (kind === 'weapon') this.weapon = item;

@@ -27,6 +27,12 @@ export class Game {
     this.mode = mode;
     this.hero = hero;
     this.dailyDate = mode === 'daily' ? new Date().toISOString().slice(0, 10) : null;
+    // 每周挑战：按 epoch 周数取规则与种子
+    if (mode === 'weekly') {
+      const week = Math.floor(Date.now() / (7 * 86400e3));
+      this.weeklyKey = `W${week}`;
+      this.weeklyRule = data.weekly[week % data.weekly.length];
+    }
     this.seed = seed ?? (Date.now() >>> 0);
 
     this.rng = new RNG(this.seed);
@@ -82,6 +88,7 @@ export class Game {
     // 冒险主世界：从上次保存的层数继续
     const startFloor = this.mode === 'adventure' ? (this.hero?.currentFloor ?? 1) : 1;
     this.generator.hero = this.mode === 'adventure' ? this.hero : null;   // 女巫委托的月光草生成
+    this.generator.extraBias = this.weeklyRule?.bias ?? null;             // 每周挑战生成偏移
     this.world = new World(this.config, this.generator, startFloor);
     this._rollWeather(true);
 
@@ -160,6 +167,15 @@ export class Game {
       const best = this.saveMeta.meta.dailyBest?.[this.dailyDate] ?? '—';
       bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.daily')}</b>`, goal: t('quest.goalDaily', { date: this.dailyDate, cur: floor, best }) }) + this.weatherBadge;
       this.ui.stageView.setChapter('📅', this.dailyDate);
+      return;
+    }
+    if (this.mode === 'weekly') {
+      const best = this.saveMeta.meta.weeklyBest?.[this.weeklyKey] ?? '—';
+      bar.innerHTML = t('quest.bar', {
+        chapter: `<b>${this.weeklyRule.emoji} ${this.weeklyRule.name}</b>`,
+        goal: t('quest.goalWeekly', { cur: floor, best, desc: this.weeklyRule.desc }),
+      }) + this.weatherBadge;
+      this.ui.stageView.setChapter(this.weeklyRule.emoji, this.weeklyRule.name);
       return;
     }
     if (this.mode === 'versus') {
@@ -409,6 +425,11 @@ export class Game {
    */
   async rest() {
     if (this.busy || this.over) return;
+    // 每周挑战·不眠者：无法休息
+    if (this.weeklyRule?.noRest) {
+      this.ui.toast(t('weekly.noRest'));
+      return;
+    }
     this.busy = true;
     try {
       // 神器·月光坠：每层有效休息次数 +1
@@ -441,9 +462,15 @@ export class Game {
 
   /* ============ 天气 ============ */
 
-  /** 初始/到期时随机新天气；大雾同步收缩视野 */
+  /** 初始/到期时随机新天气；大雾同步收缩视野；每周挑战可锁定天气 */
   _rollWeather(initial = false) {
     const prev = this.weather?.id;
+    if (this.weeklyRule?.weatherLock) {
+      this.weather = this.data.weather.find((w) => w.id === this.weeklyRule.weatherLock);
+      this.weatherLeft = 9999;
+      this.world.visOverride = this.weather.id === 'fog' ? { near: 3, far: 1 } : null;
+      return;
+    }
     this.weather = this.rng.weighted(this.data.weather);
     const [min, max] = this.weather.duration;
     this.weatherLeft = this.rng.int(min, max);
@@ -582,6 +609,7 @@ export class Game {
   async acquireGear(kind, item) {
     const p = this.player;
     item.displayName = this._gearName(item);
+    this.hero?.recordGear(item.id);
     const slot = kind === 'weapon' ? p.weapon : p.armor;
     const equip = (it) => (kind === 'weapon' ? p.equipWeapon(it) : p.equipArmor(it));
     const equipKey = kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor';
@@ -636,6 +664,7 @@ export class Game {
   giveGearSilent(kind, item) {
     const p = this.player;
     item.displayName = this._gearName(item);
+    this.hero?.recordGear(item.id);
     const slot = kind === 'weapon' ? p.weapon : p.armor;
     if (!slot) {
       kind === 'weapon' ? p.equipWeapon(item) : p.equipArmor(item);
@@ -798,7 +827,7 @@ export class Game {
     this.over = true;
     const floor = this.world.floor;
     const newlyUnlocked = this.saveMeta.recordRun(
-      { floor, kills: this.stats.kills, bossKills: this.stats.bossKills, won: won || this.won, mode: this.mode, dailyDate: this.dailyDate },
+      { floor, kills: this.stats.kills, bossKills: this.stats.bossKills, won: won || this.won, mode: this.mode, dailyDate: this.dailyDate, weeklyKey: this.weeklyKey },
       this.config, this.data.classes,
     );
 

@@ -141,7 +141,9 @@
     "daily": "📅 Daily Challenge",
     "dailyDesc": "One shared map per day ({date} best: {n})",
     "versus": "🤖 Versus",
-    "versusDesc": "Race an AI adventurer to floor {n} ({w}W {l}L)"
+    "versusDesc": "Race an AI adventurer to floor {n} ({w}W {l}L)",
+    "weekly": "Weekly Challenge",
+    "weeklyDesc": "This week [{name}]: {desc} (best: {best})"
   },
   "versus": {
     "rivalName": "Shadow Walker",
@@ -182,7 +184,18 @@
     "goalEndless": "Endless mode · floor {cur} — the deeper you go, the louder the legend",
     "goalEndlessRun": "Floor {cur} · best {best}",
     "goalDaily": "{date} · floor {cur} · today's best {best}",
-    "goalVersus": "First to floor {n}　You <b>{p}</b> ⚡ {name} <b>{r}</b>"
+    "goalVersus": "First to floor {n}　You <b>{p}</b> ⚡ {name} <b>{r}</b>",
+    "goalWeekly": "{desc} · floor {cur} · week best {best}"
+  },
+  "weekly": {
+    "noRest": "👁️ Sleepless rule: no resting this week — survive on food and springs"
+  },
+  "codex": {
+    "title": "Codex",
+    "monsters": "🐺 Bestiary",
+    "gear": "⚔️ Armory",
+    "relics": "🏺 Relics",
+    "kills": "Kills ×{n}"
   },
   "hud": {
     "floorLabel": "🗺️ <b>{n}</b>F",

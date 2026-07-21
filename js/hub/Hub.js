@@ -124,6 +124,7 @@ export class Hub {
         <div class="hub-footer">
           <button class="action-btn" id="hub-bag">🎒 ${t('inv.title').replace('🎒 ', '')}</button>
           <button class="action-btn" id="hub-achv">🏅 ${t('achv.title')}</button>
+          <button class="action-btn" id="hub-codex">📖 ${t('codex.title')}</button>
           <button class="action-btn" id="hub-howto">${t('titleScreen.howto')}</button>
           <button class="action-btn" id="hub-settings">${t('titleScreen.settings')}</button>
         </div>
@@ -153,6 +154,7 @@ export class Hub {
     layer.querySelector('.hub-hero-card').addEventListener('click', () => this._heroDetail());
     layer.querySelector('#hub-bag').addEventListener('click', () => this._bag());
     layer.querySelector('#hub-achv').addEventListener('click', () => this._achievements());
+    layer.querySelector('#hub-codex').addEventListener('click', () => this._codex());
 
     // 大厅刷新时结算可能新达成的成就（竞技场/试炼塔/祈愿等）
     checkAchievements(this.hero, this.data.achievements, (a) => {
@@ -174,17 +176,58 @@ export class Hub {
   }
 
   async _classicMenu() {
+    const today = new Date().toISOString().slice(0, 10);
+    const week = Math.floor(Date.now() / (7 * 86400e3));
+    const weeklyRule = this.data.weekly[week % this.data.weekly.length];
+    const weeklyBest = this.saveMeta.meta.weeklyBest?.[`W${week}`] ?? '—';
     const picked = await this.modal.show({
       title: t('hub.hubClassic'),
       bodyHTML: `<p>${t('hub.classicIntro', { n: this.config.classicReward.goldPerFloor })}</p>`,
       choices: [
         { label: t('modes.endless'), sub: t('modes.endlessDesc', { n: this.saveMeta.meta.endlessBest || '—' }), value: 'endless' },
-        { label: t('modes.daily'), sub: t('modes.dailyDesc', { date: new Date().toISOString().slice(0, 10), n: this.saveMeta.meta.dailyBest?.[new Date().toISOString().slice(0, 10)] ?? '—' }), value: 'daily' },
+        { label: t('modes.daily'), sub: t('modes.dailyDesc', { date: today, n: this.saveMeta.meta.dailyBest?.[today] ?? '—' }), value: 'daily' },
+        { label: `${weeklyRule.emoji} ${t('modes.weekly')}`, sub: t('modes.weeklyDesc', { name: weeklyRule.name, desc: weeklyRule.desc, best: weeklyBest }), value: 'weekly' },
         { label: t('modes.versus'), sub: t('modes.versusDesc', { n: this.config.versus.targetFloor, w: this.saveMeta.meta.pvpWins, l: this.saveMeta.meta.pvpLosses }), value: 'versus' },
         { label: t('hub.back'), value: null },
       ],
     });
     if (picked) this._launch(picked);
+  }
+
+  /** 📖 图鉴：怪物 / 装备 / 神器收集进度 */
+  async _codex() {
+    const codex = this.hero.codex ?? { monsters: {}, gear: [] };
+    const m = this.data.monsters;
+    const allMonsters = [...m.monster, ...m.elite, ...m.boss];
+    const allGear = [...this.data.weapons, ...this.data.armors];
+    const relics = this.data.relics;
+    const ownedRelics = this.hero.relics ?? [];
+
+    const cell = (known, emoji, name, sub) => `
+      <div class="shop-item" style="${known ? '' : 'opacity:0.35;filter:grayscale(1)'};cursor:default">
+        <div class="shop-emoji">${known ? emoji : '❓'}</div>
+        <div class="shop-name">${known ? name : '？？？'}</div>
+        ${sub ? `<div class="shop-desc">${sub}</div>` : ''}
+      </div>`;
+
+    const monsterHtml = allMonsters.map((x) => {
+      const kills = codex.monsters?.[x.id] ?? 0;
+      return cell(kills > 0, x.emoji, x.name, kills > 0 ? t('codex.kills', { n: kills }) : '');
+    }).join('');
+    const gearHtml = allGear.map((x) => cell(codex.gear?.includes(x.id), x.emoji, x.name, '')).join('');
+    const relicHtml = relics.map((x) => cell(ownedRelics.includes(x.id), x.emoji, x.name, ownedRelics.includes(x.id) ? x.desc : '')).join('');
+
+    const mDone = allMonsters.filter((x) => (codex.monsters?.[x.id] ?? 0) > 0).length;
+    const gDone = allGear.filter((x) => codex.gear?.includes(x.id)).length;
+
+    await this.modal.show({
+      title: `📖 ${t('codex.title')}`,
+      bodyHTML: `
+        <p><b>${t('codex.monsters')}（${mDone}/${allMonsters.length}）</b></p><div class="shop-grid">${monsterHtml}</div>
+        <p><b>${t('codex.gear')}（${gDone}/${allGear.length}）</b></p><div class="shop-grid">${gearHtml}</div>
+        <p><b>${t('codex.relics')}（${ownedRelics.length}/${relics.length}）</b></p><div class="shop-grid">${relicHtml}</div>`,
+      choices: [{ label: t('howto.close'), value: 0 }],
+    });
   }
 
   /** 角色详情：战力构成、身上装备完整属性、可卸下 */

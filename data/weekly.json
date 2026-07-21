@@ -1,0 +1,7 @@
+[
+  { "id": "bloodmoon", "name": "血月狂潮", "emoji": "🌕", "desc": "整周血月高悬：怪物战力 +10%，击杀金币 +50%", "weatherLock": "moon" },
+  { "id": "mist",      "name": "迷雾之周", "emoji": "🌫️", "desc": "浓雾整周不散：近处仅见 3 张，远方仅见 1 张", "weatherLock": "fog" },
+  { "id": "sleepless", "name": "不眠者",   "emoji": "👁️", "desc": "牌阵的低语令你无法休息：体力只能靠卡牌恢复", "noRest": true },
+  { "id": "inferno",   "name": "烈焰之周", "emoji": "🔥", "desc": "大火烧遍牌阵：火焰生成 ×3", "bias": { "fire": 3.0 } },
+  { "id": "elites",    "name": "精英横行", "emoji": "👹", "desc": "精英怪成群出没：精英生成 ×2.5", "bias": { "elite": 2.5 } }
+]

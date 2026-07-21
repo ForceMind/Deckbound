@@ -12,6 +12,7 @@ const DEFAULT_META = {
   wins: 0,
   endlessBest: 0,
   dailyBest: {},
+  weeklyBest: {},
   pvpWins: 0,
   pvpLosses: 0,
   unlockedClasses: [],
@@ -40,7 +41,7 @@ export class SaveMeta {
   /**
    * 一局结束时结算，返回本次新解锁的职业 id 列表。
    */
-  recordRun({ floor, kills, bossKills, won, mode, dailyDate }, config, classes) {
+  recordRun({ floor, kills, bossKills, won, mode, dailyDate, weeklyKey }, config, classes) {
     this.meta.totalRuns += 1;
     this.meta.totalKills += kills;
     this.meta.bossKills += bossKills;
@@ -50,6 +51,12 @@ export class SaveMeta {
     if (mode === 'daily' && dailyDate) {
       if (!this.meta.dailyBest[dailyDate] || floor > this.meta.dailyBest[dailyDate]) {
         this.meta.dailyBest[dailyDate] = floor;
+      }
+    }
+    if (mode === 'weekly' && weeklyKey) {
+      if (!this.meta.weeklyBest) this.meta.weeklyBest = {};
+      if (!this.meta.weeklyBest[weeklyKey] || floor > this.meta.weeklyBest[weeklyKey]) {
+        this.meta.weeklyBest[weeklyKey] = floor;
       }
     }
 

@@ -47,12 +47,13 @@ async function fightHandler(ctx, card) {
     const ups = ctx.player.addExp(result.expGain);
     ctx.game.stats.kills += 1;
     if (result.tier === 'boss') ctx.game.stats.bossKills += 1;
-    // 冒险主世界：击杀统计实时进入持久角色（供成就系统即时检测）
+    // 冒险主世界：击杀统计实时进入持久角色（供成就系统即时检测）+ 图鉴记录
     if (ctx.game.mode === 'adventure' && ctx.game.hero) {
       const hs = ctx.game.hero.stats;
       hs.kills += 1;
       if (result.tier === 'boss') hs.bossKills += 1;
       if (result.crit) hs.crits = (hs.crits ?? 0) + 1;
+      ctx.game.hero.recordMonsterKill(card.data.protoId);
     }
     // 技能·收割：击杀回复敌方战力一半的生命
     if (ctx.player.skillFlags?.harvest) {
