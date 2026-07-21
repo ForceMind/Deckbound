@@ -24,7 +24,14 @@ async function boot() {
     const modal = new ModalView();
     const titleView = new TitleView(modal, saveMeta, data.config);
 
-    await titleView.show();
+    // 从冒险/挑战返回时跳过标题画面，直接回大厅
+    let skipTitle = false;
+    try {
+      skipTitle = sessionStorage.getItem('deckbound_skip_title') === '1';
+      sessionStorage.removeItem('deckbound_skip_title');
+    } catch { /* 忽略 */ }
+    if (!skipTitle) await titleView.show();
+    else titleView.layer?.remove();
 
     // 持久角色：首次进入创建（序章 + 选职业），之后一直存在
     let hero = Hero.load(data.config);

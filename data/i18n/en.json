@@ -47,7 +47,12 @@
     "resetHero": "🗑️ Reset hero",
     "resetHeroSub": "Delete the current hero and start over (meta unlocks remain)",
     "resetConfirm": "Delete your hero? Power, gear and gold will be wiped. This cannot be undone.",
-    "resetYes": "Delete"
+    "resetYes": "Delete",
+    "detailPower": "Power <b>{total}</b> (base {base} + weapon {weapon} − curse {curse})",
+    "detailRecord": "{adv} adventures · deepest {deep}F · {kills} kills · {wins} throne wins",
+    "detailUnequip": "Click to unequip to bag",
+    "detailUnequipped": "✅ Unequipped to bag",
+    "detailNoGear": "Nothing equipped"
   },
   "arena": {
     "title": "⚔️ Arena",

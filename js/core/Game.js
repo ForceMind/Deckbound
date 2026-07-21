@@ -215,6 +215,12 @@ export class Game {
       bodyHTML: `<p class="story-text">${text}</p><p>${t('versus.record', { w: m.pvpWins, l: m.pvpLosses })}</p><p>${t('over.classicReward', { n: reward })}</p>`,
       choices: [{ label: t('over.again'), value: 0 }],
     });
+    Game.backToHub();
+  }
+
+  /** 结束后回大厅（跳过标题画面） */
+  static backToHub() {
+    try { sessionStorage.setItem('deckbound_skip_title', '1'); } catch { /* 忽略 */ }
     location.reload();
   }
 
@@ -662,7 +668,7 @@ export class Game {
         <p>${flavor}</p>`,
       choices: [{ label: t('over.backToHub'), value: 0 }],
     });
-    location.reload();
+    Game.backToHub();
   }
 }
 

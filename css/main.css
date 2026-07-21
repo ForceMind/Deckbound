@@ -472,7 +472,10 @@ html, body {
   border-radius: 16px;
   padding: 16px 22px;
   margin-bottom: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease;
 }
+.hub-hero-card:hover { border-color: var(--gold); transform: translateY(-2px); }
 .hub-hero-emoji { font-size: 46px; filter: drop-shadow(0 4px 12px #000a); }
 .hub-hero-stats { display: flex; flex-direction: column; gap: 4px; }
 .hub-hero-stats b { color: var(--gold); font-size: 17px; }

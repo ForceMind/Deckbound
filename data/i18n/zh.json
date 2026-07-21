@@ -47,7 +47,12 @@
     "resetHero": "🗑️ 重置角色",
     "resetHeroSub": "删除当前角色，从头开始（档案解锁保留）",
     "resetConfirm": "确定要删除角色吗？战力、装备、金币将全部清空，此操作不可恢复。",
-    "resetYes": "确认删除"
+    "resetYes": "确认删除",
+    "detailPower": "战力 <b>{total}</b>（基础 {base} + 武器 {weapon} − 诅咒 {curse}）",
+    "detailRecord": "冒险 {adv} 次 · 最深 {deep} 层 · 击杀 {kills} · 通关 {wins} 次",
+    "detailUnequip": "点击卸下到背包",
+    "detailUnequipped": "✅ 已卸下到背包",
+    "detailNoGear": "身上没有装备"
   },
   "arena": {
     "title": "⚔️ 竞技场",

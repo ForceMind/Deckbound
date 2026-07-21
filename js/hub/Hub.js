@@ -133,6 +133,7 @@ export class Hub {
       grid.appendChild(card);
     }
 
+    layer.querySelector('.hub-hero-card').addEventListener('click', () => this._heroDetail());
     layer.querySelector('#hub-bag').addEventListener('click', () => this._bag());
     layer.querySelector('#hub-howto').addEventListener('click', async () => {
       await this.modal.show({
@@ -161,6 +162,61 @@ export class Hub {
       ],
     });
     if (picked) this._launch(picked);
+  }
+
+  /** 角色详情：战力构成、身上装备完整属性、可卸下 */
+  async _heroDetail() {
+    const hero = this.hero;
+    while (true) {
+      const weaponPower = hero.weapon?.power ?? 0;
+      const cursePenalty = hero.curses * 2;
+      const statsHtml = `
+        <p>💪 ${t('hub.detailPower', { total: hero.effectivePower, base: hero.power, weapon: weaponPower, curse: cursePenalty })}</p>
+        <p>❤️ ${hero.maxHp}　⚔️ ${hero.atk + (hero.weapon?.atk ?? 0)}（${hero.atk}+${hero.weapon?.atk ?? 0}）　🎒 ${hero.inventory.length}/${hero.inventorySize}${hero.curses ? `　💀×${hero.curses}` : ''}</p>
+        <p style="color:var(--text-dim)">${t('hub.detailRecord', { adv: hero.stats.adventures, deep: hero.stats.deepestFloor, kills: hero.stats.kills, wins: hero.stats.throneWins })}</p>`;
+
+      const choices = [];
+      if (hero.weapon) {
+        choices.push({
+          label: `🗡️ ${hero.weapon.emoji} ${hero.weapon.displayName ?? hero.weapon.name}`,
+          sub: `${gearStat('weapon', hero.weapon, t)}　${hero.bagFree ? t('hub.detailUnequip') : t('gear.bagFull')}`,
+          disabled: !hero.bagFree,
+          value: 'weapon',
+        });
+      }
+      if (hero.armor) {
+        choices.push({
+          label: `🛡️ ${hero.armor.emoji} ${hero.armor.displayName ?? hero.armor.name}`,
+          sub: `${gearStat('armor', hero.armor, t)}　${hero.bagFree ? t('hub.detailUnequip') : t('gear.bagFull')}`,
+          disabled: !hero.bagFree,
+          value: 'armor',
+        });
+      }
+      if (!choices.length) {
+        choices.push({ label: t('hub.detailNoGear'), disabled: true, value: 'none' });
+      }
+      choices.push({ label: t('inv.close'), value: 'close' });
+
+      const picked = await this.modal.show({
+        title: `${this.classEmoji} ${this.heroClass?.name ?? ''}`,
+        bodyHTML: statsHtml,
+        choices,
+      });
+      if (picked === 'weapon' && hero.weapon) {
+        hero.inventory.push({ kind: 'weapon', item: hero.weapon });
+        hero.weapon = null;
+        hero.save();
+        this.toast(t('hub.detailUnequipped'));
+      } else if (picked === 'armor' && hero.armor) {
+        hero.inventory.push({ kind: 'armor', item: hero.armor });
+        hero.armor = null;
+        hero.save();
+        this.toast(t('hub.detailUnequipped'));
+      } else {
+        break;
+      }
+    }
+    this._render();
   }
 
   /** 大厅背包：查看 / 装备互换 / 卖出 */
