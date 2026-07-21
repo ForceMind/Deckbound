@@ -27,6 +27,8 @@ export class Player {
     this.inventory = [];   // { kind: 'food'|'potion'|'key'|'weapon'|'armor', item }
     this.curses = 0;
     this.relics = [];      // 神器 id 列表（被动规则改写）
+    this.skillFlags = {};  // 主动技能的一次性 buff 标志
+    this.skillCooldown = 0;
     this.buffs = [];       // 文本记录，用于侧栏展示
 
     this.playerClass = playerClass;

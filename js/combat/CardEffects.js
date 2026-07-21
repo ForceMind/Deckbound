@@ -31,10 +31,30 @@ async function fightHandler(ctx, card) {
     const ups = ctx.player.addExp(result.expGain);
     ctx.game.stats.kills += 1;
     if (result.tier === 'boss') ctx.game.stats.bossKills += 1;
+    // 冒险主世界：击杀统计实时进入持久角色（供成就系统即时检测）
+    if (ctx.game.mode === 'adventure' && ctx.game.hero) {
+      const hs = ctx.game.hero.stats;
+      hs.kills += 1;
+      if (result.tier === 'boss') hs.bossKills += 1;
+      if (result.crit) hs.crits = (hs.crits ?? 0) + 1;
+    }
+    // 技能·收割：击杀回复敌方战力一半的生命
+    if (ctx.player.skillFlags?.harvest) {
+      delete ctx.player.skillFlags.harvest;
+      const heal = Math.floor(result.monsterPower / 2);
+      ctx.player.changeHp(heal);
+      ctx.ui.toast(t('toast.skillHarvest', { n: heal }));
+    }
     const key = result.crit ? 'toast.fightWinCrit' : 'toast.fightWin';
     ctx.ui.toast(t(key, { name: card.name, power: result.powerGain, gold: result.goldGain, exp: result.expGain }));
     for (const lv of ups) ctx.ui.toast(t('toast.levelUp', { n: lv }));
     return { won: true };
+  }
+  // 技能·盾墙：本次战败免受伤害（仍被击退）
+  if (ctx.player.skillFlags?.shield) {
+    delete ctx.player.skillFlags.shield;
+    ctx.ui.toast(t('toast.skillShieldBlock', { name: card.name }));
+    return { retreat: true };
   }
   ctx.player.changeHp(-result.damage);
   // 神器·血契：不被击退，强行突破

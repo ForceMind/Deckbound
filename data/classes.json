@@ -4,57 +4,130 @@
     "name": "骑士",
     "emoji": "🛡️",
     "desc": "生命 +10，战力 +2",
-    "bonus": { "maxHp": 10, "hp": 10, "power": 2 },
-    "unlocked": true
+    "bonus": {
+      "maxHp": 10,
+      "hp": 10,
+      "power": 2
+    },
+    "unlocked": true,
+    "skill": {
+      "id": "shield",
+      "name": "盾墙",
+      "emoji": "🛡️",
+      "cooldown": 6,
+      "desc": "下一次战败免受伤害"
+    }
   },
   {
     "id": "hunter",
     "name": "猎人",
     "emoji": "🏹",
     "desc": "战力 +2，开局携带猎弓",
-    "bonus": { "power": 2, "startWeapon": "bow" },
-    "unlocked": true
+    "bonus": {
+      "power": 2,
+      "startWeapon": "bow"
+    },
+    "unlocked": true,
+    "skill": {
+      "id": "eagle_eye",
+      "name": "鹰眼",
+      "emoji": "🦅",
+      "cooldown": 5,
+      "desc": "看清视野内所有的牌（含远方与边缘），持续到前进"
+    }
   },
   {
     "id": "mage",
     "name": "法师",
     "emoji": "🔮",
     "desc": "战力 +4，生命 -5",
-    "bonus": { "power": 4, "maxHp": -5, "hp": -5 },
-    "unlocked": true
+    "bonus": {
+      "power": 4,
+      "maxHp": -5,
+      "hp": -5
+    },
+    "unlocked": true,
+    "skill": {
+      "id": "blink",
+      "name": "闪现",
+      "emoji": "✨",
+      "cooldown": 6,
+      "desc": "下一次移动不消耗任何体力"
+    }
   },
   {
     "id": "priest",
     "name": "牧师",
     "emoji": "📿",
     "desc": "生命 +5，休息时额外恢复 3 生命",
-    "bonus": { "maxHp": 5, "hp": 5, "restHeal": 3 },
-    "unlocked": true
+    "bonus": {
+      "maxHp": 5,
+      "hp": 5,
+      "restHeal": 3
+    },
+    "unlocked": true,
+    "skill": {
+      "id": "prayer",
+      "name": "祷言",
+      "emoji": "🙏",
+      "cooldown": 7,
+      "desc": "立即净化全部诅咒并恢复 8 生命"
+    }
   },
   {
     "id": "assassin",
     "name": "刺客",
     "emoji": "🗡️",
     "desc": "战力 +2，战斗有 15% 概率暴击",
-    "bonus": { "power": 2, "crit": 0.15 },
-    "unlocked": true
+    "bonus": {
+      "power": 2,
+      "crit": 0.15
+    },
+    "unlocked": true,
+    "skill": {
+      "id": "execute",
+      "name": "处决",
+      "emoji": "⚡",
+      "cooldown": 5,
+      "desc": "下一次战斗必定暴击"
+    }
   },
   {
     "id": "berserker",
     "name": "狂战士",
     "emoji": "🪓",
     "desc": "战力 +3，生命越低战力越高（解锁：单局到达 15 层）",
-    "bonus": { "power": 3, "berserk": true },
+    "bonus": {
+      "power": 3,
+      "berserk": true
+    },
     "unlocked": false,
-    "unlockHint": "单局到达 15 层解锁"
+    "unlockHint": "单局到达 15 层解锁",
+    "skill": {
+      "id": "rage",
+      "name": "狂暴",
+      "emoji": "😤",
+      "cooldown": 6,
+      "desc": "下一次战斗战力 +50%"
+    }
   },
   {
     "id": "necromancer",
     "name": "死灵法师",
     "emoji": "☠️",
     "desc": "击杀敌人额外 +1 战力（解锁：累计击败 3 个 Boss）",
-    "bonus": { "power": 1, "killBonus": 1 },
+    "bonus": {
+      "power": 1,
+      "killBonus": 1
+    },
     "unlocked": false,
-    "unlockHint": "累计击败 3 个 Boss 解锁"
+    "unlockHint": "累计击败 3 个 Boss 解锁",
+    "skill": {
+      "id": "harvest",
+      "name": "收割",
+      "emoji": "🌾",
+      "cooldown": 6,
+      "desc": "下一次击杀回复敌方战力一半的生命"
+    }
   }
 ]

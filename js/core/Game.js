@@ -10,6 +10,7 @@ import { applyEffect } from '../combat/CardEffects.js';
 import { UIManager } from '../ui/UIManager.js';
 import { TutorialView } from '../ui/TutorialView.js';
 import { Rival } from '../modes/Rival.js';
+import { checkAchievements } from './Achievements.js';
 
 /**
  * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
@@ -86,7 +87,9 @@ export class Game {
       onInventory: () => this.openInventory(),
       onMap: () => this.openMap(),
       onSettings: () => this.openSettings(),
+      onSkill: () => this.useSkill(),
     });
+    this._renderSkillBtn();
     this._bindKeyboard();
 
     // 对战模式：召唤 AI 对手
@@ -295,12 +298,15 @@ export class Game {
     if (this.busy || this.over) return;
     const move = this.config.movement;
     const sideSteps = Math.abs(col - this.player.col);
-    // 神器·行者之靴：横移完全免费
-    const cost = this.player.hasRelic('walker_boots')
-      ? move.forwardCost
-      : Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
+    // 技能·闪现：本次移动完全免费；神器·行者之靴：横移免费
+    const cost = this.player.skillFlags.blink
+      ? 0
+      : this.player.hasRelic('walker_boots')
+        ? move.forwardCost
+        : Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
 
-    if (!this.world.nearVisibleSet(this.player.col).has(col)) {
+    // 技能·鹰眼期间全部可见可达
+    if (!this.player.skillFlags.eagleEye && !this.world.nearVisibleSet(this.player.col).has(col)) {
       this.ui.toast(t('toast.tooFar'));
       return;
     }
@@ -350,6 +356,15 @@ export class Game {
       }
 
       this.restCount = 0;   // 进入新层，休息次数重置
+      delete this.player.skillFlags.blink;
+      delete this.player.skillFlags.eagleEye;   // 鹰眼持续到前进为止
+      if (this.player.skillCooldown > 0) this.player.skillCooldown -= 1;
+      this._renderSkillBtn();
+      // 冒险：实时更新最深纪录并检查成就
+      if (this.mode === 'adventure' && this.hero) {
+        if (this.world.floor > this.hero.stats.deepestFloor) this.hero.stats.deepestFloor = this.world.floor;
+        this.checkAchievements();
+      }
       const changes = this.drift.apply(this.world);
       this.ui.hud.renderFloor(this.world.floor);
       this.ui.boardView.render(this.world, this.player);
@@ -402,6 +417,56 @@ export class Game {
       this.ui.animator.screenShake();
       this.ui.toast(t('toast.bossAhead'));
     }
+  }
+
+  /* ============ 职业主动技能 ============ */
+
+  _renderSkillBtn() {
+    const btn = document.getElementById('btn-skill');
+    const skill = this.player?.playerClass?.skill;
+    if (!btn || !skill) { btn?.classList.add('hidden'); return; }
+    btn.classList.remove('hidden');
+    const cd = this.player.skillCooldown;
+    btn.innerHTML = `${skill.emoji} ${skill.name}${cd > 0 ? `（${cd}）` : ''}`;
+    btn.disabled = cd > 0;
+    btn.title = skill.desc;
+  }
+
+  /** 使用职业技能（冷却按前进回合数计） */
+  async useSkill() {
+    if (this.busy || this.over) return;
+    const skill = this.player.playerClass?.skill;
+    if (!skill || this.player.skillCooldown > 0) return;
+
+    switch (skill.id) {
+      case 'prayer': {
+        // 立即生效：净化诅咒 + 回血
+        while (this.player.curses > 0) this.player.removeCurse();
+        this.player.changeHp(8);
+        break;
+      }
+      case 'eagle_eye':
+        this.player.skillFlags.eagleEye = true;
+        this.ui.boardView.render(this.world, this.player);   // 立即翻开全部
+        break;
+      case 'blink': this.player.skillFlags.blink = true; break;
+      case 'shield': this.player.skillFlags.shield = true; break;
+      case 'execute': this.player.skillFlags.execute = true; break;
+      case 'rage': this.player.skillFlags.rage = true; break;
+      case 'harvest': this.player.skillFlags.harvest = true; break;
+      default: break;
+    }
+    this.player.skillCooldown = skill.cooldown;
+    this.ui.toast(t('toast.skillUsed', { name: `${skill.emoji} ${skill.name}`, desc: skill.desc }));
+    this._renderSkillBtn();
+  }
+
+  /** 检查成就（冒险回合末 / 结算时调用） */
+  checkAchievements() {
+    if (!this.hero) return;
+    checkAchievements(this.hero, this.data.achievements, (a) => {
+      this.ui.toast(t('achv.unlocked', { name: `${a.emoji} ${a.name}`, n: a.reward }));
+    });
   }
 
   /* ============ 神器 ============ */
@@ -684,9 +749,8 @@ export class Game {
 
     if (this.mode === 'adventure' && this.hero) {
       // 持久角色结算：成长全保留；死亡损失部分金币，主动撤退无惩罚
+      // （击杀统计已在战斗中实时累计，此处不再累加）
       this.hero.syncFromPlayer(this.player);
-      this.hero.stats.kills += this.stats.kills;
-      this.hero.stats.bossKills += this.stats.bossKills;
       if (floor > this.hero.stats.deepestFloor) this.hero.stats.deepestFloor = floor;
       if (won) this.hero.stats.throneWins += 1;
       if (!abandoned && !won) {

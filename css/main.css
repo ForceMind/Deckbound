@@ -313,6 +313,12 @@ body[data-biome="endless"] #board-wrap { background: radial-gradient(ellipse at 
 .action-btn:hover { background: #ffffff1e; border-color: var(--gold); transform: translateY(-2px); }
 .action-btn:active { transform: translateY(0) scale(0.96); }
 .action-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.action-btn.hidden { display: none; }
+.skill-btn {
+  border-color: var(--gold);
+  background: linear-gradient(160deg, #f5c54222 0%, #d9a52011 100%);
+}
+.skill-btn:not(:disabled):hover { box-shadow: 0 4px 16px #f5c54244; }
 
 /* ============ 模态层 ============ */
 #modal-layer {

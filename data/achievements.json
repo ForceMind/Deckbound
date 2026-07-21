@@ -1,0 +1,14 @@
+[
+  { "id": "first_blood", "name": "初次击杀",   "emoji": "🗡️", "desc": "击败第一个敌人",           "reward": 20 },
+  { "id": "kills50",     "name": "百战余生",   "emoji": "⚔️", "desc": "累计击杀 50 个敌人",       "reward": 80 },
+  { "id": "boss5",       "name": "屠龙者",     "emoji": "🐲", "desc": "累计击败 5 名守关首领",     "reward": 120 },
+  { "id": "floor10",     "name": "踏出迷雾",   "emoji": "🌫️", "desc": "冒险到达第 10 层",         "reward": 40 },
+  { "id": "floor25",     "name": "深渊行者",   "emoji": "🔥", "desc": "冒险到达第 25 层",         "reward": 100 },
+  { "id": "throne",      "name": "改写命运",   "emoji": "👑", "desc": "登上第 50 层的命运王座",    "reward": 300 },
+  { "id": "level10",     "name": "老练冒险者", "emoji": "⭐", "desc": "角色达到 10 级",           "reward": 80 },
+  { "id": "rich",        "name": "腰缠万贯",   "emoji": "💰", "desc": "同时持有 500 金币",        "reward": 50 },
+  { "id": "relic3",      "name": "收藏家",     "emoji": "🏺", "desc": "收集 3 件神器",            "reward": 100 },
+  { "id": "crit10",      "name": "完美主义",   "emoji": "💥", "desc": "完成 10 次完美击杀",       "reward": 60 },
+  { "id": "arena5",      "name": "竞技场之星", "emoji": "🏆", "desc": "竞技场获胜 5 场",          "reward": 100 },
+  { "id": "tower10",     "name": "登塔者",     "emoji": "🗼", "desc": "试炼塔登上第 10 层",       "reward": 100 }
+]

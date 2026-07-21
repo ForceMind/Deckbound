@@ -25,7 +25,19 @@ export class Combat {
       : card.power;
 
     let playerPower = player.effectivePower;
-    const crit = this.rng.chance(player.critChance);
+    // 技能·狂暴：本次战斗战力 +50%
+    if (player.skillFlags?.rage) {
+      playerPower = Math.round(playerPower * 1.5);
+      delete player.skillFlags.rage;
+    }
+    // 技能·处决：本次战斗必定暴击
+    let crit;
+    if (player.skillFlags?.execute) {
+      crit = true;
+      delete player.skillFlags.execute;
+    } else {
+      crit = this.rng.chance(player.critChance);
+    }
     if (crit) playerPower = Math.round(playerPower * this.cfg.critMultiplier);
 
     const win = playerPower >= monsterPower;

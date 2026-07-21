@@ -15,6 +15,7 @@ const FILES = {
   spawn: 'data/spawn.json',
   story: 'data/story.json',
   relics: 'data/relics.json',
+  achievements: 'data/achievements.json',
 };
 
 export class DataLoader {

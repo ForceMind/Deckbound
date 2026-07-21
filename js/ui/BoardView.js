@@ -28,8 +28,11 @@ export class BoardView {
    */
   render(world, player, opts = {}) {
     this.board.innerHTML = '';
-    const nearVis = world.nearVisibleSet(player.col);
-    const farVis = world.farVisibleSet(player.col);
+    // 技能·鹰眼：视野内全部翻开
+    const all = new Set(Array.from({ length: world.cols }, (_, i) => i));
+    const eagle = player.skillFlags?.eagleEye;
+    const nearVis = eagle ? all : world.nearVisibleSet(player.col);
+    const farVis = eagle ? all : world.farVisibleSet(player.col);
 
     this.board.appendChild(this._buildRow('far', world.far, {
       visible: farVis,

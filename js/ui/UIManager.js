@@ -23,11 +23,12 @@ export class UIManager {
     this.stageView = new StageView();
   }
 
-  bindActions({ onRest, onInventory, onMap, onSettings }) {
+  bindActions({ onRest, onInventory, onMap, onSettings, onSkill }) {
     document.getElementById('btn-rest').addEventListener('click', onRest);
     document.getElementById('btn-inventory').addEventListener('click', onInventory);
     document.getElementById('btn-map').addEventListener('click', onMap);
     document.getElementById('btn-settings').addEventListener('click', onSettings);
+    if (onSkill) document.getElementById('btn-skill')?.addEventListener('click', onSkill);
   }
 
   toast(msg) {

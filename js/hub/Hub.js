@@ -7,6 +7,7 @@ import { Casino } from './Casino.js';
 import { Wish } from './Wish.js';
 import { Hero } from '../core/Hero.js';
 import { gearStat } from '../core/GearFactory.js';
+import { checkAchievements } from '../core/Achievements.js';
 
 /**
  * 首次创建角色：命运发五张职业牌选一张
@@ -121,6 +122,7 @@ export class Hub {
         <div class="hub-grid"></div>
         <div class="hub-footer">
           <button class="action-btn" id="hub-bag">🎒 ${t('inv.title').replace('🎒 ', '')}</button>
+          <button class="action-btn" id="hub-achv">🏅 ${t('achv.title')}</button>
           <button class="action-btn" id="hub-howto">${t('titleScreen.howto')}</button>
           <button class="action-btn" id="hub-settings">${t('titleScreen.settings')}</button>
         </div>
@@ -149,6 +151,12 @@ export class Hub {
 
     layer.querySelector('.hub-hero-card').addEventListener('click', () => this._heroDetail());
     layer.querySelector('#hub-bag').addEventListener('click', () => this._bag());
+    layer.querySelector('#hub-achv').addEventListener('click', () => this._achievements());
+
+    // 大厅刷新时结算可能新达成的成就（竞技场/试炼塔/祈愿等）
+    checkAchievements(this.hero, this.data.achievements, (a) => {
+      this.toast(t('achv.unlocked', { name: `${a.emoji} ${a.name}`, n: a.reward }));
+    });
     layer.querySelector('#hub-howto').addEventListener('click', async () => {
       await this.modal.show({
         title: t('howto.title'),
@@ -286,6 +294,22 @@ export class Hub {
       }
     }
     this._render();
+  }
+
+  /** 成就列表：已达成金色，未达成灰显 */
+  async _achievements() {
+    const owned = this.hero.achievements ?? [];
+    const rows = this.data.achievements.map((a) => {
+      const done = owned.includes(a.id);
+      return `<p style="${done ? '' : 'opacity:0.45;filter:grayscale(1)'}">
+        ${a.emoji} <b style="color:${done ? 'var(--gold)' : 'inherit'}">${a.name}</b>　${a.desc}　<span style="color:var(--gold)">+${a.reward}💰</span>${done ? ' ✅' : ''}
+      </p>`;
+    }).join('');
+    await this.modal.show({
+      title: `🏅 ${t('achv.title')}（${owned.length}/${this.data.achievements.length}）`,
+      bodyHTML: `<div class="howto-body">${rows}</div>`,
+      choices: [{ label: t('howto.close'), value: 0 }],
+    });
   }
 
   async _settings() {
