@@ -190,6 +190,16 @@
   "weekly": {
     "noRest": "👁️ Sleepless rule: no resting this week — survive on food and springs"
   },
+  "backup": {
+    "title": "💾 Save Backup",
+    "sub": "Export/import a save code (device transfer or safety)",
+    "exportHint": "Below is your save code — copy it somewhere safe. To import, paste a save code here and click import.",
+    "copy": "📋 Copy save code",
+    "copied": "📋 Copied to clipboard",
+    "import": "📥 Import the code in the box above",
+    "importHint": "Overwrites your current hero and records — be careful",
+    "invalid": "❌ Invalid save code — check it is complete"
+  },
   "codex": {
     "title": "Codex",
     "monsters": "🐺 Bestiary",
@@ -397,6 +407,8 @@
     "seed": "World seed: <b>{seed}</b><br>The same seed generates the same deck (reserved for daily challenges)",
     "sound": "🔊 Sound: {state}",
     "music": "🎵 Music: {state}",
+    "fastCombat": "⚡ Fast combat: {state}",
+    "fastCombatSub": "Combat animations at 1/3 length",
     "soundOn": "On",
     "soundOff": "Off",
     "language": "🌐 Language: English",

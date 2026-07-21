@@ -15,10 +15,34 @@ export class Hero {
     try {
       const raw = localStorage.getItem(KEY);
       if (!raw) return null;
-      return new Hero(JSON.parse(raw), config);
+      const data = JSON.parse(raw);
+      Hero.migrate(data, config);
+      return new Hero(data, config);
     } catch {
       return null;
     }
+  }
+
+  /** 旧版本存档补齐新增字段（版本升级安全） */
+  static migrate(d, config) {
+    d.level ??= 1;
+    d.exp ??= 0;
+    d.currentFloor ??= 1;
+    d.maxEnergy ??= config.player.maxEnergy;
+    d.inventory ??= [];
+    d.curses ??= 0;
+    d.relics ??= [];
+    d.achievements ??= [];
+    d.eventMemory ??= {};
+    d.codex ??= { monsters: {}, gear: [] };
+    d.codex.monsters ??= {};
+    d.codex.gear ??= [];
+    d.stats = { adventures: 0, deaths: 0, deepestFloor: 0, kills: 0, bossKills: 0, throneWins: 0, crits: 0, ...(d.stats ?? {}) };
+    d.towerBest ??= 0;
+    d.arenaWins ??= 0;
+    d.arenaLosses ??= 0;
+    d.huntKills ??= {};
+    d.wishCount ??= 0;
   }
 
   static create(config, cls) {

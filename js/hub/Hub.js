@@ -9,6 +9,7 @@ import { Hero } from '../core/Hero.js';
 import { gearStat } from '../core/GearFactory.js';
 import { checkAchievements } from '../core/Achievements.js';
 import { sound } from '../core/Sound.js';
+import { CombatView } from '../ui/CombatView.js';
 
 /**
  * 首次创建角色：命运发五张职业牌选一张
@@ -356,18 +357,70 @@ export class Hub {
     });
   }
 
+  /** 存档导出/导入：base64 码可复制迁移到其他设备 */
+  async _backup() {
+    const encode = () => {
+      const payload = {
+        v: 1,
+        hero: JSON.parse(localStorage.getItem('deckbound_hero_v1') ?? 'null'),
+        meta: JSON.parse(localStorage.getItem('deckbound_meta_v1') ?? 'null'),
+      };
+      return btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+    };
+
+    await new Promise((resolve) => {
+      const box = this.modal.showRaw();
+      box.innerHTML = `
+        <h2>${t('backup.title')}</h2>
+        <p>${t('backup.exportHint')}</p>
+        <textarea id="backup-text" style="width:100%;height:110px;background:#ffffff0a;color:var(--text-main);border:1px solid var(--border-dim);border-radius:8px;padding:8px;font-size:11px;word-break:break-all">${encode()}</textarea>
+        <div class="modal-choices">
+          <button class="modal-choice" id="backup-copy">${t('backup.copy')}</button>
+          <button class="modal-choice" id="backup-import">${t('backup.import')}<small>${t('backup.importHint')}</small></button>
+          <button class="modal-choice" id="backup-close">${t('inv.close')}</button>
+        </div>`;
+      const textarea = box.querySelector('#backup-text');
+      box.querySelector('#backup-copy').addEventListener('click', async () => {
+        textarea.select();
+        try { await navigator.clipboard.writeText(textarea.value); } catch { document.execCommand('copy'); }
+        this.toast(t('backup.copied'));
+      });
+      box.querySelector('#backup-import').addEventListener('click', () => {
+        try {
+          const payload = JSON.parse(decodeURIComponent(escape(atob(textarea.value.trim()))));
+          if (!payload.hero?.classId) throw new Error('bad save');
+          localStorage.setItem('deckbound_hero_v1', JSON.stringify(payload.hero));
+          if (payload.meta) localStorage.setItem('deckbound_meta_v1', JSON.stringify(payload.meta));
+          this.modal.hide();
+          try { sessionStorage.setItem('deckbound_skip_title', '1'); } catch { /* 忽略 */ }
+          location.reload();
+        } catch {
+          this.toast(t('backup.invalid'));
+        }
+      });
+      box.querySelector('#backup-close').addEventListener('click', () => { this.modal.hide(); resolve(); });
+    });
+  }
+
   async _settings() {
     const picked = await this.modal.show({
       title: t('settings.title'),
       choices: [
         { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
         { label: t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }), value: 'music' },
+        { label: t('settings.fastCombat', { state: CombatView.fastMode ? t('settings.soundOn') : t('settings.soundOff') }), sub: t('settings.fastCombatSub'), value: 'fast' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
+        { label: t('backup.title'), sub: t('backup.sub'), value: 'backup' },
         { label: t('hub.resetHero'), sub: t('hub.resetHeroSub'), value: 'reset' },
         { label: t('hub.back'), value: 'back' },
       ],
     });
-    if (picked === 'sound') {
+    if (picked === 'fast') {
+      CombatView.toggleFast();
+      this.toast(t('settings.fastCombat', { state: CombatView.fastMode ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'backup') {
+      await this._backup();
+    } else if (picked === 'sound') {
       sound.toggle();
       this.toast(t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }));
     } else if (picked === 'music') {

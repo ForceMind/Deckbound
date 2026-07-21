@@ -30,7 +30,8 @@ export class HUD {
   renderStats(p) {
     const lvEl = document.getElementById('hud-level');
     if (lvEl) {
-      lvEl.innerHTML = `⭐ <b>${p.level}</b>`;
+      const pct = Math.min(100, Math.round((p.exp / p.expToNext) * 100));
+      lvEl.innerHTML = `⭐ <b>${p.level}</b><i class="exp-bar"><i style="width:${pct}%"></i></i>`;
       lvEl.title = `${t('hud.level')} ${p.level}　${p.exp}/${p.expToNext} EXP`;
     }
     this._set('hud-hp', `❤️ <b>${p.hp}</b>/<i>${p.maxHp}</i>`);

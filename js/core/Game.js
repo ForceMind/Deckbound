@@ -8,6 +8,7 @@ import { WorldDrift } from '../map/WorldDrift.js';
 import { Combat } from '../combat/Combat.js';
 import { applyEffect } from '../combat/CardEffects.js';
 import { UIManager } from '../ui/UIManager.js';
+import { CombatView } from '../ui/CombatView.js';
 import { TutorialView } from '../ui/TutorialView.js';
 import { Rival } from '../modes/Rival.js';
 import { checkAchievements } from './Achievements.js';
@@ -782,6 +783,7 @@ export class Game {
         { label: t('settings.back'), value: 'back' },
         { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
         { label: t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }), value: 'music' },
+        { label: t('settings.fastCombat', { state: CombatView.fastMode ? t('settings.soundOn') : t('settings.soundOff') }), sub: t('settings.fastCombatSub'), value: 'fast' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
         { label: t('settings.howto'), value: 'howto' },
         { label: t('settings.replayTutorial'), value: 'tutorial' },
@@ -794,6 +796,9 @@ export class Game {
     } else if (picked === 'music') {
       sound.toggleMusic();
       this.ui.toast(t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'fast') {
+      CombatView.toggleFast();
+      this.ui.toast(t('settings.fastCombat', { state: CombatView.fastMode ? t('settings.soundOn') : t('settings.soundOff') }));
     } else if (picked === 'lang') {
       await i18n.setLang(i18n.otherLang);
       this._refreshLanguage();

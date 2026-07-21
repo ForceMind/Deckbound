@@ -74,6 +74,22 @@ html, body {
 .stat-gold b { color: var(--gold); }
 .hud-stat.bump { transform: scale(1.25); }
 
+/* 等级徽章内的迷你经验条 */
+#hud-level { position: relative; overflow: hidden; }
+#hud-level .exp-bar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 3px;
+  background: #ffffff14;
+  display: block;
+}
+#hud-level .exp-bar i {
+  display: block;
+  height: 100%;
+  background: var(--gold);
+  transition: width 0.4s ease;
+}
+
 /* ============ 目标指引条 ============ */
 #quest-bar {
   text-align: center;

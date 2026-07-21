@@ -14,6 +14,17 @@ export class CombatView {
     this.animMs = config.combat.animMs;
   }
 
+  /** 快速战斗：设置开启后动画时长缩为 1/3 */
+  static get fastMode() {
+    return localStorage.getItem('deckbound_fastcombat') === '1';
+  }
+
+  static toggleFast() {
+    const next = !CombatView.fastMode;
+    localStorage.setItem('deckbound_fastcombat', next ? '1' : '0');
+    return next;
+  }
+
   async play(player, card, result) {
     sound.play('combat');
     const box = this.modal.showRaw();
@@ -36,7 +47,7 @@ export class CombatView {
       <div class="combat-result" id="cb-result"></div>`;
 
     const stage = box.querySelector('.combat-stage');
-    const phase = this.animMs / 3;
+    const phase = (CombatView.fastMode ? this.animMs / 3 : this.animMs) / 3;
 
     // 阶段1：战力数字滚动
     await Promise.all([
@@ -70,7 +81,7 @@ export class CombatView {
       resultEl.textContent = t('combat.defeat');
       this.animator.floatNum(playerEl, `-${result.damage}`, 'dmg');
     }
-    await wait(phase + 400);
+    await wait(phase + (CombatView.fastMode ? 200 : 400));
     this.modal.hide();
   }
 
