@@ -20,16 +20,16 @@ export class WorldDrift {
    * 对世界应用一次演化。
    * @returns {Array<{row, col, kind}>} 发生变化的格子（kind: wander/leave/looted/spread）
    */
-  apply(world) {
+  apply(world, weatherId = null) {
     const changes = [];
     for (const rowKey of ['near', 'far']) {
       const row = rowKey === 'near' ? world.near : world.far;
-      this._driftRow(row, rowKey, changes);
+      this._driftRow(row, rowKey, changes, weatherId);
     }
     return changes;
   }
 
-  _driftRow(row, rowKey, changes) {
+  _driftRow(row, rowKey, changes, weatherId) {
     // 1. 怪物游荡：随机一只怪与相邻格换位（不吃掉 Boss / 商人）
     const monsterCols = row
       .map((c, i) => (c.type === 'monster' || c.type === 'elite' ? i : -1))
@@ -57,8 +57,8 @@ export class WorldDrift {
         changes.push({ row: rowKey, col, kind: 'looted' });
         return;
       }
-      // 4. 火焰蔓延到相邻格（不烧敌人和特殊牌）
-      if (card.type === 'fire' && this.rng.chance(this.cfg.fireSpreadChance)) {
+      // 4. 火焰蔓延到相邻格（不烧敌人和特殊牌；雨天不蔓延）
+      if (card.type === 'fire' && weatherId !== 'rain' && this.rng.chance(this.cfg.fireSpreadChance)) {
         const target = col + (this.rng.chance(0.5) ? -1 : 1);
         const victim = row[target];
         if (victim && ['food', 'empty', 'trap', 'gold'].includes(victim.type)) {

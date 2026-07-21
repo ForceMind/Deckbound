@@ -22,7 +22,7 @@ export async function applyEffect(ctx, card) {
 
 /* ============ 敌人 ============ */
 async function fightHandler(ctx, card) {
-  const result = ctx.game.combat.resolve(ctx.player, card);
+  const result = ctx.game.combat.resolve(ctx.player, card, { weather: ctx.game.weather?.id });
   await ctx.ui.combatView.play(ctx.player, card, result);
 
   if (result.win) {
@@ -163,9 +163,24 @@ registerEffect('fire', async (ctx) => {
     ctx.ui.toast(t('toast.fireImmune'));
     return;
   }
-  const dmg = Math.max(1, ctx.rng.int(4, 8) - ctx.player.block);
+  // 天气·细雨：火焰伤害减半
+  const rain = ctx.game.weather?.id === 'rain';
+  const dmg = Math.max(1, Math.round((ctx.rng.int(4, 8) - ctx.player.block) / (rain ? 2 : 1)));
   ctx.player.changeHp(-dmg);
   ctx.ui.toast(t('toast.fire', { n: dmg }));
+});
+
+/* 月光草：女巫委托的收集目标（委托激活时才会出现在牌阵） */
+registerEffect('herb', async (ctx) => {
+  const quest = ctx.game.hero?.eventMemory?.witchQuest;
+  if (quest?.active) {
+    quest.herbs = (quest.herbs ?? 0) + 1;
+    ctx.game.hero.save();
+    ctx.ui.toast(t('toast.herbPicked', { n: quest.herbs }));
+  } else {
+    ctx.player.changeGold(2);
+    ctx.ui.toast(t('toast.herbSold'));
+  }
 });
 
 registerEffect('curse', async (ctx) => {

@@ -16,6 +16,7 @@ const FILES = {
   story: 'data/story.json',
   relics: 'data/relics.json',
   achievements: 'data/achievements.json',
+  weather: 'data/weather.json',
 };
 
 export class DataLoader {

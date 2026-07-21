@@ -5,5 +5,7 @@
   { "id": "dagger", "name": "短匕",     "emoji": "🔪", "power": 2, "crit": 0.25, "price": 15, "desc": "极高的暴击率" },
   { "id": "staff",  "name": "法杖",     "emoji": "🪄", "power": 5, "crit": 0.08, "price": 28, "desc": "纯粹的战力提升" },
   { "id": "axe",    "name": "巨斧",     "emoji": "🪓", "power": 5, "crit": 0.08, "price": 24, "desc": "劈开一切阻碍" },
-  { "id": "spear",  "name": "长枪",     "emoji": "🔱", "power": 5, "crit": 0.1,  "price": 25, "desc": "攻守兼备" }
+  { "id": "spear",  "name": "长枪",     "emoji": "🔱", "power": 5, "crit": 0.1,  "price": 25, "desc": "攻守兼备" },
+  { "id": "bloodblade", "name": "嗜血魔刃", "emoji": "🩸", "power": 9,  "crit": 0.1,  "price": 40, "desc": "强大但饥渴：每前进一层流失 1 生命", "drawback": { "hpPerFloor": 1 } },
+  { "id": "gloomtome",  "name": "幽冥法典", "emoji": "📖", "power": 11, "crit": 0.05, "price": 48, "desc": "禁忌之力：每前进一层消耗 1 体力",   "drawback": { "energyPerFloor": 1 } }
 ]

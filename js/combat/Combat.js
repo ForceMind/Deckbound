@@ -13,16 +13,18 @@ export class Combat {
   /**
    * @returns {{ win, crit, playerPower, monsterPower, powerGain, goldGain, expGain, damage, tier }}
    */
-  resolve(player, card) {
+  resolve(player, card, opts = {}) {
     const tier = card.data.tier ?? (card.data.mirror ? 'mirror' : 'monster');
 
     // 镜像玩家：战力取自玩家自身（±2 浮动），这是最危险的对手
     // 神器·镜之碎片：镜像战力永远比你低 2
-    const monsterPower = card.data.mirror
+    let monsterPower = card.data.mirror
       ? Math.max(1, player.hasRelic?.('mirror_shard')
           ? player.effectivePower - 2
           : player.effectivePower + this.rng.int(-1, 2))
       : card.power;
+    // 天气·血月：怪物战力 +10%
+    if (opts.weather === 'moon') monsterPower = Math.round(monsterPower * 1.1);
 
     let playerPower = player.effectivePower;
     // 技能·狂暴：本次战斗战力 +50%
@@ -60,8 +62,10 @@ export class Combat {
       : 0;
 
     const goldRange = this.cfg.goldReward[tier] ?? this.cfg.goldReward.monster;
+    // 天气·血月：击杀金币 +50%
+    const moonGold = opts.weather === 'moon' ? 1.5 : 1;
     const goldGain = win
-      ? Math.round(this.rng.int(goldRange[0], goldRange[1]) * (crit ? this.cfg.critGoldMult : 1))
+      ? Math.round(this.rng.int(goldRange[0], goldRange[1]) * (crit ? this.cfg.critGoldMult : 1) * moonGold)
       : 0;
 
     // 神器·血契：战败不被击退（在效果结算处），但伤害翻倍

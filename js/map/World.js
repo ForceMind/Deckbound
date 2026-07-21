@@ -20,14 +20,14 @@ export class World {
   get nearFloor() { return this.floor + 1; }
   get farFloor() { return this.floor + 2; }
 
-  /** 第一行可见窗口（以玩家为中心 5 张，贴边时收拢） */
+  /** 第一行可见窗口（以玩家为中心 5 张，贴边时收拢；大雾天气收缩） */
   nearVisibleSet(playerCol) {
-    return this._window(playerCol, this.config.grid.nearVisible);
+    return this._window(playerCol, this.visOverride?.near ?? this.config.grid.nearVisible);
   }
 
-  /** 第二行可见窗口（正前方 3 张） */
+  /** 第二行可见窗口（正前方 3 张；大雾天气收缩） */
   farVisibleSet(playerCol) {
-    return this._window(playerCol, this.config.grid.farVisible);
+    return this._window(playerCol, this.visOverride?.far ?? this.config.grid.farVisible);
   }
 
   _window(center, size) {

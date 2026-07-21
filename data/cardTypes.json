@@ -14,6 +14,7 @@
   "fire":     { "name": "火焰",   "emoji": "🔥", "category": "hazard" },
   "campfire": { "name": "营地",   "emoji": "🏕️", "category": "rest" },
   "spring":   { "name": "清泉",   "emoji": "⛲", "category": "rest" },
+  "herb":     { "name": "月光草", "emoji": "🌿", "category": "loot" },
   "shrine":   { "name": "神龛",   "emoji": "⛩️", "category": "rest" },
   "gold":     { "name": "金币",   "emoji": "💰", "category": "loot" },
   "chest":    { "name": "宝箱",   "emoji": "🎁", "category": "loot" },

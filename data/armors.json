@@ -2,5 +2,6 @@
   { "id": "leather", "name": "皮甲",   "emoji": "🦺", "block": 1, "hp": 3,  "price": 14, "desc": "聊胜于无" },
   { "id": "chain",   "name": "锁甲",   "emoji": "⛓️", "block": 2, "hp": 5,  "price": 22, "desc": "扎实的防护" },
   { "id": "plate",   "name": "板甲",   "emoji": "🛡️", "block": 3, "hp": 8,  "price": 32, "desc": "行走的堡垒" },
-  { "id": "robe",    "name": "秘法袍", "emoji": "🧥", "block": 1, "hp": 4,  "price": 20, "desc": "附有微弱魔力" }
+  { "id": "robe",    "name": "秘法袍", "emoji": "🧥", "block": 1, "hp": 4,  "price": 20, "desc": "附有微弱魔力" },
+  { "id": "martyr",  "name": "殉道者铠", "emoji": "⚜️", "block": 5, "hp": 12, "price": 45, "desc": "极致防护的代价：每前进一层掉落 2 金币", "drawback": { "goldPerFloor": 2 } }
 ]

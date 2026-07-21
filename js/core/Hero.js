@@ -41,6 +41,7 @@ export class Hero {
       curses: 0,
       relics: [],
       achievements: [],
+      eventMemory: {},
       stats: { adventures: 0, deaths: 0, deepestFloor: 0, kills: 0, bossKills: 0, throneWins: 0, crits: 0 },
       towerBest: 0,
       arenaWins: 0,

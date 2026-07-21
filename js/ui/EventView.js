@@ -11,16 +11,44 @@ export class EventView {
   async open(ctx, proto) {
     const { player, rng, ui } = ctx;
 
+    const choices = proto.choices.map((c, i) => ({
+      label: c.text,
+      sub: this._costText(c.cost),
+      disabled: !this._canAfford(player, c.cost),
+      value: i,
+    }));
+
+    // 事件链：NPC 有记忆（仅冒险主世界的持久角色）
+    const mem = ctx.game.hero?.eventMemory;
+    if (mem && proto.id === 'witch') {
+      const q = mem.witchQuest;
+      if (!q && !mem.witchQuestDone) {
+        choices.unshift({ label: t('chain.witchAccept'), sub: t('chain.witchAcceptSub'), value: 'chain:witchAccept' });
+      } else if (q?.active && (q.herbs ?? 0) >= 3) {
+        choices.unshift({ label: t('chain.witchDeliver'), sub: t('chain.witchDeliverSub'), value: 'chain:witchDeliver' });
+      } else if (q?.active) {
+        choices.unshift({ label: t('chain.witchProgress', { n: q.herbs ?? 0 }), disabled: true, value: 'chain:noop' });
+      }
+    }
+    if (mem && proto.id === 'old_man') {
+      mem.oldManVisits = (mem.oldManVisits ?? 0) + 1;
+      ctx.game.hero.save();
+      if (mem.oldManVisits >= 3 && !mem.oldManGifted) {
+        choices.unshift({ label: t('chain.oldGift'), sub: t('chain.oldGiftSub'), value: 'chain:oldGift' });
+      }
+    }
+
     const choice = await this.modal.show({
       title: `${proto.emoji} ${proto.name}`,
       bodyHTML: `<p>${proto.text}</p>`,
-      choices: proto.choices.map((c, i) => ({
-        label: c.text,
-        sub: this._costText(c.cost),
-        disabled: !this._canAfford(player, c.cost),
-        value: i,
-      })),
+      choices,
     });
+
+    // 事件链选项：独立结算
+    if (typeof choice === 'string' && choice.startsWith('chain:')) {
+      await this._resolveChain(ctx, choice.slice(6));
+      return;
+    }
 
     const picked = proto.choices[choice];
     this._payCost(player, picked.cost);
@@ -33,6 +61,33 @@ export class EventView {
       choices: [{ label: t('event.continue'), value: 0 }],
     });
     ui.toast(t('toast.eventDone', { name: proto.name, text: result.text }));
+  }
+
+  /** 事件链结算：女巫委托 / 老人馈赠 */
+  async _resolveChain(ctx, action) {
+    const hero = ctx.game.hero;
+    const mem = hero.eventMemory;
+    if (action === 'witchAccept') {
+      mem.witchQuest = { active: true, herbs: 0 };
+      hero.save();
+      ctx.ui.toast(t('chain.witchAccepted'));
+    } else if (action === 'witchDeliver') {
+      mem.witchQuest = null;
+      mem.witchQuestDone = true;
+      hero.save();
+      ctx.player.changePower(5);
+      ctx.player.changeGold(40);
+      await this.modal.show({
+        title: t('chain.witchDoneTitle'),
+        bodyHTML: `<p>${t('chain.witchDoneText')}</p>`,
+        choices: [{ label: t('event.continue'), value: 0 }],
+      });
+    } else if (action === 'oldGift') {
+      mem.oldManGifted = true;
+      hero.save();
+      ctx.player.changePower(3);
+      ctx.ui.toast(t('chain.oldGifted'));
+    }
   }
 
   _costText(cost) {

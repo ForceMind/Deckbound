@@ -38,6 +38,8 @@ export class Game {
     this.over = false;
     this.won = false;
     this.restCount = 0;   // 本层已休息次数（限制无限刷体力）
+    this.weather = null;  // 当前天气
+    this.weatherLeft = 0; // 剩余层数
     this.stats = { kills: 0, bossKills: 0 };
   }
 
@@ -78,7 +80,9 @@ export class Game {
     }
     // 冒险主世界：从上次保存的层数继续
     const startFloor = this.mode === 'adventure' ? (this.hero?.currentFloor ?? 1) : 1;
+    this.generator.hero = this.mode === 'adventure' ? this.hero : null;   // 女巫委托的月光草生成
     this.world = new World(this.config, this.generator, startFloor);
+    this._rollWeather(true);
 
     this.ui.boardView.onCardClick = (col) => this.tryMoveTo(col);
     this.ui.hud.onUseItem = (i) => this.useInventory(i);
@@ -132,6 +136,12 @@ export class Game {
     return this.story.chapters.find((c) => floor >= c.from && floor <= c.to) ?? null;
   }
 
+  get weatherBadge() {
+    return this.weather && this.weather.id !== 'clear'
+      ? `　<span title="${this.weather.desc}">${this.weather.emoji} ${this.weather.name}</span>`
+      : '';
+  }
+
   updateQuestBar() {
     const floor = this.world.floor;
     const bar = document.getElementById('quest-bar');
@@ -140,13 +150,13 @@ export class Game {
     // 非主线模式各有自己的目标指引
     if (this.mode === 'endless') {
       const best = Math.max(this.saveMeta.meta.endlessBest, floor);
-      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.endless')}</b>`, goal: t('quest.goalEndlessRun', { cur: floor, best }) });
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.endless')}</b>`, goal: t('quest.goalEndlessRun', { cur: floor, best }) }) + this.weatherBadge;
       this.ui.stageView.setChapter('🌌', this.story.endless.name);
       return;
     }
     if (this.mode === 'daily') {
       const best = this.saveMeta.meta.dailyBest?.[this.dailyDate] ?? '—';
-      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.daily')}</b>`, goal: t('quest.goalDaily', { date: this.dailyDate, cur: floor, best }) });
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.daily')}</b>`, goal: t('quest.goalDaily', { date: this.dailyDate, cur: floor, best }) }) + this.weatherBadge;
       this.ui.stageView.setChapter('📅', this.dailyDate);
       return;
     }
@@ -154,7 +164,7 @@ export class Game {
       bar.innerHTML = t('quest.bar', {
         chapter: `<b>${t('modes.versus')}</b>`,
         goal: t('quest.goalVersus', { n: this.config.versus.targetFloor, p: floor, name: this.rival?.name ?? '', r: this.rival?.floor ?? 1 }),
-      });
+      }) + this.weatherBadge;
       this.ui.stageView.setChapter('🤖', this.rival?.name ?? '');
       return;
     }
@@ -165,10 +175,10 @@ export class Game {
       const goal = ch.to >= this.story.finalFloor
         ? t('quest.goalFinal', { n: ch.to, cur: floor })
         : t('quest.goalReach', { n: ch.to, cur: floor });
-      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('chapter.enter', { n: ch.n, name: ch.name })}</b>`, goal });
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('chapter.enter', { n: ch.n, name: ch.name })}</b>`, goal }) + this.weatherBadge;
       this.ui.stageView.setChapter(ch.emoji, ch.name);
     } else {
-      bar.innerHTML = t('quest.bar', { chapter: `<b>${this.story.endless.name}</b>`, goal: t('quest.goalEndless', { cur: floor }) });
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${this.story.endless.name}</b>`, goal: t('quest.goalEndless', { cur: floor }) }) + this.weatherBadge;
       this.ui.stageView.setChapter(this.story.endless.emoji, this.story.endless.name);
     }
   }
@@ -298,12 +308,14 @@ export class Game {
     if (this.busy || this.over) return;
     const move = this.config.movement;
     const sideSteps = Math.abs(col - this.player.col);
-    // 技能·闪现：本次移动完全免费；神器·行者之靴：横移免费
+    // 技能·闪现：本次移动完全免费；神器·行者之靴：横移免费；天气·顺风：横移省 1
+    let sideCost = Math.max(0, sideSteps - move.freeRange) * move.sideCost;
+    if (this.weather?.id === 'wind') sideCost = Math.max(0, sideCost - 1);
     const cost = this.player.skillFlags.blink
       ? 0
       : this.player.hasRelic('walker_boots')
         ? move.forwardCost
-        : Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
+        : sideCost + move.forwardCost;
 
     // 技能·鹰眼期间全部可见可达
     if (!this.player.skillFlags.eagleEye && !this.world.nearVisibleSet(this.player.col).has(col)) {
@@ -360,12 +372,15 @@ export class Game {
       delete this.player.skillFlags.eagleEye;   // 鹰眼持续到前进为止
       if (this.player.skillCooldown > 0) this.player.skillCooldown -= 1;
       this._renderSkillBtn();
+      this._tickWeather();
+      this._applyGearDrawbacks();
+      if (this.player.hp <= 0 && !this._tryPhoenixRevive()) { await this._gameOver(); return; }
       // 冒险：实时更新最深纪录并检查成就
       if (this.mode === 'adventure' && this.hero) {
         if (this.world.floor > this.hero.stats.deepestFloor) this.hero.stats.deepestFloor = this.world.floor;
         this.checkAchievements();
       }
-      const changes = this.drift.apply(this.world);
+      const changes = this.drift.apply(this.world, this.weather?.id);
       this.ui.hud.renderFloor(this.world.floor);
       this.ui.boardView.render(this.world, this.player);
       this.updateQuestBar();
@@ -416,6 +431,39 @@ export class Game {
     if (this.world.far.some((c) => c.type === 'boss')) {
       this.ui.animator.screenShake();
       this.ui.toast(t('toast.bossAhead'));
+    }
+  }
+
+  /* ============ 天气 ============ */
+
+  /** 初始/到期时随机新天气；大雾同步收缩视野 */
+  _rollWeather(initial = false) {
+    const prev = this.weather?.id;
+    this.weather = this.rng.weighted(this.data.weather);
+    const [min, max] = this.weather.duration;
+    this.weatherLeft = this.rng.int(min, max);
+    this.world.visOverride = this.weather.id === 'fog' ? { near: 3, far: 1 } : null;
+    if (!initial && this.weather.id !== prev && this.weather.id !== 'clear') {
+      this.ui.toast(t('toast.weatherChanged', { name: `${this.weather.emoji} ${this.weather.name}`, desc: this.weather.desc }));
+    }
+  }
+
+  /** 每前进一层推进天气计时 */
+  _tickWeather() {
+    this.weatherLeft -= 1;
+    if (this.weatherLeft <= 0) this._rollWeather();
+  }
+
+  /* ============ 风险装备 ============ */
+
+  /** 带副作用的装备：每前进一层结算代价 */
+  _applyGearDrawbacks() {
+    for (const item of [this.player.weapon, this.player.armor]) {
+      const d = item?.drawback;
+      if (!d) continue;
+      if (d.hpPerFloor) this.player.changeHp(-d.hpPerFloor);
+      if (d.energyPerFloor) this.player.changeEnergy(-d.energyPerFloor);
+      if (d.goldPerFloor) this.player.changeGold(-d.goldPerFloor);
     }
   }
 

@@ -1,0 +1,7 @@
+[
+  { "id": "clear", "name": "晴朗", "emoji": "☀️", "desc": "风平浪静，宜赶路",                          "weight": 40, "duration": [3, 5] },
+  { "id": "fog",   "name": "大雾", "emoji": "🌫️", "desc": "视野收缩：近处仅见 3 张，远方仅见 1 张",   "weight": 15, "duration": [2, 4] },
+  { "id": "rain",  "name": "细雨", "emoji": "🌧️", "desc": "火焰无法蔓延，火焰伤害减半",               "weight": 15, "duration": [2, 4] },
+  { "id": "moon",  "name": "血月", "emoji": "🌕", "desc": "怪物战力 +10%，但击杀金币 +50%",           "weight": 15, "duration": [2, 3] },
+  { "id": "wind",  "name": "顺风", "emoji": "💨", "desc": "横向移动节省 1 体力",                      "weight": 15, "duration": [2, 4] }
+]

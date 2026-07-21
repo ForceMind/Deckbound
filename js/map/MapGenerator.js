@@ -52,6 +52,8 @@ export class MapGenerator {
       const scale = this.spawn.floorScaling[type] ?? 0;
       weights[type] = Math.max(0, (base + scale * floor) * (bias?.[type] ?? 1));
     }
+    // 女巫委托激活时，月光草会出现在牌阵中
+    if (this.hero?.eventMemory?.witchQuest?.active) weights.herb = 6;
     return this.rng.weighted(weights) ?? 'empty';
   }
 
