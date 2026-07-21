@@ -24,6 +24,30 @@
     "text": "No one remembers what happened that night.<br><br>When they woke, the land, the towns, the mountains and seas were gone — replaced by a vast array of cards stretching endlessly northward. Every card is a road, an enemy, a choice.<br><br>The last prophecy of the diviners: <b>\"Go north. Through mist, bone, flame and mirror — upon the fiftieth card sits the Throne of Fate that can rewrite it all.\"</b><br><br>Countless adventurers set out. None returned.<br><br>Now it is your turn.",
     "continue": "Step onto the deck"
   },
+  "modes": {
+    "title": "🂠 Choose a Mode",
+    "adventure": "🗺️ Adventure",
+    "adventureDesc": "Five chapters — reach the Throne of Fate on floor 50",
+    "endless": "🌌 Endless",
+    "endlessDesc": "No finish line — go as deep as you can (best: {n})",
+    "daily": "📅 Daily Challenge",
+    "dailyDesc": "One shared map per day ({date} best: {n})",
+    "versus": "🤖 Versus",
+    "versusDesc": "Race an AI adventurer to floor {n} ({w}W {l}L)"
+  },
+  "versus": {
+    "rivalName": "Shadow Walker",
+    "rivalDied": "🪦 {name} fell in the deck! Just reach the goal alive to win",
+    "rivalKillBoss": "🤖 {name} defeated a warden!",
+    "winTitle": "🏆 Race Won",
+    "winText": "You reached floor {n} first. {name}'s silhouette fades into the deck.",
+    "loseTitle": "😵 Race Lost",
+    "loseText": "{name} reached floor {n} before you. Walk faster next time.",
+    "loseDeadText": "You fell along the way, while {name} kept walking.",
+    "record": "Versus record: {w}W {l}L"
+  },
+  "rivalBar": "🤖 {name}　🗺️ <b>{floor}</b>F　💪 {power}　❤️ {hp}",
+  "rivalBarDead": "🪦 {name} has fallen",
   "class": {
     "pickTitle": "🂠 Choose Your Class",
     "pickHint": "Fate deals you five cards — pick one to begin",
@@ -47,7 +71,10 @@
     "bar": "{chapter}　·　{goal}",
     "goalReach": "Goal: reach floor {n} and defeat the warden (now floor {cur})",
     "goalFinal": "Final battle: floor {n} · Throne of Fate (now floor {cur})",
-    "goalEndless": "Endless mode · floor {cur} — the deeper you go, the louder the legend"
+    "goalEndless": "Endless mode · floor {cur} — the deeper you go, the louder the legend",
+    "goalEndlessRun": "Floor {cur} · best {best}",
+    "goalDaily": "{date} · floor {cur} · today's best {best}",
+    "goalVersus": "First to floor {n}　You <b>{p}</b> ⚡ {name} <b>{r}</b>"
   },
   "hud": {
     "floorLabel": "🗺️ <b>{n}</b>F",
@@ -135,7 +162,7 @@
   },
   "gear": {
     "title": "Found {name}",
-    "compare": "<p>New: <b>{newStat}</b><br>Equipped ({oldName}): {oldStat}</p>",
+    "compare": "<p>New {newName}: <b>{newStat}</b><br>Equipped {oldName}: {oldStat}</p>",
     "equipNew": "✅ Equip the new one",
     "oldToBag": "{name} goes to your bag",
     "oldSold": "Bag full — {name} will be sold (+{n} gold)",
@@ -161,6 +188,8 @@
     "curseRemoved": "✨ A curse was removed",
     "leave": "👋 Leave",
     "bagFull": "🎒 Bag full — can't buy gear",
+    "manageBag": "🎒 Manage bag",
+    "manageBagSub": "{n}/{max} slots (eat food or sell gear here to free space)",
     "equipped": "Equipped {name}",
     "foodDesc": "HP +{hp}, energy +{energy}",
     "potionDesc": "Random effect when drunk",

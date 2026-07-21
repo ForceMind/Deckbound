@@ -44,14 +44,14 @@ export class HUD {
     if (p.weapon) {
       wEl.classList.add('filled');
       const stat = t('hud.weaponStat', { atk: p.weapon.atk ?? 0, power: p.weapon.power ?? 0, crit: Math.round((p.weapon.crit ?? 0) * 100) });
-      wEl.innerHTML = `<span class="slot-icon">${p.weapon.emoji}</span><span class="slot-name">${p.weapon.name}<br><small>${stat}</small></span>`;
+      wEl.innerHTML = `<span class="slot-icon">${p.weapon.emoji}</span><span class="slot-name">${p.weapon.displayName ?? p.weapon.name}<br><small>${stat}</small></span>`;
     } else {
       wEl.classList.remove('filled');
       wEl.innerHTML = `<span class="slot-icon">🗡️</span><span class="slot-name">${t('hud.empty')}</span>`;
     }
     if (p.armor) {
       aEl.classList.add('filled');
-      aEl.innerHTML = `<span class="slot-icon">${p.armor.emoji}</span><span class="slot-name">${p.armor.name}<br><small>${t('hud.armorStat', { block: p.armor.block ?? 0 })}</small></span>`;
+      aEl.innerHTML = `<span class="slot-icon">${p.armor.emoji}</span><span class="slot-name">${p.armor.displayName ?? p.armor.name}<br><small>${t('hud.armorStat', { block: p.armor.block ?? 0 })}</small></span>`;
     } else {
       aEl.classList.remove('filled');
       aEl.innerHTML = `<span class="slot-icon">🛡️</span><span class="slot-name">${t('hud.empty')}</span>`;

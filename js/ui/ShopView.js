@@ -72,6 +72,11 @@ export class ShopView {
             ui.toast(t('shop.curseRemoved'));
             render();
           });
+        // 背包满时可在商店内直接整理（吃食物/卖装备腾位置）
+        mkBtn(t('shop.manageBag'), t('shop.manageBagSub', { n: player.inventory.length, max: player.inventorySize }), false, async () => {
+          await ctx.game.openInventory(true);
+          render();
+        });
         mkBtn(t('shop.leave'), null, false, () => { this.modal.hide(); resolve(); });
       };
       render();

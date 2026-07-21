@@ -86,6 +86,18 @@ html, body {
 }
 #quest-bar b { color: var(--gold); }
 
+#rival-bar {
+  text-align: center;
+  padding: 5px 20px;
+  font-size: 13px;
+  color: #d99;
+  background: #1c1420;
+  border-bottom: 1px solid #3a2635;
+  letter-spacing: 0.5px;
+}
+#rival-bar b { color: var(--hp); }
+#rival-bar.hidden { display: none; }
+
 /* ============ 中部 ============ */
 #middle {
   flex: 1;

@@ -17,11 +17,16 @@ async function boot() {
     const loader = new DataLoader();
     const data = await loader.loadAll();
     const saveMeta = new SaveMeta();
-    const titleView = new TitleView(new ModalView(), saveMeta);
+    const titleView = new TitleView(new ModalView(), saveMeta, data.config);
 
-    await titleView.show();
+    const mode = await titleView.show();
 
-    const game = new Game(data, saveMeta, titleView);
+    // 每日挑战：同一天全球同一种子（同一牌阵）
+    let seed;
+    if (mode === 'daily') {
+      seed = Number(new Date().toISOString().slice(0, 10).replace(/-/g, '')) >>> 0;
+    }
+    const game = new Game(data, saveMeta, titleView, seed, mode);
     window.__game = game;   // 调试入口
     await game.start();
   } catch (err) {

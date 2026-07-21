@@ -9,18 +9,21 @@ import { Combat } from '../combat/Combat.js';
 import { applyEffect } from '../combat/CardEffects.js';
 import { UIManager } from '../ui/UIManager.js';
 import { TutorialView } from '../ui/TutorialView.js';
+import { Rival } from '../modes/Rival.js';
 
 /**
  * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
  * 主线：穿过五个章节，抵达第 50 层「命运王座」击败最终首领即通关，之后可进入无尽模式。
  */
 export class Game {
-  constructor(data, saveMeta, titleView, seed) {
+  constructor(data, saveMeta, titleView, seed, mode = 'adventure') {
     this.data = data;
     this.config = data.config;
     this.story = data.story;
     this.saveMeta = saveMeta;
     this.titleView = titleView;
+    this.mode = mode;
+    this.dailyDate = mode === 'daily' ? new Date().toISOString().slice(0, 10) : null;
     this.seed = seed ?? (Date.now() >>> 0);
 
     this.rng = new RNG(this.seed);
@@ -67,6 +70,12 @@ export class Game {
       onSettings: () => this.openSettings(),
     });
     this._bindKeyboard();
+
+    // 对战模式：召唤 AI 对手
+    if (this.mode === 'versus') {
+      this.rival = new Rival(this.data, (this.seed + 7777) >>> 0, t('versus.rivalName'));
+      this._renderRivalBar();
+    }
 
     this.ui.hud.renderAll(this.player, this.world.floor);
     this.ui.boardView.render(this.world, this.player, { enterFar: true });
@@ -123,9 +132,32 @@ export class Game {
 
   updateQuestBar() {
     const floor = this.world.floor;
-    const ch = this.chapterOf(floor);
     const bar = document.getElementById('quest-bar');
     if (!bar) return;
+
+    // 非主线模式各有自己的目标指引
+    if (this.mode === 'endless') {
+      const best = Math.max(this.saveMeta.meta.endlessBest, floor);
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.endless')}</b>`, goal: t('quest.goalEndlessRun', { cur: floor, best }) });
+      this.ui.stageView.setChapter('🌌', this.story.endless.name);
+      return;
+    }
+    if (this.mode === 'daily') {
+      const best = this.saveMeta.meta.dailyBest?.[this.dailyDate] ?? '—';
+      bar.innerHTML = t('quest.bar', { chapter: `<b>${t('modes.daily')}</b>`, goal: t('quest.goalDaily', { date: this.dailyDate, cur: floor, best }) });
+      this.ui.stageView.setChapter('📅', this.dailyDate);
+      return;
+    }
+    if (this.mode === 'versus') {
+      bar.innerHTML = t('quest.bar', {
+        chapter: `<b>${t('modes.versus')}</b>`,
+        goal: t('quest.goalVersus', { n: this.config.versus.targetFloor, p: floor, name: this.rival?.name ?? '', r: this.rival?.floor ?? 1 }),
+      });
+      this.ui.stageView.setChapter('🤖', this.rival?.name ?? '');
+      return;
+    }
+
+    const ch = this.chapterOf(floor);
     if (ch) {
       const goal = ch.to >= this.story.finalFloor
         ? t('quest.goalFinal', { n: ch.to, cur: floor })
@@ -138,8 +170,61 @@ export class Game {
     }
   }
 
+  /* ============ 对战模式 ============ */
+
+  _renderRivalBar() {
+    const bar = document.getElementById('rival-bar');
+    if (!bar || !this.rival) return;
+    bar.classList.remove('hidden');
+    const r = this.rival;
+    bar.innerHTML = r.dead
+      ? t('rivalBarDead', { name: r.name })
+      : t('rivalBar', { name: r.name, floor: r.floor, power: r.power, hp: Math.max(0, r.hp) });
+  }
+
+  /** 玩家每完成一个回合（前进/击退/休息），对手也走一步；同步检查胜负 */
+  async _afterPlayerTurn() {
+    if (this.mode !== 'versus' || this.over || !this.rival) return;
+    // 玩家先抵达目标层：获胜
+    if (this.world.floor >= this.config.versus.targetFloor) {
+      await this._versusEnd(true);
+      return;
+    }
+    if (!this.rival.dead) {
+      const ev = this.rival.step();
+      if (ev?.type === 'death') this.ui.toast(t('versus.rivalDied', { name: this.rival.name }));
+      else if (ev?.type === 'kill' && ev.tier === 'boss') this.ui.toast(t('versus.rivalKillBoss', { name: this.rival.name }));
+      this._renderRivalBar();
+      if (!this.rival.dead && this.rival.floor >= this.config.versus.targetFloor) {
+        await this._versusEnd(false);
+        return;
+      }
+    }
+    this.updateQuestBar();
+  }
+
+  async _versusEnd(win, reason = 'arrive') {
+    if (this.over) return;
+    this.over = true;
+    this.saveMeta.recordVersus(win);
+    const m = this.saveMeta.meta;
+    const target = this.config.versus.targetFloor;
+    const text = win
+      ? t('versus.winText', { n: target, name: this.rival.name })
+      : reason === 'dead'
+        ? t('versus.loseDeadText', { name: this.rival.name })
+        : t('versus.loseText', { n: target, name: this.rival.name });
+    await this.ui.modal.show({
+      title: win ? t('versus.winTitle') : t('versus.loseTitle'),
+      bodyHTML: `<p class="story-text">${text}</p><p>${t('versus.record', { w: m.pvpWins, l: m.pvpLosses })}</p>`,
+      choices: [{ label: t('over.again'), value: 0 }],
+    });
+    location.reload();
+  }
+
   /** 滚动后检测章节推进：击败守关首领→章末故事；跨入新章→章首故事；50 层→通关 */
   async _checkStoryProgress(beatBoss) {
+    if (this.mode !== 'adventure') return;   // 章节故事只属于主线冒险
     const floor = this.world.floor;
 
     if (beatBoss) {
@@ -232,10 +317,11 @@ export class Game {
 
       if (this.player.hp <= 0) { await this._gameOver(); return; }
 
-      // 4a. 战败击退：留在原行
+      // 4a. 战败击退：留在原行（对战模式下对手照常前进）
       if (result.retreat) {
         await this.ui.boardView.animateRetreat();
         this.ui.boardView.render(this.world, this.player);
+        await this._afterPlayerTurn();
         return;
       }
 
@@ -261,6 +347,8 @@ export class Game {
 
       await this._checkStoryProgress(beatBoss && !result.retreat);
       if (this.over) return;
+      await this._afterPlayerTurn();
+      if (this.over) return;
       this._checkBossAhead();
     } finally {
       this.busy = false;
@@ -280,6 +368,7 @@ export class Game {
       this.ui.boardView.animateFlip(oldPos);
       this.ui.toast(t('toast.rest', { n: this.config.rest.energyGain }));
       await new Promise((r) => setTimeout(r, 500));
+      await this._afterPlayerTurn();
     } finally {
       this.busy = false;
     }
@@ -300,6 +389,12 @@ export class Game {
       : t('hud.armorStat', { block: item.block ?? 0 });
   }
 
+  /** 装备显示名带稀有度后缀（同名不同稀有度的装备不再混淆） */
+  _gearName(item) {
+    const r = this.data.rarities[item.rarity];
+    return r && item.rarity !== 'common' ? `${item.name}（${r.name}）` : item.name;
+  }
+
   _sellPrice(item) {
     return Math.max(2, Math.floor((item.price ?? 10) / 2));
   }
@@ -310,13 +405,14 @@ export class Game {
    */
   async acquireGear(kind, item) {
     const p = this.player;
+    item.displayName = this._gearName(item);
     const slot = kind === 'weapon' ? p.weapon : p.armor;
     const equip = (it) => (kind === 'weapon' ? p.equipWeapon(it) : p.equipArmor(it));
     const equipKey = kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor';
 
     if (!slot) {
       equip(item);
-      this.ui.toast(t(equipKey, { name: item.name }));
+      this.ui.toast(t(equipKey, { name: item.displayName }));
       return;
     }
 
@@ -324,16 +420,19 @@ export class Game {
     const newSell = this._sellPrice(item);
     const oldSell = this._sellPrice(slot);
     const picked = await this.ui.modal.show({
-      title: t('gear.title', { name: `${item.emoji} ${item.name}` }),
+      title: t('gear.title', { name: `${item.emoji} ${item.displayName}` }),
       bodyHTML: t('gear.compare', {
+        newName: item.displayName,
         newStat: this._gearStat(kind, item),
-        oldName: slot.name,
+        oldName: slot.displayName ?? slot.name,
         oldStat: this._gearStat(kind, slot),
       }),
       choices: [
         {
           label: t('gear.equipNew'),
-          sub: bagFree ? t('gear.oldToBag', { name: slot.name }) : t('gear.oldSold', { name: slot.name, n: oldSell }),
+          sub: bagFree
+            ? t('gear.oldToBag', { name: slot.displayName ?? slot.name })
+            : t('gear.oldSold', { name: slot.displayName ?? slot.name, n: oldSell }),
           value: 'equip',
         },
         { label: t('gear.toBag'), sub: bagFree ? t('gear.toBagSub') : t('gear.bagFull'), disabled: !bagFree, value: 'bag' },
@@ -360,16 +459,17 @@ export class Game {
   /** 非交互获取装备（事件奖励等场景）：槽空装备，否则入背包，满则折价卖 */
   giveGearSilent(kind, item) {
     const p = this.player;
+    item.displayName = this._gearName(item);
     const slot = kind === 'weapon' ? p.weapon : p.armor;
     if (!slot) {
       kind === 'weapon' ? p.equipWeapon(item) : p.equipArmor(item);
-      this.ui.toast(t(kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor', { name: item.name }));
+      this.ui.toast(t(kind === 'weapon' ? 'toast.equipWeapon' : 'toast.equipArmor', { name: item.displayName }));
     } else if (p.addItem(kind, item)) {
-      this.ui.toast(t('toast.gearToBag', { name: item.name }));
+      this.ui.toast(t('toast.gearToBag', { name: item.displayName }));
     } else {
       const n = this._sellPrice(item);
       p.changeGold(n);
-      this.ui.toast(t('toast.gearSold', { name: item.name, n }));
+      this.ui.toast(t('toast.gearSold', { name: item.displayName, n }));
     }
   }
 
@@ -431,11 +531,12 @@ export class Game {
 
   /* ============ 底栏面板 ============ */
 
-  async openInventory() {
-    if (this.busy || this.over) return;
+  /** @param fromShop 商店内嵌打开时跳过 busy 检查（商店流程中 busy 恒为 true） */
+  async openInventory(fromShop = false) {
+    if (!fromShop && (this.busy || this.over)) return;
     const p = this.player;
     const items = p.inventory.map((e, i) => ({
-      label: `${e.item.emoji} ${e.item.name}`,
+      label: `${e.item.emoji} ${e.item.displayName ?? e.item.name}`,
       sub: this._invSub(e),
       value: i,
     }));
@@ -444,7 +545,7 @@ export class Game {
       bodyHTML: `<p>${items.length ? t('inv.hint') : t('inv.emptyHint')}</p>`,
       choices: [...items, { label: t('inv.close'), value: -1 }],
     });
-    if (picked >= 0) this.useInventory(picked);
+    if (picked >= 0) await this.useInventory(picked);   // 等处理链走完（装备弹窗）再返回，商店流程依赖此顺序
   }
 
   _invSub(entry) {
@@ -506,10 +607,15 @@ export class Game {
 
   async _gameOver(abandoned = false, won = false) {
     if (this.over) return;
+    // 对战模式的死亡/放弃走竞速结算
+    if (this.mode === 'versus') {
+      await this._versusEnd(false, 'dead');
+      return;
+    }
     this.over = true;
     const floor = this.world.floor;
     const newlyUnlocked = this.saveMeta.recordRun(
-      { floor, kills: this.stats.kills, bossKills: this.stats.bossKills, won: won || this.won },
+      { floor, kills: this.stats.kills, bossKills: this.stats.bossKills, won: won || this.won, mode: this.mode, dailyDate: this.dailyDate },
       this.config, this.data.classes,
     );
 

@@ -24,6 +24,30 @@
     "text": "没有人记得那一夜发生了什么。<br><br>醒来时，大地、城镇、山川与海洋都消失了——取而代之的，是一片向北方无限延展的巨大牌阵。每一张牌都是一段路、一个敌人、一次抉择。<br><br>占卜师们在死前留下了最后的预言：<b>「向北走。穿过迷雾、白骨、烈焰与镜像，在第五十张牌之上，坐着改写这一切的『命运王座』。」</b><br><br>无数冒险者踏上牌阵，无人归来。<br><br>现在，轮到你了。",
     "continue": "踏上牌阵"
   },
+  "modes": {
+    "title": "🂠 选择玩法",
+    "adventure": "🗺️ 冒险模式",
+    "adventureDesc": "五章主线，抵达第 50 层的命运王座",
+    "endless": "🌌 无尽探索",
+    "endlessDesc": "没有终点，比谁走得更深（最深纪录：{n} 层）",
+    "daily": "📅 每日挑战",
+    "dailyDesc": "每天一张全球同图（{date} 最佳：{n}）",
+    "versus": "🤖 对战模式",
+    "versusDesc": "与 AI 冒险者竞速，先到第 {n} 层者胜（{w} 胜 {l} 负）"
+  },
+  "versus": {
+    "rivalName": "影子行者",
+    "rivalDied": "🪦 {name}倒在了牌阵中！只要你活着抵达终点就赢了",
+    "rivalKillBoss": "🤖 {name}击败了一名首领！",
+    "winTitle": "🏆 竞速获胜",
+    "winText": "你先一步抵达了第 {n} 层，{name}的身影消散在牌阵深处。",
+    "loseTitle": "😵 竞速落败",
+    "loseText": "{name}先你一步抵达了第 {n} 层。下次走快一点。",
+    "loseDeadText": "你倒在了半路上，而{name}还在继续前进。",
+    "record": "对战战绩：{w} 胜 {l} 负"
+  },
+  "rivalBar": "🤖 {name}　🗺️ <b>{floor}</b> 层　💪 {power}　❤️ {hp}",
+  "rivalBarDead": "🪦 {name} 已倒下",
   "class": {
     "pickTitle": "🂠 选择你的职业",
     "pickHint": "命运发给你五张牌 —— 选择一张，作为你的开始",
@@ -47,7 +71,10 @@
     "bar": "{chapter}　·　{goal}",
     "goalReach": "目标：抵达第 {n} 层，击败守关首领（当前第 {cur} 层）",
     "goalFinal": "最终之战：第 {n} 层 · 命运王座（当前第 {cur} 层）",
-    "goalEndless": "无尽模式 · 已深入第 {cur} 层，走得越远，传说越响"
+    "goalEndless": "无尽模式 · 已深入第 {cur} 层，走得越远，传说越响",
+    "goalEndlessRun": "当前第 {cur} 层 · 最深纪录 {best} 层",
+    "goalDaily": "{date} · 当前第 {cur} 层 · 今日最佳 {best}",
+    "goalVersus": "先抵达第 {n} 层　你 <b>{p}</b> 层 ⚡ {name} <b>{r}</b> 层"
   },
   "hud": {
     "floorLabel": "🗺️ <b>{n}</b> 层",
@@ -135,7 +162,7 @@
   },
   "gear": {
     "title": "获得 {name}",
-    "compare": "<p>新装备：<b>{newStat}</b><br>当前装备（{oldName}）：{oldStat}</p>",
+    "compare": "<p>新装备 {newName}：<b>{newStat}</b><br>当前装备 {oldName}：{oldStat}</p>",
     "equipNew": "✅ 装备新的",
     "oldToBag": "{name} 将收入背包",
     "oldSold": "背包已满，{name} 将折价卖出（+{n} 金币）",
@@ -161,6 +188,8 @@
     "curseRemoved": "✨ 一层诅咒被解除了",
     "leave": "👋 离开商店",
     "bagFull": "🎒 背包已满，无法购买装备",
+    "manageBag": "🎒 整理背包",
+    "manageBagSub": "当前 {n}/{max} 格（可在此吃掉食物或卖出装备腾位置）",
     "equipped": "已装备{name}",
     "foodDesc": "生命 +{hp}，体力 +{energy}",
     "potionDesc": "饮用后获得随机效果",

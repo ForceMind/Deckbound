@@ -5,13 +5,14 @@ import { t, i18n } from '../core/I18n.js';
  * 开始后播放序章（首次），随后进入职业选择。
  */
 export class TitleView {
-  constructor(modal, saveMeta) {
+  constructor(modal, saveMeta, config) {
     this.modal = modal;
     this.saveMeta = saveMeta;
+    this.config = config;
     this.layer = null;
   }
 
-  /** 显示标题画面，玩家点击「开始冒险」后 resolve */
+  /** 显示标题画面，玩家选定玩法后 resolve(mode) */
   show() {
     return new Promise((resolve) => {
       const layer = document.createElement('div');
@@ -34,14 +35,30 @@ export class TitleView {
       this.layer = layer;
 
       layer.querySelector('#title-start').addEventListener('click', async () => {
-        await this._playPrologue();
+        const mode = await this._pickMode();
+        if (mode === 'adventure') await this._playPrologue();   // 序章只属于主线冒险
         layer.classList.add('title-fade');
         setTimeout(() => { layer.remove(); this.layer = null; }, 500);
-        resolve();
+        resolve(mode);
       });
       layer.querySelector('#title-howto').addEventListener('click', () => this.showHowto());
       layer.querySelector('#title-records').addEventListener('click', () => this._showRecords());
       layer.querySelector('#title-settings').addEventListener('click', () => this._showSettings());
+    });
+  }
+
+  /** 玩法选择：冒险 / 无尽探索 / 每日挑战 / AI 对战 */
+  _pickMode() {
+    const m = this.saveMeta.meta;
+    const today = new Date().toISOString().slice(0, 10);
+    return this.modal.show({
+      title: t('modes.title'),
+      choices: [
+        { label: t('modes.adventure'), sub: t('modes.adventureDesc'), value: 'adventure' },
+        { label: t('modes.endless'), sub: t('modes.endlessDesc', { n: m.endlessBest || '—' }), value: 'endless' },
+        { label: t('modes.daily'), sub: t('modes.dailyDesc', { date: today, n: m.dailyBest?.[today] ?? '—' }), value: 'daily' },
+        { label: t('modes.versus'), sub: t('modes.versusDesc', { n: this.config.versus.targetFloor, w: m.pvpWins, l: m.pvpLosses }), value: 'versus' },
+      ],
     });
   }
 

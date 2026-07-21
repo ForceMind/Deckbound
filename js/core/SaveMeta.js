@@ -10,6 +10,10 @@ const DEFAULT_META = {
   totalKills: 0,
   bossKills: 0,
   wins: 0,
+  endlessBest: 0,
+  dailyBest: {},
+  pvpWins: 0,
+  pvpLosses: 0,
   unlockedClasses: [],
 };
 
@@ -36,12 +40,18 @@ export class SaveMeta {
   /**
    * 一局结束时结算，返回本次新解锁的职业 id 列表。
    */
-  recordRun({ floor, kills, bossKills, won }, config, classes) {
+  recordRun({ floor, kills, bossKills, won, mode, dailyDate }, config, classes) {
     this.meta.totalRuns += 1;
     this.meta.totalKills += kills;
     this.meta.bossKills += bossKills;
     if (won) this.meta.wins += 1;
     if (floor > this.meta.bestFloor) this.meta.bestFloor = floor;
+    if (mode === 'endless' && floor > this.meta.endlessBest) this.meta.endlessBest = floor;
+    if (mode === 'daily' && dailyDate) {
+      if (!this.meta.dailyBest[dailyDate] || floor > this.meta.dailyBest[dailyDate]) {
+        this.meta.dailyBest[dailyDate] = floor;
+      }
+    }
 
     const newly = [];
     const tryUnlock = (id, cond) => {
@@ -55,6 +65,13 @@ export class SaveMeta {
 
     this.save();
     return newly;
+  }
+
+  /** 对战模式胜负记录 */
+  recordVersus(win) {
+    if (win) this.meta.pvpWins += 1;
+    else this.meta.pvpLosses += 1;
+    this.save();
   }
 
   isClassUnlocked(cls) {

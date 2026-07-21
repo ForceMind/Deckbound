@@ -47,6 +47,9 @@
     "refreshCost": 10,
     "removeCurseCost": 25
   },
+  "versus": {
+    "targetFloor": 20
+  },
   "meta": {
     "unlockFloorBerserker": 15,
     "unlockBossKillsNecromancer": 3
