@@ -34,6 +34,19 @@ export class Wish {
       pulls[rng.int(0, 9)] = rollGear(data, rng, { weights: { epic: 85, legendary: 13, mythic: 2 } });
     }
 
+    // 神明的额外眷顾：小概率附赠一件未拥有的神器（单抽 3%，十连 20%）
+    const unowned = this.hub.unownedRelics();
+    if (unowned.length && rng.chance(picked === 10 ? 0.2 : 0.03)) {
+      const relic = rng.pick(unowned);
+      this.hub.grantHeroRelic(relic);
+      await modal.show({
+        title: t('wish.bonusRelic'),
+        bodyHTML: `<p style="font-size:44px;margin-bottom:4px">${relic.emoji}</p>
+          <p><b style="color:${data.rarities[relic.rarity]?.color ?? '#fff'}">${relic.name}</b></p><p>${relic.desc}</p>`,
+        choices: [{ label: t('relic.gainOk'), value: 0 }],
+      });
+    }
+
     // 结果面板：每件可点击装备（旧的折卖），关闭时未处理的按 60% 折卖
     await new Promise((resolve) => {
       const kept = new Set();

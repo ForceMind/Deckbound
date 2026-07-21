@@ -112,7 +112,15 @@ html, body {
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transition: background 1.2s ease;
 }
+
+/* Biome 色调：每个章节的牌阵氛围不同 */
+body[data-biome="2"] #board-wrap { background: radial-gradient(ellipse at 50% 20%, #4a465533 0%, transparent 65%); }
+body[data-biome="3"] #board-wrap { background: radial-gradient(ellipse at 50% 20%, #66261e44 0%, transparent 65%); }
+body[data-biome="4"] #board-wrap { background: radial-gradient(ellipse at 50% 20%, #2b4a6644 0%, transparent 65%); }
+body[data-biome="5"] #board-wrap { background: radial-gradient(ellipse at 50% 20%, #66521e44 0%, transparent 65%); }
+body[data-biome="endless"] #board-wrap { background: radial-gradient(ellipse at 50% 20%, #3c1f5544 0%, transparent 65%); }
 
 #board {
   position: relative;
@@ -279,6 +287,7 @@ html, body {
 .buff-list { display: flex; flex-direction: column; gap: 4px; }
 .buff-item { font-size: 12px; color: var(--text-dim); background: #ffffff08; padding: 4px 8px; border-radius: 6px; }
 .buff-item.curse { color: #c678dd; }
+.buff-item.relic { color: var(--gold); border: 1px solid #f5c54233; cursor: help; }
 
 /* ============ 底栏 ============ */
 #actions {

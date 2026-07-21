@@ -14,6 +14,7 @@ const FILES = {
   rarities: 'data/rarities.json',
   spawn: 'data/spawn.json',
   story: 'data/story.json',
+  relics: 'data/relics.json',
 };
 
 export class DataLoader {

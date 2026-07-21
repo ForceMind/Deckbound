@@ -31,6 +31,11 @@ export class ShopView {
             <div class="shop-name">${entry.name}</div>
             <div class="shop-price">💰 ${entry.price}</div>
             <div class="shop-desc">${entry.desc}</div>`;
+          // 神器·贪婪之瞳：商店价格 +30%（每件只加一次）
+          if (player.hasRelic?.('greed_eye') && !entry.greedApplied) {
+            entry.price = Math.round(entry.price * 1.3);
+            entry.greedApplied = true;
+          }
           if (!entry.sold) {
             el.addEventListener('click', () => {
               if (player.gold < entry.price) { ui.toast(t('shop.noGold')); return; }

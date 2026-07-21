@@ -14,10 +14,17 @@ export class MapGenerator {
     this.rarities = data.rarities;
   }
 
+  /** 当前层所属章节的牌池偏移（Biome：白骨荒原多诅咒、燃烧深渊多火焰…） */
+  _biomeBias(floor) {
+    const ch = this.data.story?.chapters?.find((c) => floor >= c.from && floor <= c.to);
+    return ch?.spawnBias ?? null;
+  }
+
   /** 生成第 floor 层的一行牌 */
   generateRow(floor) {
     const cols = this.config.grid.cols;
     const isBossFloor = floor > 0 && floor % this.config.boss.interval === 0;
+    const bias = this._biomeBias(floor);
     const rowCount = {};
     const row = [];
 
@@ -27,14 +34,14 @@ export class MapGenerator {
         rowCount.boss = 1;
         continue;
       }
-      const type = this._rollType(floor, rowCount);
+      const type = this._rollType(floor, rowCount, bias);
       rowCount[type] = (rowCount[type] ?? 0) + 1;
       row.push(this._makeCard(type, floor));
     }
     return row;
   }
 
-  _rollType(floor, rowCount) {
+  _rollType(floor, rowCount, bias) {
     const weights = {};
     for (const [type, base] of Object.entries(this.spawn.baseWeights)) {
       // 未到出现层数下限的类型不生成
@@ -43,7 +50,7 @@ export class MapGenerator {
       const cap = this.spawn.maxPerRow[type];
       if (cap && (rowCount[type] ?? 0) >= cap) continue;
       const scale = this.spawn.floorScaling[type] ?? 0;
-      weights[type] = Math.max(0, base + scale * floor);
+      weights[type] = Math.max(0, (base + scale * floor) * (bias?.[type] ?? 1));
     }
     return this.rng.weighted(weights) ?? 'empty';
   }

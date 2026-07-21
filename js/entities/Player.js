@@ -26,6 +26,7 @@ export class Player {
     this.armor = null;
     this.inventory = [];   // { kind: 'food'|'potion'|'key'|'weapon'|'armor', item }
     this.curses = 0;
+    this.relics = [];      // 神器 id 列表（被动规则改写）
     this.buffs = [];       // 文本记录，用于侧栏展示
 
     this.playerClass = playerClass;
@@ -46,6 +47,7 @@ export class Player {
       this.exp = heroState.exp ?? 0;
       this.maxEnergy = heroState.maxEnergy ?? base.maxEnergy;
       this.energy = this.maxEnergy;
+      this.relics = [...(heroState.relics ?? [])];
     } else {
       this._applyClassStats(playerClass);
     }
@@ -84,6 +86,25 @@ export class Player {
 
   get block() {
     return this.armor?.block ?? 0;
+  }
+
+  hasRelic(id) {
+    return this.relics.includes(id);
+  }
+
+  addRelic(id) {
+    if (!this.relics.includes(id)) {
+      this.relics.push(id);
+      bus.emit('inventoryChanged', this);
+    }
+  }
+
+  removeRelic(id) {
+    const i = this.relics.indexOf(id);
+    if (i >= 0) {
+      this.relics.splice(i, 1);
+      bus.emit('inventoryChanged', this);
+    }
   }
 
   /** 升到下一级所需经验 */

@@ -13,11 +13,18 @@ export class Auction {
   _rollListings() {
     const { rng, data, config } = this.hub;
     const cfg = config.auction;
-    return Array.from({ length: cfg.listings }, () => {
+    const listings = Array.from({ length: cfg.listings }, () => {
       const { kind, item } = rollGear(data, rng, { weights: { common: 30, rare: 35, epic: 25, legendary: 8, mythic: 2 } });
       const price = Math.round(item.price * (cfg.markupMin + rng.next() * (cfg.markupMax - cfg.markupMin)));
       return { kind, item, price, sold: false };
     });
+    // 12% 概率出现一条神器挂单（稀有货源，价格不菲）
+    const unowned = this.hub.unownedRelics();
+    if (unowned.length && rng.chance(0.12)) {
+      const relic = rng.pick(unowned);
+      listings.push({ relic, price: 120 + rng.int(0, 80), sold: false });
+    }
+    return listings;
   }
 
   async open() {
@@ -25,12 +32,19 @@ export class Auction {
     if (!this.listings) this.listings = this._rollListings();
 
     while (true) {
-      const buyChoices = this.listings.map((l, i) => ({
-        label: `${l.item.emoji} ${l.item.displayName}　💰${l.price}`,
-        sub: `${gearStat(l.kind, l.item, t)}${l.sold ? `　${t('auction.sold')}` : ''}`,
-        disabled: l.sold || hero.gold < l.price,
-        value: `buy:${i}`,
-      }));
+      const buyChoices = this.listings.map((l, i) => (l.relic
+        ? {
+          label: `🏺 ${l.relic.emoji} ${l.relic.name}　💰${l.price}`,
+          sub: `${l.relic.desc}${l.sold ? `　${t('auction.sold')}` : ''}`,
+          disabled: l.sold || hero.gold < l.price,
+          value: `buy:${i}`,
+        }
+        : {
+          label: `${l.item.emoji} ${l.item.displayName}　💰${l.price}`,
+          sub: `${gearStat(l.kind, l.item, t)}${l.sold ? `　${t('auction.sold')}` : ''}`,
+          disabled: l.sold || hero.gold < l.price,
+          value: `buy:${i}`,
+        }));
       const sellChoices = hero.inventory
         .map((e, i) => ({ e, i }))
         .filter(({ e }) => e.kind === 'weapon' || e.kind === 'armor')
@@ -64,6 +78,11 @@ export class Auction {
         if (l.sold || hero.gold < l.price) continue;
         hero.changeGold(-l.price);
         l.sold = true;
+        if (l.relic) {
+          this.hub.grantHeroRelic(l.relic);
+          this.hub.toast(t('relic.bought', { name: `${l.relic.emoji} ${l.relic.name}` }));
+          continue;
+        }
         const how = hero.giveGear(l.kind, l.item);
         this.hub.toast(how === 'equipped'
           ? t('toast.equipWeapon', { name: l.item.displayName })

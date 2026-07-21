@@ -34,15 +34,25 @@ async function fightHandler(ctx, card) {
     const key = result.crit ? 'toast.fightWinCrit' : 'toast.fightWin';
     ctx.ui.toast(t(key, { name: card.name, power: result.powerGain, gold: result.goldGain, exp: result.expGain }));
     for (const lv of ups) ctx.ui.toast(t('toast.levelUp', { n: lv }));
-    return {};
+    return { won: true };
   }
   ctx.player.changeHp(-result.damage);
+  // 神器·血契：不被击退，强行突破
+  if (result.bloodPact && ctx.player.hp > 0) {
+    ctx.ui.toast(t('toast.fightLoseBloodPact', { name: card.name, dmg: result.damage }));
+    return {};
+  }
   ctx.ui.toast(t('toast.fightLose', { name: card.name, dmg: result.damage }));
   return { retreat: true };
 }
 registerEffect('monster', fightHandler);
-registerEffect('elite', fightHandler);
-registerEffect('boss', fightHandler);
+registerEffect('elite', async (ctx, card) => fightHandler(ctx, card));
+registerEffect('boss', async (ctx, card) => {
+  const result = await fightHandler(ctx, card);
+  // 首领必掉一件未拥有的神器（只有真正击败才掉，血契强行突破不算）
+  if (result.won) await ctx.game.grantRelic();
+  return result;
+});
 registerEffect('mirror', fightHandler);
 
 /* ============ 装备（装备栏系统：不顶掉，玩家选择） ============ */
@@ -83,20 +93,25 @@ registerEffect('key', async (ctx, card) => {
 });
 
 /* ============ 拾取 ============ */
+/** 神器·幸运金币：拾取金币 +30% */
+const luckyGold = (ctx, n) => Math.round(n * (ctx.player.hasRelic('lucky_coin') ? 1.3 : 1));
+
 registerEffect('gold', async (ctx, card) => {
-  ctx.player.changeGold(card.data.amount ?? 5);
-  ctx.ui.toast(t('toast.pickGold', { n: card.data.amount }));
+  const amount = luckyGold(ctx, card.data.amount ?? 5);
+  ctx.player.changeGold(amount);
+  ctx.ui.toast(t('toast.pickGold', { n: amount }));
 });
 
 registerEffect('treasure', async (ctx, card) => {
-  const gold = ctx.rng.int(10, 20) + ctx.world.floor * 2;
+  const gold = luckyGold(ctx, ctx.rng.int(10, 20) + ctx.world.floor * 2);
   ctx.player.changeGold(gold);
   ctx.ui.toast(t('toast.treasure', { n: gold }));
 });
 
 registerEffect('chest', async (ctx, card) => {
   const roll = ctx.rng.next();
-  if (roll < 0.12) {
+  // 神器·贪婪之瞳：宝箱永远不是宝箱怪
+  if (roll < 0.12 && !ctx.player.hasRelic('greed_eye')) {
     // 宝箱怪！
     const power = Math.round(6 + ctx.world.floor * 1.1);
     const mimic = new Card('monster', { name: t('toast.mimicName'), emoji: '📦', data: { power, tier: 'monster' } });
@@ -104,7 +119,7 @@ registerEffect('chest', async (ctx, card) => {
     return fightHandler(ctx, mimic);
   }
   if (roll < 0.55) {
-    const gold = ctx.rng.int(8, 16) + ctx.world.floor;
+    const gold = luckyGold(ctx, ctx.rng.int(8, 16) + ctx.world.floor);
     ctx.player.changeGold(gold);
     ctx.ui.toast(t('toast.chestGold', { n: gold }));
   } else {
@@ -122,6 +137,12 @@ registerEffect('trap', async (ctx) => {
 });
 
 registerEffect('fire', async (ctx) => {
+  // 神器·余烬护符：火焰无害，反而恢复体力
+  if (ctx.player.hasRelic('ember_charm')) {
+    ctx.player.changeEnergy(1);
+    ctx.ui.toast(t('toast.fireImmune'));
+    return;
+  }
   const dmg = Math.max(1, ctx.rng.int(4, 8) - ctx.player.block);
   ctx.player.changeHp(-dmg);
   ctx.ui.toast(t('toast.fire', { n: dmg }));
@@ -170,7 +191,8 @@ registerEffect('blessing', async (ctx) => {
 
 /* ============ 特殊 ============ */
 registerEffect('door', async (ctx) => {
-  if (ctx.player.consumeKey()) {
+  // 神器·万能钥环：开门不需要钥匙
+  if (ctx.player.hasRelic('key_ring') || ctx.player.consumeKey()) {
     const gold = 20 + ctx.world.floor * 3;
     ctx.player.changeGold(gold);
     ctx.player.changePower(2);

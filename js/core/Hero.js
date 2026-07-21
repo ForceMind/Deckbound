@@ -39,6 +39,7 @@ export class Hero {
       armor: null,
       inventory: [],
       curses: 0,
+      relics: [],
       stats: { adventures: 0, deaths: 0, deepestFloor: 0, kills: 0, bossKills: 0, throneWins: 0 },
       towerBest: 0,
       arenaWins: 0,
@@ -72,7 +73,12 @@ export class Hero {
     this.inventory = p.inventory;
     this.inventorySize = p.inventorySize;
     this.curses = p.curses;
+    this.relics = [...p.relics];
     this.save();
+  }
+
+  hasRelic(id) {
+    return (this.relics ?? []).includes(id);
   }
 
   /** 有效战力（大厅玩法用；与 Player.effectivePower 同口径，不含濒死加成） */

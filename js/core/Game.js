@@ -31,7 +31,7 @@ export class Game {
     this.generator = new MapGenerator(data, this.rng);
     this.combat = new Combat(this.config, this.rng);
     this.drift = new WorldDrift(this.config, data, this.rng);
-    this.ui = new UIManager(this.config);
+    this.ui = new UIManager(this.config, data.relics);
 
     this.busy = false;
     this.over = false;
@@ -157,6 +157,7 @@ export class Game {
     }
 
     const ch = this.chapterOf(floor);
+    document.body.dataset.biome = ch?.n ?? 'endless';   // Biome 视觉色调
     if (ch) {
       const goal = ch.to >= this.story.finalFloor
         ? t('quest.goalFinal', { n: ch.to, cur: floor })
@@ -294,7 +295,10 @@ export class Game {
     if (this.busy || this.over) return;
     const move = this.config.movement;
     const sideSteps = Math.abs(col - this.player.col);
-    const cost = Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
+    // 神器·行者之靴：横移完全免费
+    const cost = this.player.hasRelic('walker_boots')
+      ? move.forwardCost
+      : Math.max(0, sideSteps - move.freeRange) * move.sideCost + move.forwardCost;
 
     if (!this.world.nearVisibleSet(this.player.col).has(col)) {
       this.ui.toast(t('toast.tooFar'));
@@ -323,7 +327,7 @@ export class Game {
       const beatBoss = card.type === 'boss';
       const result = await applyEffect(this.ctx, card);
 
-      if (this.player.hp <= 0) { await this._gameOver(); return; }
+      if (this.player.hp <= 0 && !this._tryPhoenixRevive()) { await this._gameOver(); return; }
 
       // 4a. 战败击退：留在原行（对战模式下对手照常前进）
       if (result.retreat) {
@@ -338,10 +342,11 @@ export class Game {
       await this.ui.boardView.animateScroll(this.world, this.player);
       if (result.teleport) this.world.scroll();
 
-      // 长途跋涉：每前进若干层自动消耗体力
+      // 长途跋涉：每前进若干层自动消耗体力（行者之靴的代价：多耗 1）
       if (move.floorDrainInterval > 0 && this.world.floor % move.floorDrainInterval === 0) {
-        this.player.changeEnergy(-move.floorDrainAmount);
-        this.ui.toast(t('toast.fatigue', { n: move.floorDrainAmount }));
+        const drain = move.floorDrainAmount + (this.player.hasRelic('walker_boots') ? 1 : 0);
+        this.player.changeEnergy(-drain);
+        this.ui.toast(t('toast.fatigue', { n: drain }));
       }
 
       this.restCount = 0;   // 进入新层，休息次数重置
@@ -372,7 +377,9 @@ export class Game {
     if (this.busy || this.over) return;
     this.busy = true;
     try {
-      const effective = this.restCount < (this.config.rest.maxPerFloor ?? Infinity);
+      // 神器·月光坠：每层有效休息次数 +1
+      const maxRest = (this.config.rest.maxPerFloor ?? Infinity) + (this.player.hasRelic('moon_amulet') ? 1 : 0);
+      const effective = this.restCount < maxRest;
       this.restCount += 1;
       if (effective) {
         this.player.changeEnergy(this.config.rest.energyGain);
@@ -395,6 +402,39 @@ export class Game {
       this.ui.animator.screenShake();
       this.ui.toast(t('toast.bossAhead'));
     }
+  }
+
+  /* ============ 神器 ============ */
+
+  /** 神器·凤凰羽：死亡时满血复活并燃尽（一次性）。返回 true 表示已复活 */
+  _tryPhoenixRevive() {
+    if (!this.player.hasRelic('phoenix_feather')) return false;
+    this.player.removeRelic('phoenix_feather');
+    this.player.hp = this.player.maxHp;
+    bus.emit('statsChanged', this.player);
+    this.ui.animator.screenShake();
+    this.ui.toast(t('toast.phoenixRevive'));
+    return true;
+  }
+
+  /** 获得一件尚未拥有的随机神器（首领掉落） */
+  async grantRelic() {
+    const pool = this.data.relics.filter((r) => !this.player.hasRelic(r.id));
+    if (!pool.length) {
+      // 全收集齐：折算为金币
+      this.player.changeGold(50);
+      this.ui.toast(t('relic.allOwned'));
+      return;
+    }
+    const relic = this.rng.pick(pool);
+    this.player.addRelic(relic.id);
+    await this.ui.modal.show({
+      title: t('relic.gainTitle'),
+      bodyHTML: `<p style="font-size:44px;margin-bottom:4px">${relic.emoji}</p>
+        <p><b style="color:${this.data.rarities[relic.rarity]?.color ?? '#fff'}">${relic.name}</b></p>
+        <p>${relic.desc}</p>`,
+      choices: [{ label: t('relic.gainOk'), value: 0 }],
+    });
   }
 
   /* ============ 装备栏系统 ============ */
@@ -541,7 +581,7 @@ export class Game {
     if (effect.energy) this.player.changeEnergy(effect.energy);
     if (effect.maxHp) this.player.changeMaxHp(effect.maxHp);
     this.ui.toast(t('toast.potionEffect', { text: effect.text }));
-    if (this.player.hp <= 0) this._gameOver();
+    if (this.player.hp <= 0 && !this._tryPhoenixRevive()) this._gameOver();
   }
 
   /* ============ 底栏面板 ============ */

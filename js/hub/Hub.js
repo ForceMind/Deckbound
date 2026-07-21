@@ -62,6 +62,20 @@ export class Hub {
     return this.heroClass?.emoji ?? '🧑';
   }
 
+  /** 大厅内获得神器（祈愿/拍卖行渠道） */
+  grantHeroRelic(relic) {
+    if (!this.hero.relics) this.hero.relics = [];
+    if (!this.hero.relics.includes(relic.id)) {
+      this.hero.relics.push(relic.id);
+      this.hero.save();
+    }
+  }
+
+  /** 尚未拥有的神器池 */
+  unownedRelics() {
+    return this.data.relics.filter((r) => !(this.hero.relics ?? []).includes(r.id));
+  }
+
   toast(msg) {
     const layer = document.getElementById('toast-layer');
     const el = document.createElement('div');
@@ -175,7 +189,11 @@ export class Hub {
         <p>⭐ ${t('hub.detailLevel', { lv: hero.level ?? 1, exp: hero.exp ?? 0, next: expToNext })}</p>
         <p>💪 ${t('hub.detailPower', { total: hero.effectivePower, base: hero.power, weapon: weaponPower, curse: cursePenalty })}</p>
         <p>❤️ ${hero.maxHp}　🎒 ${hero.inventory.length}/${hero.inventorySize}${hero.curses ? `　💀×${hero.curses}` : ''}</p>
-        <p style="color:var(--text-dim)">${t('hub.detailRecord', { adv: hero.stats.adventures, deep: hero.stats.deepestFloor, kills: hero.stats.kills, wins: hero.stats.throneWins })}</p>`;
+        <p style="color:var(--text-dim)">${t('hub.detailRecord', { adv: hero.stats.adventures, deep: hero.stats.deepestFloor, kills: hero.stats.kills, wins: hero.stats.throneWins })}</p>
+        ${(hero.relics ?? []).length ? `<p>${t('hub.detailRelics')}<br>${(hero.relics ?? []).map((id) => {
+          const r = this.data.relics.find((x) => x.id === id);
+          return r ? `<span title="${r.desc}" style="cursor:help">${r.emoji} ${r.name}</span>` : '';
+        }).join('　')}</p>` : ''}`;
 
       const choices = [];
       if (hero.weapon) {

@@ -84,6 +84,18 @@ export class HUD {
   renderBuffs(p) {
     const list = document.getElementById('sidebar-buffs');
     list.innerHTML = '';
+    // 神器（悬浮显示效果说明）
+    if (p.relics?.length && this.relicsData) {
+      for (const id of p.relics) {
+        const r = this.relicsData.find((x) => x.id === id);
+        if (!r) continue;
+        const el = document.createElement('div');
+        el.className = 'buff-item relic';
+        el.textContent = `${r.emoji} ${r.name}`;
+        el.title = r.desc;
+        list.appendChild(el);
+      }
+    }
     if (p.curses > 0) {
       const el = document.createElement('div');
       el.className = 'buff-item curse';

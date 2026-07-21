@@ -11,9 +11,10 @@ import { StageView } from './StageView.js';
  * UI 总管 —— 组装所有视图，提供 toast 与底栏交互绑定。
  */
 export class UIManager {
-  constructor(config) {
+  constructor(config, relicsData = null) {
     this.animator = new Animator();
     this.hud = new HUD(this.animator);
+    this.hud.relicsData = relicsData;
     this.boardView = new BoardView(config);
     this.modal = new ModalView();
     this.combatView = new CombatView(this.modal, this.animator, config);

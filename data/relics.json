@@ -1,0 +1,12 @@
+[
+  { "id": "lucky_coin",      "name": "幸运金币",   "emoji": "🪙", "rarity": "common",    "desc": "拾取的金币 +30%" },
+  { "id": "greed_eye",       "name": "贪婪之瞳",   "emoji": "👁️", "rarity": "rare",      "desc": "宝箱再也不会是宝箱怪，但商店价格 +30%" },
+  { "id": "walker_boots",    "name": "行者之靴",   "emoji": "👢", "rarity": "rare",      "desc": "横向移动不再消耗体力，但每次跋涉多消耗 1 体力" },
+  { "id": "moon_amulet",     "name": "月光坠",     "emoji": "🌙", "rarity": "rare",      "desc": "每层有效休息次数 +1" },
+  { "id": "ember_charm",     "name": "余烬护符",   "emoji": "🧿", "rarity": "epic",      "desc": "火焰不再伤害你，反而恢复 1 体力" },
+  { "id": "hunter_horn",     "name": "猎手号角",   "emoji": "📯", "rarity": "epic",      "desc": "击杀获得的经验 +25%" },
+  { "id": "key_ring",        "name": "万能钥环",   "emoji": "🗝️", "rarity": "epic",      "desc": "开启秘门不再需要钥匙" },
+  { "id": "blood_pact",      "name": "血契",       "emoji": "🩸", "rarity": "legendary", "desc": "战败不再被击退（强行突破），但战败伤害翻倍" },
+  { "id": "mirror_shard",    "name": "镜之碎片",   "emoji": "🔮", "rarity": "legendary", "desc": "镜像行者的战力永远比你低 2 点" },
+  { "id": "phoenix_feather", "name": "凤凰羽",     "emoji": "🪶", "rarity": "mythic",    "desc": "死亡时浴火重生：满血复活并燃尽此神器（一次性）" }
+]
