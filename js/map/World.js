@@ -46,11 +46,18 @@ export class World {
     bus.emit('worldScrolled', this);
   }
 
-  /** Rest：牌不变，但视野内两行的牌各自随机挪动位置（含未翻开的） */
+  /** Rest：牌不变，两行各自整体循环平移（方向与距离随机，含未翻开的） */
   shufflePositions() {
     const rng = this.generator.rng;
-    this.near = rng.shuffle(this.near);
-    this.far = rng.shuffle(this.far);
+    const rotate = (row) => {
+      let shift = 0;
+      while (shift === 0) shift = rng.int(-3, 3);
+      const n = row.length;
+      const k = ((shift % n) + n) % n;
+      return [...row.slice(n - k), ...row.slice(0, n - k)];
+    };
+    this.near = rotate(this.near);
+    this.far = rotate(this.far);
     bus.emit('rowsReshuffled', this);
   }
 

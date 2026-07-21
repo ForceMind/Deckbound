@@ -113,6 +113,7 @@ export class BoardView {
       <span class="card-emoji">${card.emoji}</span>
       <span class="card-name">${card.name}</span>
       ${card.isEnemy ? `<span class="card-power">${card.data.mirror ? '?' : card.power}</span>` : ''}
+      ${card.isEnemy && card.data.level ? `<span class="card-corner">Lv.${card.data.level}</span>` : ''}
       <span class="card-rarity-gem"></span>`;
     return el;
   }
@@ -134,6 +135,7 @@ export class BoardView {
     const gap = parseFloat(style.getPropertyValue('--card-gap'));
     const dx = (toCol - fromCol) * (w + gap);
     el.style.transition = 'transform 0.28s cubic-bezier(0.3, 0, 0.4, 1)';
+    el.style.zIndex = 20;   // 高于同行右侧的牌（DOM 序在后），避免穿到牌下面
     void el.offsetWidth;   // 强制 reflow，保证过渡生效
     el.style.transform = `translateX(${dx}px)`;
     await wait(300);

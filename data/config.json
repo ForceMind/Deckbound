@@ -23,7 +23,8 @@
     "floorDrainAmount": 1
   },
   "rest": {
-    "energyGain": 1
+    "energyGain": 1,
+    "maxPerFloor": 2
   },
   "combat": {
     "animMs": 3000,
@@ -35,6 +36,13 @@
   "boss": {
     "interval": 10
   },
+  "monsterModifiers": [
+    { "prefix": "虚弱的", "mult": 0.75, "weight": 12 },
+    { "prefix": "",       "mult": 1.0,  "weight": 60 },
+    { "prefix": "饥饿的", "mult": 1.1,  "weight": 12 },
+    { "prefix": "凶暴的", "mult": 1.25, "weight": 10 },
+    { "prefix": "远古的", "mult": 1.45, "weight": 6 }
+  ],
   "drift": {
     "monsterWanderChance": 0.35,
     "merchantLeaveChance": 0.18,
@@ -45,7 +53,10 @@
   "shop": {
     "stock": 5,
     "refreshCost": 10,
-    "removeCurseCost": 25
+    "removeCurseCost": 25,
+    "bagExpandBase": 25,
+    "bagExpandStep": 15,
+    "bagMax": 12
   },
   "versus": {
     "targetFloor": 20

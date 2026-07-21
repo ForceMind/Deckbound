@@ -102,15 +102,24 @@ export class MapGenerator {
 
   _makeMonster(tier, floor) {
     const proto = this.rng.pick(this.data.monsters[tier]);
-    const power = Math.round(proto.basePower + proto.perFloor * floor + this.rng.int(-1, 2));
-    const rarity = tier === 'elite' ? 'epic' : 'common';
-    return new Card(tier, { name: proto.name, emoji: proto.emoji, rarity, data: { power, tier } });
+    // 等级围绕层数浮动，词缀（虚弱/饥饿/凶暴/远古）进一步拉开个体差异
+    const level = Math.max(1, floor + this.rng.int(-1, 1));
+    const mod = this.rng.weighted(this.config.monsterModifiers ?? [{ prefix: '', mult: 1, weight: 1 }]);
+    const power = Math.max(1, Math.round((proto.basePower + proto.perFloor * level + this.rng.int(-1, 2)) * mod.mult));
+    let rarity = tier === 'elite' ? 'epic' : 'common';
+    if (mod.mult >= 1.4) rarity = tier === 'elite' ? 'legendary' : 'rare';
+    return new Card(tier, {
+      name: `${mod.prefix}${proto.name}`,
+      emoji: proto.emoji,
+      rarity,
+      data: { power, tier, level },
+    });
   }
 
   _makeBoss(floor) {
     const proto = this.rng.pick(this.data.monsters.boss);
     const power = Math.round(proto.basePower + proto.perFloor * floor);
-    return new Card('boss', { name: proto.name, emoji: proto.emoji, rarity: 'legendary', data: { power, tier: 'boss' } });
+    return new Card('boss', { name: proto.name, emoji: proto.emoji, rarity: 'legendary', data: { power, tier: 'boss', level: floor } });
   }
 
   /** 装备按稀有度放大数值 */

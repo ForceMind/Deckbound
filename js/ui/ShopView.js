@@ -72,6 +72,18 @@ export class ShopView {
             ui.toast(t('shop.curseRemoved'));
             render();
           });
+        // 背包扩容（价格随容量递增，有上限）
+        const expandPrice = cfg.bagExpandBase + (player.inventorySize - ctx.config.player.inventorySize) * cfg.bagExpandStep;
+        const bagMaxed = player.inventorySize >= cfg.bagMax;
+        mkBtn(t('shop.expandBag', { n: expandPrice }),
+          bagMaxed ? t('shop.expandBagMaxed') : t('shop.expandBagSub', { size: player.inventorySize, next: player.inventorySize + 1, max: cfg.bagMax }),
+          bagMaxed || player.gold < expandPrice, () => {
+            player.changeGold(-expandPrice);
+            player.inventorySize += 1;
+            ui.toast(t('shop.bagExpanded', { n: player.inventorySize }));
+            ctx.ui.hud.renderInventory(player);
+            render();
+          });
         // 背包满时可在商店内直接整理（吃食物/卖装备腾位置）
         mkBtn(t('shop.manageBag'), t('shop.manageBagSub', { n: player.inventory.length, max: player.inventorySize }), false, async () => {
           await ctx.game.openInventory(true);

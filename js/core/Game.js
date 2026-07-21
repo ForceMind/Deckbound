@@ -35,6 +35,7 @@ export class Game {
     this.busy = false;
     this.over = false;
     this.won = false;
+    this.restCount = 0;   // 本层已休息次数（限制无限刷体力）
     this.stats = { kills: 0, bossKills: 0 };
   }
 
@@ -336,6 +337,7 @@ export class Game {
         this.ui.toast(t('toast.fatigue', { n: move.floorDrainAmount }));
       }
 
+      this.restCount = 0;   // 进入新层，休息次数重置
       const changes = this.drift.apply(this.world);
       this.ui.hud.renderFloor(this.world.floor);
       this.ui.boardView.render(this.world, this.player);
@@ -355,18 +357,25 @@ export class Game {
     }
   }
 
-  /** 原地休息：恢复体力，视野内两行的牌随机挪动位置（FLIP 滑动动画） */
+  /**
+   * 原地休息：恢复体力，视野内两行的牌整体平移（FLIP 滑动动画）。
+   * 每层最多 maxPerFloor 次有效休息，之后只挪牌不回体力（防无限刷）。
+   */
   async rest() {
     if (this.busy || this.over) return;
     this.busy = true;
     try {
-      this.player.changeEnergy(this.config.rest.energyGain);
-      if (this.player.restHeal) this.player.changeHp(this.player.restHeal);
+      const effective = this.restCount < (this.config.rest.maxPerFloor ?? Infinity);
+      this.restCount += 1;
+      if (effective) {
+        this.player.changeEnergy(this.config.rest.energyGain);
+        if (this.player.restHeal) this.player.changeHp(this.player.restHeal);
+      }
       const oldPos = this.ui.boardView.capturePositions();
       this.world.shufflePositions();
       this.ui.boardView.render(this.world, this.player);
       this.ui.boardView.animateFlip(oldPos);
-      this.ui.toast(t('toast.rest', { n: this.config.rest.energyGain }));
+      this.ui.toast(effective ? t('toast.rest', { n: this.config.rest.energyGain }) : t('toast.restTired'));
       await new Promise((r) => setTimeout(r, 500));
       await this._afterPlayerTurn();
     } finally {
