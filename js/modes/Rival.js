@@ -43,6 +43,7 @@ export class Rival {
     let bestScore = -Infinity;
     for (const c of vis) {
       const card = this.world.near[c];
+      if (card.type === 'barrier') continue;   // 结界不可通行
       const cost = Math.max(0, Math.abs(c - this.centerCol) - move.freeRange) * move.sideCost;
       if (cost > this.energy) continue;
       const score = this._score(card) - cost * 2 + this.rng.next() * 2;   // 少量噪声：AI 也会犯错

@@ -8,6 +8,8 @@ const CONDS = {
   boss5: (h) => (h.stats?.bossKills ?? 0) >= 5,
   floor10: (h) => (h.stats?.deepestFloor ?? 0) >= 10,
   floor25: (h) => (h.stats?.deepestFloor ?? 0) >= 25,
+  floor50: (h) => (h.stats?.deepestFloor ?? 0) >= 51,
+  floor75: (h) => (h.stats?.deepestFloor ?? 0) >= 75,
   throne: (h) => (h.stats?.throneWins ?? 0) >= 1,
   level10: (h) => (h.level ?? 1) >= 10,
   rich: (h) => (h.gold ?? 0) >= 500,

@@ -38,7 +38,7 @@ export class WorldDrift {
       const col = this.rng.pick(monsterCols);
       const dir = this.rng.chance(0.5) ? -1 : 1;
       const target = col + dir;
-      if (target >= 0 && target < row.length && !['boss', 'merchant', 'door'].includes(row[target].type)) {
+      if (target >= 0 && target < row.length && !['boss', 'merchant', 'door', 'barrier'].includes(row[target].type)) {
         [row[col], row[target]] = [row[target], row[col]];
         changes.push({ row: rowKey, col, kind: 'wander' }, { row: rowKey, col: target, kind: 'wander' });
       }

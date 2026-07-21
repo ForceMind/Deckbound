@@ -14,10 +14,23 @@ export class MapGenerator {
     this.rarities = data.rarities;
   }
 
+  /** 当前层所属章节 */
+  _chapterOf(floor) {
+    return this.data.story?.chapters?.find((c) => floor >= c.from && floor <= c.to) ?? null;
+  }
+
   /** 当前层所属章节的牌池偏移（Biome：白骨荒原多诅咒、燃烧深渊多火焰…） */
   _biomeBias(floor) {
-    const ch = this.data.story?.chapters?.find((c) => floor >= c.from && floor <= c.to);
-    return ch?.spawnBias ?? null;
+    return this._chapterOf(floor)?.spawnBias ?? null;
+  }
+
+  /** 章节难度乘数（软卡点：每进新章怪物强度上跳一档；越过终章后继续缓涨） */
+  _chapterPowerMult(floor) {
+    const ch = this._chapterOf(floor);
+    if (ch) return ch.powerMult ?? 1;
+    const final = this.data.story?.finalFloor ?? 100;
+    const last = this.data.story?.chapters?.at(-1)?.powerMult ?? 2;
+    return floor > final ? last + (floor - final) * 0.01 : 1;
   }
 
   /** 生成第 floor 层的一行牌 */
@@ -32,6 +45,11 @@ export class MapGenerator {
       if (isBossFloor && col === Math.floor(cols / 2)) {
         row.push(this._makeBoss(floor));
         rowCount.boss = 1;
+        continue;
+      }
+      // 冒险主世界的首领层：两侧全是结界，必须击败首领才能通过（硬卡点）
+      if (isBossFloor && this.hero) {
+        row.push(new Card('barrier', { name: this.data.cardTypes.barrier.name, emoji: this.data.cardTypes.barrier.emoji, data: {} }));
         continue;
       }
       const type = this._rollType(floor, rowCount, bias);
@@ -117,10 +135,11 @@ export class MapGenerator {
 
   _makeMonster(tier, floor) {
     const proto = this.rng.pick(this.data.monsters[tier]);
-    // 等级围绕层数浮动，词缀（虚弱/饥饿/凶暴/远古）进一步拉开个体差异
+    // 等级围绕层数浮动，词缀（虚弱/饥饿/凶暴/远古）进一步拉开个体差异；章节乘数分段抬升
     const level = Math.max(1, floor + this.rng.int(-1, 1));
     const mod = this.rng.weighted(this.config.monsterModifiers ?? [{ prefix: '', mult: 1, weight: 1 }]);
-    const power = Math.max(1, Math.round((proto.basePower + proto.perFloor * level + this.rng.int(-1, 2)) * mod.mult));
+    const chMult = this._chapterPowerMult(floor);
+    const power = Math.max(1, Math.round((proto.basePower + proto.perFloor * level + this.rng.int(-1, 2)) * mod.mult * chMult));
     let rarity = tier === 'elite' ? 'epic' : 'common';
     if (mod.mult >= 1.4) rarity = tier === 'elite' ? 'legendary' : 'rare';
     return new Card(tier, {
@@ -133,7 +152,7 @@ export class MapGenerator {
 
   _makeBoss(floor) {
     const proto = this.rng.pick(this.data.monsters.boss);
-    const power = Math.round(proto.basePower + proto.perFloor * floor);
+    const power = Math.round((proto.basePower + proto.perFloor * floor) * this._chapterPowerMult(floor));
     return new Card('boss', {
       name: proto.name,
       emoji: proto.emoji,

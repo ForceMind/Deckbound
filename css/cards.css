@@ -73,6 +73,16 @@
   filter: saturate(0.8) brightness(0.88);
 }
 
+/* 首领结界：不可通行 */
+.card.type-barrier {
+  background: linear-gradient(160deg, #241a2e 0%, #171020 100%);
+  border: 2px solid #4a3a5e;
+  color: #8a7ba0;
+  cursor: not-allowed;
+}
+.card.type-barrier .card-emoji { filter: drop-shadow(0 0 6px #8a5cf655); }
+.card.type-barrier.clickable:hover { transform: none; box-shadow: 0 4px 10px #0007; }
+
 /* 玩家所在行走过的地面 */
 .card.card-ground {
   background: #1c2233;

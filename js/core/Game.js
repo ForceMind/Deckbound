@@ -342,6 +342,12 @@ export class Game {
       this.ui.toast(t('toast.tooFar'));
       return;
     }
+    // 首领结界：必须击败守关首领才能通过
+    if (this.world.near[col]?.type === 'barrier') {
+      this.ui.animator.screenShake();
+      this.ui.toast(t('toast.barrier'));
+      return;
+    }
     if (this.player.energy < cost) {
       this.ui.toast(t('toast.noEnergy', { n: cost }));
       return;
