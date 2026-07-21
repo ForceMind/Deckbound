@@ -134,6 +134,7 @@ export class BoardView {
     const gap = parseFloat(style.getPropertyValue('--card-gap'));
     const dx = (toCol - fromCol) * (w + gap);
     el.style.transition = 'transform 0.28s cubic-bezier(0.3, 0, 0.4, 1)';
+    void el.offsetWidth;   // 强制 reflow，保证过渡生效
     el.style.transform = `translateX(${dx}px)`;
     await wait(300);
   }
@@ -147,14 +148,14 @@ export class BoardView {
     const dx = (toCol - fromCol) * (w + parseFloat(style.getPropertyValue('--card-gap')));
     const dy = -this.rowHeight;
     el.style.transition = 'transform 0.38s cubic-bezier(0.35, -0.15, 0.4, 1.1)';
-    el.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
     el.style.zIndex = 20;
-    // 目标格淡出（被玩家覆盖）
     const target = this._cardEl('near', toCol);
-    if (target) {
-      target.style.transition = 'opacity 0.3s ease 0.15s';
-      target.style.opacity = '0.25';
-    }
+    if (target) target.style.transition = 'opacity 0.3s ease 0.15s';
+    // 横移后玩家牌是刚重渲染的新元素：必须先强制 reflow，
+    // 否则 transition 不生效，向上移动会变成瞬移
+    void el.offsetWidth;
+    el.style.transform = `translate(${dx}px, ${dy}px) scale(1.06)`;
+    if (target) target.style.opacity = '0.25';   // 目标格淡出（被玩家覆盖）
     await wait(400);
   }
 
