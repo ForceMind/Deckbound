@@ -248,6 +248,8 @@
     "weatherChanged": "🌤️ Weather shift — {name}: {desc}",
     "herbPicked": "🌿 Picked moonherb ({n}/3)",
     "herbSold": "🌿 Just a weed… sold for 2 gold",
+    "bossSkill": "⚠️ {boss} unleashes [{name}] — {desc}",
+    "bossBurn": "🔥 The lingering embers scorch you: HP -3",
     "equipWeapon": "🗡️ Equipped {name}",
     "swapWeapon": "🗡️ Swapped to {name}, old weapon sold for {n} gold",
     "equipArmor": "🛡️ Equipped {name}",
@@ -380,6 +382,9 @@
   "settings": {
     "title": "⚙️ Settings",
     "seed": "World seed: <b>{seed}</b><br>The same seed generates the same deck (reserved for daily challenges)",
+    "sound": "🔊 Sound: {state}",
+    "soundOn": "On",
+    "soundOff": "Off",
     "language": "🌐 Language: English",
     "languageSub": "切换为中文",
     "howto": "📜 How to Play",

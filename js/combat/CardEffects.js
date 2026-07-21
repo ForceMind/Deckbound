@@ -22,8 +22,24 @@ export async function applyEffect(ctx, card) {
 
 /* ============ 敌人 ============ */
 async function fightHandler(ctx, card) {
-  const result = ctx.game.combat.resolve(ctx.player, card, { weather: ctx.game.weather?.id });
+  // 首领技能：战前效果
+  const bossSkill = card.data.skill;
+  if (bossSkill) {
+    ctx.ui.toast(t('toast.bossSkill', { boss: card.name, name: bossSkill.name, desc: bossSkill.desc }));
+    if (bossSkill.id === 'firebreath') ctx.player.changeHp(-5);
+    else if (bossSkill.id === 'curse') ctx.player.addCurse();
+    else if (bossSkill.id === 'drain') ctx.player.changeEnergy(-2);
+    if (ctx.player.hp <= 0) return { retreat: true };   // 龙息可能直接击倒濒死者
+  }
+
+  const result = ctx.game.combat.resolve(ctx.player, card, { weather: ctx.game.weather?.id, bossSkill: bossSkill?.id });
   await ctx.ui.combatView.play(ctx.player, card, result);
+
+  // 首领技能·烈焰余烬：战后无论胜负损失生命
+  if (bossSkill?.id === 'burn') {
+    ctx.player.changeHp(-3);
+    ctx.ui.toast(t('toast.bossBurn'));
+  }
 
   if (result.win) {
     ctx.player.changePower(result.powerGain);

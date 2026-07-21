@@ -32,6 +32,8 @@ export class Combat {
       playerPower = Math.round(playerPower * 1.5);
       delete player.skillFlags.rage;
     }
+    // 首领技能·深渊威压：本次战斗玩家战力 -10%
+    if (opts.bossSkill === 'terror') playerPower = Math.max(1, Math.round(playerPower * 0.9));
     // 技能·处决：本次战斗必定暴击
     let crit;
     if (player.skillFlags?.execute) {
@@ -40,6 +42,8 @@ export class Combat {
     } else {
       crit = this.rng.chance(player.critChance);
     }
+    // 首领技能·岿然不动：无法暴击
+    if (opts.bossSkill === 'immovable') crit = false;
     if (crit) playerPower = Math.round(playerPower * this.cfg.critMultiplier);
 
     const win = playerPower >= monsterPower;

@@ -128,7 +128,12 @@ export class MapGenerator {
   _makeBoss(floor) {
     const proto = this.rng.pick(this.data.monsters.boss);
     const power = Math.round(proto.basePower + proto.perFloor * floor);
-    return new Card('boss', { name: proto.name, emoji: proto.emoji, rarity: 'legendary', data: { power, tier: 'boss', level: floor } });
+    return new Card('boss', {
+      name: proto.name,
+      emoji: proto.emoji,
+      rarity: 'legendary',
+      data: { power, tier: 'boss', level: floor, skill: proto.skill ?? null },
+    });
   }
 
   /** 装备按稀有度放大数值 */

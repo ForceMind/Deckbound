@@ -4,6 +4,7 @@ import { Game } from './core/Game.js';
 import { Hero } from './core/Hero.js';
 import { RNG } from './core/RNG.js';
 import { i18n, t } from './core/I18n.js';
+import './core/Sound.js';   // 初始化音效（订阅事件总线）
 import { ModalView } from './ui/ModalView.js';
 import { TitleView } from './ui/TitleView.js';
 import { Hub, pickClass } from './hub/Hub.js';

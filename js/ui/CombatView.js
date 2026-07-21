@@ -1,5 +1,6 @@
 import { wait } from '../anim/Animator.js';
 import { t } from '../core/I18n.js';
+import { sound } from '../core/Sound.js';
 
 /**
  * 战斗演出 —— 点击怪物立即开战（无二次确认），全程自动：
@@ -14,6 +15,7 @@ export class CombatView {
   }
 
   async play(player, card, result) {
+    sound.play('combat');
     const box = this.modal.showRaw();
     box.classList.add('combat-panel');
     box.innerHTML = `
@@ -53,6 +55,7 @@ export class CombatView {
     const monsterEl = box.querySelector('#cb-monster');
     const resultEl = box.querySelector('#cb-result');
     if (result.win) {
+      sound.play('win');
       playerEl.classList.add('winner');
       monsterEl.classList.add('loser');
       resultEl.className = 'combat-result victory';
@@ -60,6 +63,7 @@ export class CombatView {
       this.animator.floatNum(playerEl, t('combat.powerGain', { n: result.powerGain }), 'pow');
       this.animator.flyCoins(monsterEl, Math.min(8, Math.max(3, Math.round(result.goldGain / 4))));
     } else {
+      sound.play('lose');
       monsterEl.classList.add('winner');
       playerEl.classList.add('loser');
       resultEl.className = 'combat-result defeat';

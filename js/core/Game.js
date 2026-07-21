@@ -11,6 +11,7 @@ import { UIManager } from '../ui/UIManager.js';
 import { TutorialView } from '../ui/TutorialView.js';
 import { Rival } from '../modes/Rival.js';
 import { checkAchievements } from './Achievements.js';
+import { sound } from './Sound.js';
 
 /**
  * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
@@ -328,6 +329,7 @@ export class Game {
     }
 
     this.busy = true;
+    sound.play('click');
     try {
       // 1. 横向移动（超出免费范围的部分收体力）
       if (sideSteps > 0) {
@@ -419,6 +421,7 @@ export class Game {
       this.world.shufflePositions();
       this.ui.boardView.render(this.world, this.player);
       this.ui.boardView.animateFlip(oldPos);
+      sound.play('rest');
       this.ui.toast(effective ? t('toast.rest', { n: this.config.rest.energyGain }) : t('toast.restTired'));
       await new Promise((r) => setTimeout(r, 500));
       await this._afterPlayerTurn();
@@ -505,6 +508,7 @@ export class Game {
       default: break;
     }
     this.player.skillCooldown = skill.cooldown;
+    sound.play('skill');
     this.ui.toast(t('toast.skillUsed', { name: `${skill.emoji} ${skill.name}`, desc: skill.desc }));
     this._renderSkillBtn();
   }
@@ -541,6 +545,7 @@ export class Game {
     }
     const relic = this.rng.pick(pool);
     this.player.addRelic(relic.id);
+    sound.play('relic');
     await this.ui.modal.show({
       title: t('relic.gainTitle'),
       bodyHTML: `<p style="font-size:44px;margin-bottom:4px">${relic.emoji}</p>
@@ -744,13 +749,17 @@ export class Game {
       bodyHTML: `<p>${t('settings.seed', { seed: this.seed })}</p>`,
       choices: [
         { label: t('settings.back'), value: 'back' },
+        { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
         { label: t('settings.howto'), value: 'howto' },
         { label: t('settings.replayTutorial'), value: 'tutorial' },
         { label: t('settings.restart'), sub: t('settings.restartSub'), value: 'restart' },
       ],
     });
-    if (picked === 'lang') {
+    if (picked === 'sound') {
+      sound.toggle();
+      this.ui.toast(t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'lang') {
       await i18n.setLang(i18n.otherLang);
       this._refreshLanguage();
     } else if (picked === 'howto') {

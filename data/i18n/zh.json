@@ -248,6 +248,8 @@
     "weatherChanged": "🌤️ 天气变化——{name}：{desc}",
     "herbPicked": "🌿 拾取月光草（{n}/3）",
     "herbSold": "🌿 一株野草……换了 2 金币",
+    "bossSkill": "⚠️ {boss}发动【{name}】——{desc}",
+    "bossBurn": "🔥 烈焰余烬灼烧着你：生命 -3",
     "equipWeapon": "🗡️ 装备了{name}",
     "swapWeapon": "🗡️ 换上{name}，旧武器折价 {n} 金币",
     "equipArmor": "🛡️ 装备了{name}",
@@ -380,6 +382,9 @@
   "settings": {
     "title": "⚙️ 设置",
     "seed": "世界种子：<b>{seed}</b><br>同一种子会生成同一片牌阵（为每日挑战预留）",
+    "sound": "🔊 音效：{state}",
+    "soundOn": "开",
+    "soundOff": "关",
     "language": "🌐 语言：中文",
     "languageSub": "切换为 English",
     "howto": "📜 游戏说明",

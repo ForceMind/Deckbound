@@ -8,6 +8,7 @@ import { Wish } from './Wish.js';
 import { Hero } from '../core/Hero.js';
 import { gearStat } from '../core/GearFactory.js';
 import { checkAchievements } from '../core/Achievements.js';
+import { sound } from '../core/Sound.js';
 
 /**
  * 首次创建角色：命运发五张职业牌选一张
@@ -316,12 +317,16 @@ export class Hub {
     const picked = await this.modal.show({
       title: t('settings.title'),
       choices: [
+        { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
         { label: t('hub.resetHero'), sub: t('hub.resetHeroSub'), value: 'reset' },
         { label: t('hub.back'), value: 'back' },
       ],
     });
-    if (picked === 'lang') {
+    if (picked === 'sound') {
+      sound.toggle();
+      this.toast(t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'lang') {
       await i18n.setLang(i18n.otherLang);
       location.reload();
     } else if (picked === 'reset') {

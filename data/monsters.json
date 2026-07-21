@@ -1,36 +1,222 @@
 {
   "monster": [
-    { "id": "wolf",     "name": "野狼",   "emoji": "🐺", "basePower": 6,  "perFloor": 0.9 },
-    { "id": "bat",      "name": "蝙蝠",   "emoji": "🦇", "basePower": 5,  "perFloor": 0.8 },
-    { "id": "snake",    "name": "毒蛇",   "emoji": "🐍", "basePower": 7,  "perFloor": 0.9 },
-    { "id": "skeleton", "name": "骷髅兵", "emoji": "💀", "basePower": 8,  "perFloor": 1.0 },
-    { "id": "goblin",   "name": "哥布林", "emoji": "👺", "basePower": 7,  "perFloor": 1.0 },
-    { "id": "slime",    "name": "史莱姆", "emoji": "🟢", "basePower": 4,  "perFloor": 0.7 },
-    { "id": "spider",   "name": "巨蛛",   "emoji": "🕷️", "basePower": 8,  "perFloor": 1.0 },
-    { "id": "rat",      "name": "钉齿鼠", "emoji": "🐀", "basePower": 5,  "perFloor": 0.8 },
-    { "id": "scorpion", "name": "沙蝎",   "emoji": "🦂", "basePower": 7,  "perFloor": 0.95 },
-    { "id": "ghost",    "name": "游魂",   "emoji": "👻", "basePower": 6,  "perFloor": 0.9 },
-    { "id": "crow",     "name": "腐鸦",   "emoji": "🐦‍⬛", "basePower": 5,  "perFloor": 0.85 },
-    { "id": "boar",     "name": "獠牙野猪", "emoji": "🐗", "basePower": 8, "perFloor": 1.05 }
+    {
+      "id": "wolf",
+      "name": "野狼",
+      "emoji": "🐺",
+      "basePower": 6,
+      "perFloor": 0.9
+    },
+    {
+      "id": "bat",
+      "name": "蝙蝠",
+      "emoji": "🦇",
+      "basePower": 5,
+      "perFloor": 0.8
+    },
+    {
+      "id": "snake",
+      "name": "毒蛇",
+      "emoji": "🐍",
+      "basePower": 7,
+      "perFloor": 0.9
+    },
+    {
+      "id": "skeleton",
+      "name": "骷髅兵",
+      "emoji": "💀",
+      "basePower": 8,
+      "perFloor": 1
+    },
+    {
+      "id": "goblin",
+      "name": "哥布林",
+      "emoji": "👺",
+      "basePower": 7,
+      "perFloor": 1
+    },
+    {
+      "id": "slime",
+      "name": "史莱姆",
+      "emoji": "🟢",
+      "basePower": 4,
+      "perFloor": 0.7
+    },
+    {
+      "id": "spider",
+      "name": "巨蛛",
+      "emoji": "🕷️",
+      "basePower": 8,
+      "perFloor": 1
+    },
+    {
+      "id": "rat",
+      "name": "钉齿鼠",
+      "emoji": "🐀",
+      "basePower": 5,
+      "perFloor": 0.8
+    },
+    {
+      "id": "scorpion",
+      "name": "沙蝎",
+      "emoji": "🦂",
+      "basePower": 7,
+      "perFloor": 0.95
+    },
+    {
+      "id": "ghost",
+      "name": "游魂",
+      "emoji": "👻",
+      "basePower": 6,
+      "perFloor": 0.9
+    },
+    {
+      "id": "crow",
+      "name": "腐鸦",
+      "emoji": "🐦‍⬛",
+      "basePower": 5,
+      "perFloor": 0.85
+    },
+    {
+      "id": "boar",
+      "name": "獠牙野猪",
+      "emoji": "🐗",
+      "basePower": 8,
+      "perFloor": 1.05
+    }
   ],
   "elite": [
-    { "id": "ogre",     "name": "食人魔",   "emoji": "👹", "basePower": 14, "perFloor": 1.3 },
-    { "id": "knightf",  "name": "堕落骑士", "emoji": "🧟", "basePower": 15, "perFloor": 1.4 },
-    { "id": "werewolf", "name": "狼人",     "emoji": "🌕", "basePower": 16, "perFloor": 1.4 },
-    { "id": "golem",    "name": "石魔像",   "emoji": "🗿", "basePower": 18, "perFloor": 1.5 },
-    { "id": "minotaur", "name": "牛头人",   "emoji": "🐂", "basePower": 17, "perFloor": 1.45 },
-    { "id": "shaman",   "name": "咒术师",   "emoji": "🧿", "basePower": 15, "perFloor": 1.4 },
-    { "id": "wyvern",   "name": "双足飞龙", "emoji": "🦎", "basePower": 19, "perFloor": 1.55 }
+    {
+      "id": "ogre",
+      "name": "食人魔",
+      "emoji": "👹",
+      "basePower": 14,
+      "perFloor": 1.3
+    },
+    {
+      "id": "knightf",
+      "name": "堕落骑士",
+      "emoji": "🧟",
+      "basePower": 15,
+      "perFloor": 1.4
+    },
+    {
+      "id": "werewolf",
+      "name": "狼人",
+      "emoji": "🌕",
+      "basePower": 16,
+      "perFloor": 1.4
+    },
+    {
+      "id": "golem",
+      "name": "石魔像",
+      "emoji": "🗿",
+      "basePower": 18,
+      "perFloor": 1.5
+    },
+    {
+      "id": "minotaur",
+      "name": "牛头人",
+      "emoji": "🐂",
+      "basePower": 17,
+      "perFloor": 1.45
+    },
+    {
+      "id": "shaman",
+      "name": "咒术师",
+      "emoji": "🧿",
+      "basePower": 15,
+      "perFloor": 1.4
+    },
+    {
+      "id": "wyvern",
+      "name": "双足飞龙",
+      "emoji": "🦎",
+      "basePower": 19,
+      "perFloor": 1.55
+    }
   ],
   "boss": [
-    { "id": "dragon",   "name": "远古巨龙", "emoji": "🐲", "basePower": 24, "perFloor": 1.9 },
-    { "id": "lich",     "name": "巫妖王",   "emoji": "🧛", "basePower": 22, "perFloor": 1.8 },
-    { "id": "demon",    "name": "深渊魔王", "emoji": "😈", "basePower": 26, "perFloor": 2.0 },
-    { "id": "kraken",   "name": "梦魇之主", "emoji": "🐙", "basePower": 23, "perFloor": 1.9 },
-    { "id": "phoenix",  "name": "灾厄凰鸟", "emoji": "🦅", "basePower": 25, "perFloor": 1.95 },
-    { "id": "titan",    "name": "崩山泰坦", "emoji": "⛰️", "basePower": 27, "perFloor": 2.05 }
+    {
+      "id": "dragon",
+      "name": "远古巨龙",
+      "emoji": "🐲",
+      "basePower": 24,
+      "perFloor": 1.9,
+      "skill": {
+        "id": "firebreath",
+        "name": "龙息",
+        "desc": "战前喷吐龙息：你损失 5 生命"
+      }
+    },
+    {
+      "id": "lich",
+      "name": "巫妖王",
+      "emoji": "🧛",
+      "basePower": 22,
+      "perFloor": 1.8,
+      "skill": {
+        "id": "curse",
+        "name": "亡者之咒",
+        "desc": "战前施放诅咒：你获得一层诅咒（立即生效）"
+      }
+    },
+    {
+      "id": "demon",
+      "name": "深渊魔王",
+      "emoji": "😈",
+      "basePower": 26,
+      "perFloor": 2,
+      "skill": {
+        "id": "terror",
+        "name": "深渊威压",
+        "desc": "本次战斗你的战力 -10%"
+      }
+    },
+    {
+      "id": "kraken",
+      "name": "梦魇之主",
+      "emoji": "🐙",
+      "basePower": 23,
+      "perFloor": 1.9,
+      "skill": {
+        "id": "drain",
+        "name": "梦魇缠绕",
+        "desc": "战前吸取你 2 点体力"
+      }
+    },
+    {
+      "id": "phoenix",
+      "name": "灾厄凰鸟",
+      "emoji": "🦅",
+      "basePower": 25,
+      "perFloor": 1.95,
+      "skill": {
+        "id": "burn",
+        "name": "烈焰余烬",
+        "desc": "战后无论胜负，你损失 3 生命"
+      }
+    },
+    {
+      "id": "titan",
+      "name": "崩山泰坦",
+      "emoji": "⛰️",
+      "basePower": 27,
+      "perFloor": 2.05,
+      "skill": {
+        "id": "immovable",
+        "name": "岿然不动",
+        "desc": "本次战斗你无法暴击"
+      }
+    }
   ],
   "mirror": [
-    { "id": "mirror",   "name": "镜像行者", "emoji": "🪞", "basePower": 0, "perFloor": 0 }
+    {
+      "id": "mirror",
+      "name": "镜像行者",
+      "emoji": "🪞",
+      "basePower": 0,
+      "perFloor": 0
+    }
   ]
 }
