@@ -1,12 +1,16 @@
 import { DataLoader } from './core/DataLoader.js';
 import { SaveMeta } from './core/SaveMeta.js';
 import { Game } from './core/Game.js';
+import { Hero } from './core/Hero.js';
+import { RNG } from './core/RNG.js';
 import { i18n, t } from './core/I18n.js';
 import { ModalView } from './ui/ModalView.js';
 import { TitleView } from './ui/TitleView.js';
+import { Hub, pickClass } from './hub/Hub.js';
 
 /**
- * 入口 —— 加载语言与配置 → 标题画面 → 启动游戏。
+ * 入口 —— 标题 → 持久角色（首次：序章+选职业）→ 大厅 → 各玩法。
+ * 冒险/经典挑战结束后 reload 回到此流程（角色与进度都在 localStorage）。
  */
 async function boot() {
   try {
@@ -17,17 +21,34 @@ async function boot() {
     const loader = new DataLoader();
     const data = await loader.loadAll();
     const saveMeta = new SaveMeta();
-    const titleView = new TitleView(new ModalView(), saveMeta, data.config);
+    const modal = new ModalView();
+    const titleView = new TitleView(modal, saveMeta, data.config);
 
-    const mode = await titleView.show();
+    await titleView.show();
 
-    // 每日挑战：同一天全球同一种子（同一牌阵）
+    // 持久角色：首次进入创建（序章 + 选职业），之后一直存在
+    let hero = Hero.load(data.config);
+    if (!hero) {
+      await titleView.playPrologue();
+      const cls = await pickClass(modal, data.classes, saveMeta, new RNG());
+      hero = Hero.create(data.config, cls);
+      if (cls.bonus?.startWeapon) {
+        const proto = data.weapons.find((w) => w.id === cls.bonus.startWeapon);
+        if (proto) { hero.weapon = { ...proto }; hero.save(); }
+      }
+    }
+
+    // 大厅：resolve 时进入需要牌阵的玩法（冒险 / 经典挑战）
+    const hub = new Hub(data, hero, saveMeta, modal, new RNG());
+    const mode = await hub.show();
+
     let seed;
     if (mode === 'daily') {
       seed = Number(new Date().toISOString().slice(0, 10).replace(/-/g, '')) >>> 0;
     }
-    const game = new Game(data, saveMeta, titleView, seed, mode);
+    const game = new Game(data, saveMeta, titleView, seed, mode, hero);
     window.__game = game;   // 调试入口
+    window.__hero = hero;
     await game.start();
   } catch (err) {
     console.error(err);

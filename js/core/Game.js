@@ -16,13 +16,14 @@ import { Rival } from '../modes/Rival.js';
  * 主线：穿过五个章节，抵达第 50 层「命运王座」击败最终首领即通关，之后可进入无尽模式。
  */
 export class Game {
-  constructor(data, saveMeta, titleView, seed, mode = 'adventure') {
+  constructor(data, saveMeta, titleView, seed, mode = 'adventure', hero = null) {
     this.data = data;
     this.config = data.config;
     this.story = data.story;
     this.saveMeta = saveMeta;
     this.titleView = titleView;
     this.mode = mode;
+    this.hero = hero;
     this.dailyDate = mode === 'daily' ? new Date().toISOString().slice(0, 10) : null;
     this.seed = seed ?? (Date.now() >>> 0);
 
@@ -54,11 +55,25 @@ export class Game {
   /* ============ 开局 ============ */
 
   async start() {
-    const cls = await this._pickClass();
-    this.player = new Player(this.config, cls);
-    if (cls.bonus?.startWeapon) {
-      const proto = this.data.weapons.find((w) => w.id === cls.bonus.startWeapon);
-      if (proto) this.player.equipWeapon({ ...proto });
+    // 职业固定为持久角色的职业（在创建角色时选定）
+    const cls = this.data.classes.find((c) => c.id === this.hero?.classId) ?? this.data.classes[0];
+
+    if (this.mode === 'adventure') {
+      // 冒险主世界：持久角色带全部家当进入，实时回写
+      this.player = new Player(this.config, cls, this.hero);
+      this.hero.stats.adventures += 1;
+      this.hero.save();
+      const sync = () => this.hero.syncFromPlayer(this.player);
+      bus.on('statsChanged', sync);
+      bus.on('equipChanged', sync);
+      bus.on('inventoryChanged', sync);
+    } else {
+      // 经典挑战：临时角色（公平起跑），结算按层数奖励主角色金币
+      this.player = new Player(this.config, cls);
+      if (cls.bonus?.startWeapon) {
+        const proto = this.data.weapons.find((w) => w.id === cls.bonus.startWeapon);
+        if (proto) this.player.equipWeapon({ ...proto });
+      }
     }
     this.world = new World(this.config, this.generator);
 
@@ -87,29 +102,6 @@ export class Game {
       await new TutorialView().run();
     }
     this.ui.toast(t('toast.runStart', { cls: cls.name }));
-  }
-
-  /** 开局随机 5 张职业牌，选择 1 张 */
-  async _pickClass() {
-    const pool = this.rng.shuffle(this.data.classes).slice(0, 5);
-    return new Promise((resolve) => {
-      const box = this.ui.modal.showRaw();
-      box.innerHTML = `<h2>${t('class.pickTitle')}</h2><p>${t('class.pickHint')}</p><div class="card-pick-row"></div>`;
-      const row = box.querySelector('.card-pick-row');
-      for (const cls of pool) {
-        const unlocked = this.saveMeta.isClassUnlocked(cls);
-        const el = document.createElement('div');
-        el.className = `card card-class${unlocked ? '' : ' locked'}`;
-        el.innerHTML = `
-          <span class="card-emoji">${cls.emoji}</span>
-          <span class="card-name">${cls.name}</span>
-          <span class="card-desc">${unlocked ? cls.desc : t('class.locked', { hint: cls.unlockHint })}</span>`;
-        if (unlocked) {
-          el.addEventListener('click', () => { this.ui.modal.hide(); resolve(cls); });
-        }
-        row.appendChild(el);
-      }
-    });
   }
 
   _bindKeyboard() {
@@ -208,6 +200,9 @@ export class Game {
     if (this.over) return;
     this.over = true;
     this.saveMeta.recordVersus(win);
+    // 竞速奖励结算给主角色
+    const reward = win ? this.config.classicReward.versusWin : this.config.classicReward.versusLose;
+    this.hero?.changeGold(reward);
     const m = this.saveMeta.meta;
     const target = this.config.versus.targetFloor;
     const text = win
@@ -217,7 +212,7 @@ export class Game {
         : t('versus.loseText', { n: target, name: this.rival.name });
     await this.ui.modal.show({
       title: win ? t('versus.winTitle') : t('versus.loseTitle'),
-      bodyHTML: `<p class="story-text">${text}</p><p>${t('versus.record', { w: m.pvpWins, l: m.pvpLosses })}</p>`,
+      bodyHTML: `<p class="story-text">${text}</p><p>${t('versus.record', { w: m.pvpWins, l: m.pvpLosses })}</p><p>${t('over.classicReward', { n: reward })}</p>`,
       choices: [{ label: t('over.again'), value: 0 }],
     });
     location.reload();
@@ -633,14 +628,39 @@ export class Game {
       ? `<p style="color:var(--gold)">${t('over.unlock', { names: newlyUnlocked.map((id) => this.data.classes.find((c) => c.id === id)?.name).join('、') })}</p>`
       : '';
     const title = won ? t('over.winTitle') : abandoned ? t('over.abandonTitle') : t('over.deathTitle');
-    const flavor = won ? t('over.winText') : t('over.deathText');
+    let extraHtml = '';
+    let flavor;
+
+    if (this.mode === 'adventure' && this.hero) {
+      // 持久角色结算：成长全保留；死亡损失部分金币，主动撤退无惩罚
+      this.hero.syncFromPlayer(this.player);
+      this.hero.stats.kills += this.stats.kills;
+      this.hero.stats.bossKills += this.stats.bossKills;
+      if (floor > this.hero.stats.deepestFloor) this.hero.stats.deepestFloor = floor;
+      if (won) this.hero.stats.throneWins += 1;
+      if (!abandoned && !won) {
+        this.hero.stats.deaths += 1;
+        const loss = Math.floor(this.hero.gold * this.config.adventure.deathGoldLossPct);
+        this.hero.gold = Math.max(0, this.hero.gold - loss);
+        extraHtml = `<p>${t('over.heroDeathLoss', { n: loss })}</p>`;
+      }
+      this.hero.save();
+      flavor = won ? t('over.winText') : abandoned ? t('over.heroRetreatText') : t('over.heroDeathText');
+    } else {
+      // 经典挑战：按层数奖励主角色金币
+      const reward = floor * this.config.classicReward.goldPerFloor;
+      this.hero?.changeGold(reward);
+      extraHtml = `<p style="color:var(--gold)">${t('over.classicReward', { n: reward })}</p>`;
+      flavor = won ? t('over.winText') : t('over.deathText');
+    }
+
     await this.ui.modal.show({
       title,
       bodyHTML: `
         <p>${t('over.summary', { floor, kills: this.stats.kills, power: this.player.effectivePower })}</p>
-        ${unlockHtml}
+        ${unlockHtml}${extraHtml}
         <p>${flavor}</p>`,
-      choices: [{ label: t('over.again'), value: 0 }],
+      choices: [{ label: t('over.backToHub'), value: 0 }],
     });
     location.reload();
   }

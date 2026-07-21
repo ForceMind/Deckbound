@@ -448,6 +448,68 @@ html, body {
 .title-btn.primary:hover { box-shadow: 0 6px 22px #f5c54255; }
 .title-meta { margin-top: 26px; color: var(--text-dim); font-size: 13px; }
 
+/* ============ 大厅 ============ */
+#hub-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 450;
+  overflow-y: auto;
+  background:
+    radial-gradient(ellipse at 50% 10%, #232b4a66 0%, transparent 55%),
+    var(--bg-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hub-inner { width: min(860px, 94vw); padding: 30px 0; }
+
+.hub-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-panel);
+  border: 1px solid var(--border-dim);
+  border-radius: 16px;
+  padding: 16px 22px;
+  margin-bottom: 20px;
+}
+.hub-hero-emoji { font-size: 46px; filter: drop-shadow(0 4px 12px #000a); }
+.hub-hero-stats { display: flex; flex-direction: column; gap: 4px; }
+.hub-hero-stats b { color: var(--gold); font-size: 17px; }
+.hub-hero-stats span { font-size: 14px; }
+.hub-hero-gear { color: var(--text-dim); font-size: 12px !important; }
+
+.hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.hub-card {
+  background: #ffffff08;
+  border: 1px solid var(--border-dim);
+  border-radius: 14px;
+  padding: 18px 10px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+.hub-card:hover { border-color: var(--gold); background: #ffffff14; transform: translateY(-4px); }
+.hub-card-emoji { font-size: 36px; }
+.hub-card b { font-size: 15px; }
+.hub-card small { color: var(--text-dim); font-size: 11px; line-height: 1.5; }
+
+.hub-footer { display: flex; justify-content: center; gap: 12px; margin-top: 20px; }
+
+@media (max-width: 900px) {
+  .hub-grid { grid-template-columns: repeat(2, 1fr); }
+  .hub-hero-card { flex-wrap: wrap; padding: 12px 14px; }
+  .hub-inner { padding: 14px 0; }
+}
+
 .story-text { text-align: left; line-height: 2; }
 .howto-body { text-align: left; }
 .howto-body p { margin-bottom: 10px; line-height: 1.8; }

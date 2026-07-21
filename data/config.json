@@ -61,6 +61,46 @@
   "versus": {
     "targetFloor": 20
   },
+  "adventure": {
+    "deathGoldLossPct": 0.15
+  },
+  "arena": {
+    "stakes": [50, 150, 400],
+    "rounds": 3
+  },
+  "auction": {
+    "listings": 6,
+    "refreshCost": 10,
+    "markupMin": 1.2,
+    "markupMax": 1.7
+  },
+  "tower": {
+    "baseReward": 10,
+    "rewardPerFloor": 5,
+    "gearDropEvery": 3,
+    "gearDropChance": 0.35
+  },
+  "hunt": {
+    "baseFee": 30,
+    "feeStep": 25,
+    "basePower": 40,
+    "powerStep": 30
+  },
+  "casino": {
+    "cardStakes": [10, 30, 100],
+    "cardPayout": 2.5,
+    "dicePayout": 1.9
+  },
+  "wish": {
+    "singleCost": 20,
+    "tenCost": 180,
+    "pitySellPct": 0.6
+  },
+  "classicReward": {
+    "goldPerFloor": 3,
+    "versusWin": 100,
+    "versusLose": 20
+  },
   "meta": {
     "unlockFloorBerserker": 15,
     "unlockBossKillsNecromancer": 3

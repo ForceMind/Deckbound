@@ -5,7 +5,10 @@ import { bus } from '../core/EventBus.js';
  * 所有属性变化都通过方法修改并广播 statsChanged，UI 只做被动渲染。
  */
 export class Player {
-  constructor(config, playerClass) {
+  /**
+   * @param heroState 持久角色数据（冒险主世界）；为空时用基础值 + 职业加成（经典挑战）
+   */
+  constructor(config, playerClass, heroState = null) {
     const base = config.player;
     this.maxHp = base.maxHp;
     this.hp = base.hp;
@@ -19,24 +22,46 @@ export class Player {
     this.col = config.grid.playerStartCol;
     this.weapon = null;
     this.armor = null;
-    this.inventory = [];   // { kind: 'food'|'potion'|'key'|'artifact', item }
+    this.inventory = [];   // { kind: 'food'|'potion'|'key'|'weapon'|'armor', item }
     this.curses = 0;
     this.buffs = [];       // 文本记录，用于侧栏展示
 
     this.playerClass = playerClass;
-    this._applyClass(playerClass);
+    this._applyClassTraits(playerClass);
+
+    if (heroState) {
+      // 持久角色进入冒险：属性/装备/背包/金币全部继承，满状态出发
+      this.maxHp = heroState.maxHp;
+      this.hp = heroState.maxHp;
+      this.atk = heroState.atk;
+      this.power = heroState.power;
+      this.gold = heroState.gold;
+      this.inventorySize = heroState.inventorySize;
+      this.weapon = heroState.weapon ? { ...heroState.weapon } : null;
+      this.armor = heroState.armor ? { ...heroState.armor } : null;
+      this.inventory = (heroState.inventory ?? []).map((e) => ({ ...e, item: { ...e.item } }));
+      this.curses = heroState.curses ?? 0;
+    } else {
+      this._applyClassStats(playerClass);
+    }
   }
 
-  _applyClass(cls) {
+  /** 职业特性（暴击/休整/击杀加成/狂化）——持久角色也要生效 */
+  _applyClassTraits(cls) {
+    const b = cls?.bonus ?? {};
+    this.classCrit = b.crit ?? 0;
+    this.restHeal = b.restHeal ?? 0;
+    this.killBonus = b.killBonus ?? 0;
+    this.berserk = !!b.berserk;
+  }
+
+  /** 职业属性加成（仅无持久角色数据时应用，持久角色已在创建时计入） */
+  _applyClassStats(cls) {
     const b = cls?.bonus ?? {};
     this.maxHp += b.maxHp ?? 0;
     this.hp += b.hp ?? 0;
     this.atk += b.atk ?? 0;
     this.power += b.power ?? 0;
-    this.classCrit = b.crit ?? 0;
-    this.restHeal = b.restHeal ?? 0;
-    this.killBonus = b.killBonus ?? 0;
-    this.berserk = !!b.berserk;
   }
 
   /** 有效战力 = 基础战力 + 武器加成 - 诅咒惩罚 (+ 狂战士低血加成) */

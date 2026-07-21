@@ -34,12 +34,10 @@ export class TitleView {
       document.body.appendChild(layer);
       this.layer = layer;
 
-      layer.querySelector('#title-start').addEventListener('click', async () => {
-        const mode = await this._pickMode();
-        if (mode === 'adventure') await this._playPrologue();   // 序章只属于主线冒险
+      layer.querySelector('#title-start').addEventListener('click', () => {
         layer.classList.add('title-fade');
         setTimeout(() => { layer.remove(); this.layer = null; }, 500);
-        resolve(mode);
+        resolve();
       });
       layer.querySelector('#title-howto').addEventListener('click', () => this.showHowto());
       layer.querySelector('#title-records').addEventListener('click', () => this._showRecords());
@@ -47,22 +45,7 @@ export class TitleView {
     });
   }
 
-  /** 玩法选择：冒险 / 无尽探索 / 每日挑战 / AI 对战 */
-  _pickMode() {
-    const m = this.saveMeta.meta;
-    const today = new Date().toISOString().slice(0, 10);
-    return this.modal.show({
-      title: t('modes.title'),
-      choices: [
-        { label: t('modes.adventure'), sub: t('modes.adventureDesc'), value: 'adventure' },
-        { label: t('modes.endless'), sub: t('modes.endlessDesc', { n: m.endlessBest || '—' }), value: 'endless' },
-        { label: t('modes.daily'), sub: t('modes.dailyDesc', { date: today, n: m.dailyBest?.[today] ?? '—' }), value: 'daily' },
-        { label: t('modes.versus'), sub: t('modes.versusDesc', { n: this.config.versus.targetFloor, w: m.pvpWins, l: m.pvpLosses }), value: 'versus' },
-      ],
-    });
-  }
-
-  async _playPrologue() {
+  async playPrologue() {
     await this.modal.show({
       title: t('prologue.title'),
       bodyHTML: `<p class="story-text">${t('prologue.text')}</p>`,
