@@ -6,11 +6,12 @@
 export class Combat {
   constructor(config, rng) {
     this.cfg = config.combat;
+    this.expCfg = config.exp;
     this.rng = rng;
   }
 
   /**
-   * @returns {{ win, crit, playerPower, monsterPower, powerGain, goldGain, damage, tier }}
+   * @returns {{ win, crit, playerPower, monsterPower, powerGain, goldGain, expGain, damage, tier }}
    */
   resolve(player, card) {
     const tier = card.data.tier ?? (card.data.mirror ? 'mirror' : 'monster');
@@ -26,14 +27,30 @@ export class Combat {
 
     const win = playerPower >= monsterPower;
 
-    const powerGain = win ? (this.cfg.powerGain[tier] ?? this.cfg.powerGain.monster) + (player.killBonus ?? 0) : 0;
+    // 战力奖励随敌人强度浮动：层级基础值 + 敌方战力/15；暴击（完美击杀）额外 +1
+    const powerGain = win
+      ? (this.cfg.powerGain[tier] ?? this.cfg.powerGain.monster)
+        + Math.floor(monsterPower / this.cfg.powerGainStrengthDiv)
+        + (player.killBonus ?? 0)
+        + (crit ? this.cfg.critPowerBonus : 0)
+      : 0;
+
+    // 经验 = 敌方战力 × 层级系数；暴击 ×1.5
+    const expCfg = this.expCfg ?? {};
+    const tierMult = expCfg.tierMult?.[tier] ?? 1;
+    const expGain = win
+      ? Math.ceil(monsterPower * tierMult * (crit ? this.cfg.critExpMult : 1))
+      : 0;
+
     const goldRange = this.cfg.goldReward[tier] ?? this.cfg.goldReward.monster;
-    const goldGain = win ? this.rng.int(goldRange[0], goldRange[1]) : 0;
+    const goldGain = win
+      ? Math.round(this.rng.int(goldRange[0], goldRange[1]) * (crit ? this.cfg.critGoldMult : 1))
+      : 0;
 
     const damage = win
       ? 0
       : Math.max(1, this.cfg.defeatDamageBase + (monsterPower - playerPower) - player.block);
 
-    return { win, crit, playerPower, monsterPower, powerGain, goldGain, damage, tier };
+    return { win, crit, playerPower, monsterPower, powerGain, goldGain, expGain, damage, tier };
   }
 }

@@ -17,6 +17,7 @@ export class StageView {
     bus.on('goldGained', (n) => this.burst('💰', `+${n}`, 'gold'));
     bus.on('powerGained', (n) => this.burst('💪', `+${n}`, 'pow'));
     bus.on('playerHurt', (n) => this.burst('💥', `-${n}`, 'dmg'));
+    bus.on('levelUp', (lv) => this.burst('🎉', `Lv.${lv}`, 'pow'));
   }
 
   /** 背景漂浮牌背（随机大小/位置/速度，无限循环） */

@@ -27,6 +27,8 @@ export class Hero {
     const hero = new Hero({
       created: Date.now(),
       classId: cls.id,
+      level: 1,
+      exp: 0,
       maxHp: base.maxHp + (b.maxHp ?? 0),
       atk: base.atk + (b.atk ?? 0),
       power: base.power + (b.power ?? 0),
@@ -59,6 +61,8 @@ export class Hero {
 
   /** 冒险中的运行时 Player 状态回写到持久角色 */
   syncFromPlayer(p) {
+    this.level = p.level;
+    this.exp = p.exp;
     this.maxHp = p.maxHp;
     this.atk = p.atk;
     this.power = p.power;

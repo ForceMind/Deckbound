@@ -28,9 +28,12 @@ async function fightHandler(ctx, card) {
   if (result.win) {
     ctx.player.changePower(result.powerGain);
     ctx.player.changeGold(result.goldGain);
+    const ups = ctx.player.addExp(result.expGain);
     ctx.game.stats.kills += 1;
     if (result.tier === 'boss') ctx.game.stats.bossKills += 1;
-    ctx.ui.toast(t('toast.fightWin', { name: card.name, power: result.powerGain, gold: result.goldGain }));
+    const key = result.crit ? 'toast.fightWinCrit' : 'toast.fightWin';
+    ctx.ui.toast(t(key, { name: card.name, power: result.powerGain, gold: result.goldGain, exp: result.expGain }));
+    for (const lv of ups) ctx.ui.toast(t('toast.levelUp', { n: lv }));
     return {};
   }
   ctx.player.changeHp(-result.damage);

@@ -99,7 +99,7 @@ export class Hub {
         <div class="hub-hero-card">
           <span class="hub-hero-emoji">${this.classEmoji}</span>
           <div class="hub-hero-stats">
-            <b>${this.heroClass?.name ?? ''}</b>
+            <b>${this.heroClass?.name ?? ''}　⭐ Lv.${hero.level ?? 1}</b>
             <span>💪 ${hero.effectivePower}　❤️ ${hero.maxHp}　⚔️ ${hero.atk + (hero.weapon?.atk ?? 0)}　💰 ${hero.gold}</span>
             <span class="hub-hero-gear">🗡️ ${weapon}　🛡️ ${armor}　🎒 ${hero.inventory.length}/${hero.inventorySize}</span>
           </div>
@@ -170,7 +170,9 @@ export class Hub {
     while (true) {
       const weaponPower = hero.weapon?.power ?? 0;
       const cursePenalty = hero.curses * 2;
+      const expToNext = this.config.exp.baseToNext + ((hero.level ?? 1) - 1) * this.config.exp.perLevel;
       const statsHtml = `
+        <p>⭐ ${t('hub.detailLevel', { lv: hero.level ?? 1, exp: hero.exp ?? 0, next: expToNext })}</p>
         <p>💪 ${t('hub.detailPower', { total: hero.effectivePower, base: hero.power, weapon: weaponPower, curse: cursePenalty })}</p>
         <p>❤️ ${hero.maxHp}　⚔️ ${hero.atk + (hero.weapon?.atk ?? 0)}（${hero.atk}+${hero.weapon?.atk ?? 0}）　🎒 ${hero.inventory.length}/${hero.inventorySize}${hero.curses ? `　💀×${hero.curses}` : ''}</p>
         <p style="color:var(--text-dim)">${t('hub.detailRecord', { adv: hero.stats.adventures, deep: hero.stats.deepestFloor, kills: hero.stats.kills, wins: hero.stats.throneWins })}</p>`;

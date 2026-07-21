@@ -15,6 +15,7 @@ export class HUD {
     bus.on('inventoryChanged', (p) => { this.renderInventory(p); this.renderBuffs(p); });
     bus.on('goldGained', () => this.animator.bumpStat('hud-gold'));
     bus.on('powerGained', () => this.animator.bumpStat('hud-power'));
+    bus.on('levelUp', () => this.animator.bumpStat('hud-level'));
     bus.on('playerHurt', () => this.animator.bumpStat('hud-hp'));
   }
 
@@ -27,6 +28,11 @@ export class HUD {
   }
 
   renderStats(p) {
+    const lvEl = document.getElementById('hud-level');
+    if (lvEl) {
+      lvEl.innerHTML = `⭐ <b>${p.level}</b>`;
+      lvEl.title = `${t('hud.level')} ${p.level}　${p.exp}/${p.expToNext} EXP`;
+    }
     this._set('hud-hp', `❤️ <b>${p.hp}</b>/<i>${p.maxHp}</i>`);
     this._set('hud-atk', `⚔️ <b>${p.atk + (p.weapon?.atk ?? 0)}</b>`);
     this._set('hud-power', `💪 <b>${p.effectivePower}</b>`);

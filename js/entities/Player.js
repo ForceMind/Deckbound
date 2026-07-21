@@ -9,7 +9,10 @@ export class Player {
    * @param heroState 持久角色数据（冒险主世界）；为空时用基础值 + 职业加成（经典挑战）
    */
   constructor(config, playerClass, heroState = null) {
+    this.config = config;
     const base = config.player;
+    this.level = 1;
+    this.exp = 0;
     this.maxHp = base.maxHp;
     this.hp = base.hp;
     this.atk = base.atk;
@@ -41,6 +44,8 @@ export class Player {
       this.armor = heroState.armor ? { ...heroState.armor } : null;
       this.inventory = (heroState.inventory ?? []).map((e) => ({ ...e, item: { ...e.item } }));
       this.curses = heroState.curses ?? 0;
+      this.level = heroState.level ?? 1;
+      this.exp = heroState.exp ?? 0;
     } else {
       this._applyClassStats(playerClass);
     }
@@ -80,6 +85,34 @@ export class Player {
 
   get block() {
     return this.armor?.block ?? 0;
+  }
+
+  /** 升到下一级所需经验 */
+  get expToNext() {
+    const c = this.config.exp;
+    return c.baseToNext + (this.level - 1) * c.perLevel;
+  }
+
+  /**
+   * 获得经验，可能连续升级。升级：生命上限+3 并回复等量、攻击+1、每 3 级战力+1。
+   * @returns 本次升到的等级数组（空数组=未升级）
+   */
+  addExp(amount) {
+    this.exp += amount;
+    const ups = [];
+    const c = this.config.exp;
+    while (this.exp >= this.expToNext) {
+      this.exp -= this.expToNext;
+      this.level += 1;
+      this.maxHp += c.levelUp.maxHp;
+      this.hp = Math.min(this.maxHp, this.hp + c.levelUp.maxHp);
+      this.atk += c.levelUp.atk;
+      if (this.level % c.levelUp.powerEvery === 0) this.power += 1;
+      ups.push(this.level);
+    }
+    bus.emit('statsChanged', this);
+    for (const lv of ups) bus.emit('levelUp', lv);
+    return ups;
   }
 
   changeHp(delta) {
