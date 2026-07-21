@@ -4,7 +4,7 @@ import { Game } from './core/Game.js';
 import { Hero } from './core/Hero.js';
 import { RNG } from './core/RNG.js';
 import { i18n, t } from './core/I18n.js';
-import './core/Sound.js';   // 初始化音效（订阅事件总线）
+import { sound } from './core/Sound.js';
 import { ModalView } from './ui/ModalView.js';
 import { TitleView } from './ui/TitleView.js';
 import { Hub, pickClass } from './hub/Hub.js';
@@ -31,6 +31,7 @@ async function boot() {
       skipTitle = sessionStorage.getItem('deckbound_skip_title') === '1';
       sessionStorage.removeItem('deckbound_skip_title');
     } catch { /* 忽略 */ }
+    sound.startMusic('hub');   // 标题与大厅共用平静主题
     if (!skipTitle) await titleView.show();
     else titleView.layer?.remove();
 

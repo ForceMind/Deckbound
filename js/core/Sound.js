@@ -5,19 +5,32 @@ import { bus } from './EventBus.js';
  * 订阅事件总线自动发声；设置中可开关（localStorage 记忆）。
  */
 const KEY = 'deckbound_sound';
+const MUSIC_KEY = 'deckbound_music';
+
+/** 生成式氛围音阶：大厅（C 大调五声，平静）/ 冒险（A 小调五声，神秘） */
+const THEMES = {
+  hub: [261.6, 293.7, 329.6, 392.0, 440.0, 523.3],
+  adventure: [220.0, 261.6, 293.7, 329.6, 392.0, 440.0],
+};
 
 class SoundManager {
   constructor() {
     this.enabled = localStorage.getItem(KEY) !== '0';
+    this.musicOn = localStorage.getItem(MUSIC_KEY) !== '0';
     this.ctx = null;
+    this.musicTimer = null;
+    this.currentTheme = null;
 
     bus.on('goldGained', () => this.play('coin'));
     bus.on('powerGained', () => this.play('power'));
     bus.on('playerHurt', () => this.play('hurt'));
     bus.on('levelUp', () => this.play('levelup'));
 
-    // AudioContext 需要用户手势解锁
-    document.addEventListener('pointerdown', () => this._ensure(), { once: true });
+    // AudioContext 需要用户手势解锁；解锁后补启动待播的音乐
+    document.addEventListener('pointerdown', () => {
+      this._ensure();
+      if (this.musicOn && this.currentTheme && !this.musicTimer) this.startMusic(this.currentTheme);
+    }, { once: true });
   }
 
   _ensure() {
@@ -32,6 +45,41 @@ class SoundManager {
     localStorage.setItem(KEY, this.enabled ? '1' : '0');
     if (this.enabled) this.play('click');
     return this.enabled;
+  }
+
+  /* ============ 背景音乐（生成式氛围） ============ */
+
+  /** 切换到某个音乐主题（hub / adventure）。每 ~2.2s 从音阶随机取音铺 pad */
+  startMusic(theme) {
+    this.currentTheme = theme;
+    if (!this.musicOn) return;
+    this._ensure();
+    if (!this.ctx) return;
+    if (this.musicTimer) clearInterval(this.musicTimer);
+
+    const scale = THEMES[theme] ?? THEMES.hub;
+    const tick = () => {
+      if (!this.musicOn || !this.ctx || document.hidden) return;
+      const f = scale[Math.floor(Math.random() * scale.length)];
+      this._tone(f, 2.6 + Math.random() * 1.2, { vol: 0.03 });
+      if (Math.random() < 0.35) this._tone(f * 2, 1.6, { vol: 0.015, delay: 0.5 });
+      if (Math.random() < 0.15) this._tone(scale[0] / 2, 4.5, { vol: 0.028 });   // 低音 drone
+    };
+    tick();
+    this.musicTimer = setInterval(tick, 2200);
+  }
+
+  stopMusic() {
+    if (this.musicTimer) clearInterval(this.musicTimer);
+    this.musicTimer = null;
+  }
+
+  toggleMusic() {
+    this.musicOn = !this.musicOn;
+    localStorage.setItem(MUSIC_KEY, this.musicOn ? '1' : '0');
+    if (this.musicOn && this.currentTheme) this.startMusic(this.currentTheme);
+    else this.stopMusic();
+    return this.musicOn;
   }
 
   /** 合成一个音：频率、时长，可选波形/音量/延迟/滑音目标 */

@@ -383,6 +383,7 @@
     "title": "⚙️ 设置",
     "seed": "世界种子：<b>{seed}</b><br>同一种子会生成同一片牌阵（为每日挑战预留）",
     "sound": "🔊 音效：{state}",
+    "music": "🎵 音乐：{state}",
     "soundOn": "开",
     "soundOff": "关",
     "language": "🌐 语言：中文",

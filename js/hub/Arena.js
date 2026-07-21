@@ -1,6 +1,7 @@
 import { t } from '../core/I18n.js';
 import { rollGear, gearStat } from '../core/GearFactory.js';
 import { wait } from '../anim/Animator.js';
+import { sound } from '../core/Sound.js';
 
 /**
  * ⚔️ 竞技场 —— 押注金币与 AI 对手战力对决（三轮两胜）。
@@ -39,6 +40,7 @@ export class Arena {
     if (rng.chance(0.5)) loot.push(rollGear(data, rng, { weights }));
 
     hero.changeGold(-stake);
+    sound.play('combat');
 
     // 三轮两胜：双方每轮 roll 战力 ±15%
     const box = modal.showRaw();
@@ -67,6 +69,7 @@ export class Arena {
     await wait(500);
 
     const won = myWins >= 2;
+    sound.play(won ? 'win' : 'lose');
     const resultEl = box.querySelector('#arena-result');
     resultEl.className = `combat-result ${won ? 'victory' : 'defeat'}`;
     resultEl.textContent = won ? t('combat.victory') : t('combat.defeat');

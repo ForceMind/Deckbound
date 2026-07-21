@@ -1,6 +1,7 @@
 import { t } from '../core/I18n.js';
 import { rollGear } from '../core/GearFactory.js';
 import { wait } from '../anim/Animator.js';
+import { sound } from '../core/Sound.js';
 
 /**
  * 🐉 首领狩猎 —— 付入场费挑战强化版首领，胜利掉落高稀有装备与金币。
@@ -39,6 +40,7 @@ export class Hunt {
     const fee = cfg.baseFee + cfg.feeStep * picked;
     const bossPower = cfg.basePower + cfg.powerStep * picked;
     hero.changeGold(-fee);
+    sound.play('combat');
 
     // 战斗演出（roll ±12%）
     const box = modal.showRaw();
@@ -56,6 +58,7 @@ export class Hunt {
     const mine = hero.effectivePower * (0.88 + rng.next() * 0.24);
     const theirs = bossPower * (0.88 + rng.next() * 0.24);
     const won = mine >= theirs;
+    sound.play(won ? 'win' : 'lose');
     const resultEl = box.querySelector('#hunt-result');
     box.querySelector('.combat-stage').classList.remove('clash');
     resultEl.className = `combat-result ${won ? 'victory' : 'defeat'}`;

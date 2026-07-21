@@ -103,6 +103,7 @@ export class Game {
       this._renderRivalBar();
     }
 
+    sound.startMusic('adventure');
     this.ui.hud.renderAll(this.player, this.world.floor);
     this.ui.boardView.render(this.world, this.player, { enterFar: true });
     this.updateQuestBar();
@@ -220,6 +221,7 @@ export class Game {
   async _versusEnd(win, reason = 'arrive') {
     if (this.over) return;
     this.over = true;
+    sound.play(win ? 'win' : 'lose');
     this.saveMeta.recordVersus(win);
     // 竞速奖励结算给主角色
     const reward = win ? this.config.classicReward.versusWin : this.config.classicReward.versusLose;
@@ -750,6 +752,7 @@ export class Game {
       choices: [
         { label: t('settings.back'), value: 'back' },
         { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
+        { label: t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }), value: 'music' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
         { label: t('settings.howto'), value: 'howto' },
         { label: t('settings.replayTutorial'), value: 'tutorial' },
@@ -759,6 +762,9 @@ export class Game {
     if (picked === 'sound') {
       sound.toggle();
       this.ui.toast(t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'music') {
+      sound.toggleMusic();
+      this.ui.toast(t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }));
     } else if (picked === 'lang') {
       await i18n.setLang(i18n.otherLang);
       this._refreshLanguage();
@@ -796,6 +802,7 @@ export class Game {
       this.config, this.data.classes,
     );
 
+    sound.play(won ? 'win' : 'lose');
     if (!abandoned && !won) this.ui.animator.screenShake();
     const unlockHtml = newlyUnlocked.length
       ? `<p style="color:var(--gold)">${t('over.unlock', { names: newlyUnlocked.map((id) => this.data.classes.find((c) => c.id === id)?.name).join('、') })}</p>`

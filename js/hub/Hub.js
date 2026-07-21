@@ -318,6 +318,7 @@ export class Hub {
       title: t('settings.title'),
       choices: [
         { label: t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }), value: 'sound' },
+        { label: t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }), value: 'music' },
         { label: t('settings.language'), sub: t('settings.languageSub'), value: 'lang' },
         { label: t('hub.resetHero'), sub: t('hub.resetHeroSub'), value: 'reset' },
         { label: t('hub.back'), value: 'back' },
@@ -326,6 +327,9 @@ export class Hub {
     if (picked === 'sound') {
       sound.toggle();
       this.toast(t('settings.sound', { state: sound.enabled ? t('settings.soundOn') : t('settings.soundOff') }));
+    } else if (picked === 'music') {
+      sound.toggleMusic();
+      this.toast(t('settings.music', { state: sound.musicOn ? t('settings.soundOn') : t('settings.soundOff') }));
     } else if (picked === 'lang') {
       await i18n.setLang(i18n.otherLang);
       location.reload();
