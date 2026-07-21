@@ -55,12 +55,12 @@ export class Player {
     }
   }
 
-  /** 职业特性（暴击/休整/击杀加成/狂化）——持久角色也要生效 */
+  /** 职业特性（暴击/休整/击杀经验加成/狂化）——持久角色也要生效 */
   _applyClassTraits(cls) {
     const b = cls?.bonus ?? {};
     this.classCrit = b.crit ?? 0;
     this.restHeal = b.restHeal ?? 0;
-    this.killBonus = b.killBonus ?? 0;
+    this.killExpBonus = b.killExp ?? 0;
     this.berserk = !!b.berserk;
   }
 
@@ -109,10 +109,10 @@ export class Player {
     }
   }
 
-  /** 升到下一级所需经验 */
+  /** 升到下一级所需经验（复利曲线：等级越高越难升，形成软上限） */
   get expToNext() {
     const c = this.config.exp;
-    return c.baseToNext + (this.level - 1) * c.perLevel;
+    return Math.round(c.baseToNext * Math.pow(c.growth, this.level - 1));
   }
 
   /**
@@ -128,7 +128,7 @@ export class Player {
       this.level += 1;
       this.maxHp += c.levelUp.maxHp;
       this.hp = Math.min(this.maxHp, this.hp + c.levelUp.maxHp);
-      if (this.level % c.levelUp.powerEvery === 0) this.power += 1;
+      this.power += c.levelUp.power ?? 0;   // 经验驱动：战力唯一的常规成长来源
       if (c.levelUp.maxEnergyEvery && this.level % c.levelUp.maxEnergyEvery === 0) {
         this.maxEnergy += 1;
         this.energy += 1;

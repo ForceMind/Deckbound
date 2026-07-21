@@ -115,10 +115,10 @@
     "id": "necromancer",
     "name": "死灵法师",
     "emoji": "☠️",
-    "desc": "击杀敌人额外 +1 战力（解锁：累计击败 3 个 Boss）",
+    "desc": "击杀经验 +15%（解锁：累计击败 3 个 Boss）",
     "bonus": {
       "power": 1,
-      "killBonus": 1
+      "killExp": 0.15
     },
     "unlocked": false,
     "unlockHint": "累计击败 3 个 Boss 解锁",

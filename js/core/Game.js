@@ -857,16 +857,17 @@ export class Game {
       this.hero.syncFromPlayer(this.player);
       if (floor > this.hero.stats.deepestFloor) this.hero.stats.deepestFloor = floor;
       if (won) this.hero.stats.throneWins += 1;
+      // 章节即关卡：撤退与死亡都回本章起点（重刷本章攒经验是过首领的正道），
+      // 死亡额外损失金币；通关后原地保存（无尽推进）
+      const ch = this.chapterOf(floor);
+      this.hero.currentFloor = won ? floor : (ch ? ch.from : Math.max(1, floor - 9));
       if (!abandoned && !won) {
         this.hero.stats.deaths += 1;
         const loss = Math.floor(this.hero.gold * this.config.adventure.deathGoldLossPct);
         this.hero.gold = Math.max(0, this.hero.gold - loss);
-        // 死亡检查点：退回本章起点（撤退则原地保存）
-        const ch = this.chapterOf(floor);
-        this.hero.currentFloor = ch ? ch.from : Math.max(1, floor - 9);
         extraHtml = `<p>${t('over.heroDeathLoss', { n: loss })}</p><p>${t('over.heroCheckpoint', { n: this.hero.currentFloor })}</p>`;
-      } else {
-        this.hero.currentFloor = floor;
+      } else if (!won) {
+        extraHtml = `<p>${t('over.heroCheckpoint', { n: this.hero.currentFloor })}</p>`;
       }
       this.hero.save();
       flavor = won ? t('over.winText') : abandoned ? t('over.heroRetreatText') : t('over.heroDeathText');

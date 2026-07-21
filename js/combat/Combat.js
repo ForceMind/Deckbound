@@ -48,21 +48,14 @@ export class Combat {
 
     const win = playerPower >= monsterPower;
 
-    // 战力奖励随敌人强度浮动：层级基础值 + 敌方战力/15；暴击（完美击杀）额外 +1
-    const powerGain = win
-      ? (this.cfg.powerGain[tier] ?? this.cfg.powerGain.monster)
-        + Math.floor(monsterPower / this.cfg.powerGainStrengthDiv)
-        + (player.killBonus ?? 0)
-        + (crit ? this.cfg.critPowerBonus : 0)
-      : 0;
-
-    // 经验 = 敌方战力 × 层级系数；暴击 ×1.5
+    // 经验驱动成长：击杀只给经验（战力由升级/装备/神器提供）。
+    // 经验 = 敌方战力 × 层级系数；暴击 ×1.5；死灵法师与猎手号角有加成
     const expCfg = this.expCfg ?? {};
     const tierMult = expCfg.tierMult?.[tier] ?? 1;
-    // 神器·猎手号角：击杀经验 +25%
     const relicExpMult = player.hasRelic?.('hunter_horn') ? 1.25 : 1;
+    const classExpMult = 1 + (player.killExpBonus ?? 0);
     const expGain = win
-      ? Math.ceil(monsterPower * tierMult * relicExpMult * (crit ? this.cfg.critExpMult : 1))
+      ? Math.ceil(monsterPower * tierMult * relicExpMult * classExpMult * (crit ? this.cfg.critExpMult : 1))
       : 0;
 
     const goldRange = this.cfg.goldReward[tier] ?? this.cfg.goldReward.monster;
@@ -78,6 +71,6 @@ export class Combat {
       ? 0
       : Math.max(1, this.cfg.defeatDamageBase + (monsterPower - playerPower) - player.block) * (bloodPact ? 2 : 1);
 
-    return { win, crit, playerPower, monsterPower, powerGain, goldGain, expGain, damage, tier, bloodPact };
+    return { win, crit, playerPower, monsterPower, goldGain, expGain, damage, tier, bloodPact };
   }
 }

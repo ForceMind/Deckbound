@@ -27,20 +27,17 @@
   },
   "combat": {
     "animMs": 3000,
-    "powerGain": { "monster": 2, "elite": 4, "boss": 10, "mirror": 5 },
-    "powerGainStrengthDiv": 25,
     "goldReward": { "monster": [3, 8], "elite": [10, 18], "boss": [30, 50], "mirror": [15, 25] },
     "defeatDamageBase": 4,
     "critMultiplier": 1.5,
     "critExpMult": 1.5,
-    "critGoldMult": 1.3,
-    "critPowerBonus": 1
+    "critGoldMult": 1.3
   },
   "exp": {
     "tierMult": { "monster": 1.0, "elite": 1.5, "boss": 3.0, "mirror": 2.0 },
-    "baseToNext": 20,
-    "perLevel": 15,
-    "levelUp": { "maxHp": 3, "powerEvery": 2, "maxEnergyEvery": 5 }
+    "baseToNext": 15,
+    "growth": 1.08,
+    "levelUp": { "maxHp": 3, "power": 3, "maxEnergyEvery": 5 }
   },
   "boss": {
     "interval": 10

@@ -2,68 +2,174 @@
   "finalFloor": 100,
   "chapters": [
     {
-      "n": 1, "from": 1, "to": 10, "name": "迷雾边境", "emoji": "🌫️", "powerMult": 1.0,
-      "spawnBias": { "food": 1.3, "empty": 1.2 },
+      "n": 1,
+      "from": 1,
+      "to": 10,
+      "name": "迷雾边境",
+      "emoji": "🌫️",
+      "powerMult": 1,
+      "spawnBias": {
+        "food": 1.3,
+        "empty": 1.2
+      },
       "intro": "牌阵的边缘笼罩着灰白的迷雾。野狼与哥布林在牌面间游荡，偶尔能遇到同样迷路的商人。占卜师的遗言在风中回响：「向北走。」",
       "outro": "迷雾中的守关者倒下了。雾气散开一角，你第一次看清了牌阵的辽阔——它一直延伸到天际线之外。"
     },
     {
-      "n": 2, "from": 11, "to": 20, "name": "白骨荒原", "emoji": "💀", "powerMult": 1.0,
-      "spawnBias": { "monster": 1.3, "curse": 2.2, "trap": 1.5, "campfire": 0.6, "food": 0.8 },
+      "n": 2,
+      "from": 11,
+      "to": 20,
+      "name": "白骨荒原",
+      "emoji": "💀",
+      "powerMult": 1,
+      "spawnBias": {
+        "monster": 1.3,
+        "curse": 2.2,
+        "trap": 1.5,
+        "campfire": 0.6,
+        "food": 0.8
+      },
       "intro": "迷雾散尽，脚下的牌面变得惨白。这里曾是先行者们的葬身之地，骷髅兵举着锈剑漫无目的地徘徊。他们生前，也都是向北而行的冒险者。",
       "outro": "荒原的主人化作了一堆白骨。你在它的王座下发现了一行刻字：「第五十张牌。别相信镜子。」"
     },
     {
-      "n": 3, "from": 21, "to": 30, "name": "燃烧深渊", "emoji": "🔥", "powerMult": 1.1,
-      "spawnBias": { "fire": 4.5, "trap": 1.5, "spring": 0.5, "food": 0.7, "campfire": 0.7 },
+      "n": 3,
+      "from": 21,
+      "to": 30,
+      "name": "燃烧深渊",
+      "emoji": "🔥",
+      "powerMult": 1.09,
+      "spawnBias": {
+        "fire": 4.5,
+        "trap": 1.5,
+        "spring": 0.5,
+        "food": 0.7,
+        "campfire": 0.7
+      },
       "intro": "空气开始灼热。牌面的边缘卷曲、焦黑，火焰在牌与牌之间蔓延。据说深渊的火焰烧掉的不是身体，而是记忆。",
       "outro": "深渊之火随着守关者的倒下而熄灭。灰烬中浮现出一条向北的路，路的尽头映着一片银白色的光。"
     },
     {
-      "n": 4, "from": 31, "to": 40, "name": "镜像回廊", "emoji": "🪞", "powerMult": 1.2,
-      "spawnBias": { "mirror": 6.0, "elite": 1.3, "blessing": 1.4, "teleport": 2.0 },
+      "n": 4,
+      "from": 31,
+      "to": 40,
+      "name": "镜像回廊",
+      "emoji": "🪞",
+      "powerMult": 1.18,
+      "spawnBias": {
+        "mirror": 6,
+        "elite": 1.3,
+        "blessing": 1.4,
+        "teleport": 2
+      },
       "intro": "这里的每一张牌都泛着银光。你开始在牌面上看到自己的倒影——但倒影的动作，比你慢半拍。白骨荒原的刻字在脑中回响：别相信镜子。",
       "outro": "你击碎了最后一面镜子。碎片中映出的不再是你，而是一座王座的轮廓——它就在前方，第五十张牌之上。"
     },
     {
-      "n": 5, "from": 41, "to": 50, "name": "虚妄王座", "emoji": "👑", "powerMult": 1.3,
-      "spawnBias": { "elite": 1.6, "monster": 1.3, "shrine": 1.6, "empty": 0.5, "gold": 1.3 },
+      "n": 5,
+      "from": 41,
+      "to": 50,
+      "name": "虚妄王座",
+      "emoji": "👑",
+      "powerMult": 1.27,
+      "spawnBias": {
+        "elite": 1.6,
+        "monster": 1.3,
+        "shrine": 1.6,
+        "empty": 0.5,
+        "gold": 1.3
+      },
       "intro": "牌阵的「尽头」到了。天空低垂，每一张牌都散发着微光，像是整个世界都在屏息。王座上的存在已经注意到了你——它正在洗牌。",
       "outro": "你坐上王座的一瞬间，它碎成了千万片牌屑。这是一座假王座——预言被篡改了。牌屑中浮现出真正的谶语：「第一百张牌。走完镜子背后的路。」牌阵仍在向北延伸。"
     },
     {
-      "n": 6, "from": 51, "to": 60, "name": "裂隙之界", "emoji": "🕳️", "powerMult": 1.4,
-      "spawnBias": { "curse": 2.0, "trap": 1.8, "teleport": 2.5, "empty": 0.6 },
+      "n": 6,
+      "from": 51,
+      "to": 60,
+      "name": "裂隙之界",
+      "emoji": "🕳️",
+      "powerMult": 1.36,
+      "spawnBias": {
+        "curse": 2,
+        "trap": 1.8,
+        "teleport": 2.5,
+        "empty": 0.6
+      },
       "intro": "假王座的碎片撕开了牌阵的表层。这里的牌面残缺不全，裂隙中渗出低语。走错一步，就会成为裂隙的一部分。",
       "outro": "裂隙的看守者崩解了。裂缝深处透出星光——那不是天空，是牌阵之外的东西。"
     },
     {
-      "n": 7, "from": 61, "to": 70, "name": "星坠荒海", "emoji": "🌠", "powerMult": 1.55,
-      "spawnBias": { "gold": 1.6, "treasure": 1.8, "teleport": 2.0, "monster": 1.2, "campfire": 0.8 },
+      "n": 7,
+      "from": 61,
+      "to": 70,
+      "name": "星坠荒海",
+      "emoji": "🌠",
+      "powerMult": 1.5,
+      "spawnBias": {
+        "gold": 1.6,
+        "treasure": 1.8,
+        "teleport": 2,
+        "monster": 1.2,
+        "campfire": 0.8
+      },
       "intro": "无数星辰坠落在这片牌海上，每一颗都值一笔财富——也都引来了守财的凶兽。传说星坠之地，藏着预言被篡改的原因。",
       "outro": "星海的巨兽沉入牌底。你捡起一枚星屑，里面封着半句话：「……篡改预言的，是坐在真王座上的那位。」"
     },
     {
-      "n": 8, "from": 71, "to": 80, "name": "时之裂隙", "emoji": "⏳", "powerMult": 1.7,
-      "spawnBias": { "mirror": 4.0, "elite": 1.5, "blessing": 1.3, "shrine": 1.3 },
+      "n": 8,
+      "from": 71,
+      "to": 80,
+      "name": "时之裂隙",
+      "emoji": "⏳",
+      "powerMult": 1.63,
+      "spawnBias": {
+        "mirror": 4,
+        "elite": 1.5,
+        "blessing": 1.3,
+        "shrine": 1.3
+      },
       "intro": "时间在这里失去了方向。你看到无数个「自己」的残影在牌面上重演过去的选择——有的死在龙息下，有的倒在荒原上。别停下，停下就会变成残影之一。",
       "outro": "时之守卫的沙漏碎了。所有残影同时转头看向你，然后微笑着消散。前方的牌面上写着：还有二十张牌。"
     },
     {
-      "n": 9, "from": 81, "to": 90, "name": "寂灭长夜", "emoji": "🌑", "powerMult": 1.85,
-      "spawnBias": { "monster": 1.5, "elite": 1.8, "curse": 1.8, "campfire": 0.5, "food": 0.6, "empty": 0.4 },
+      "n": 9,
+      "from": 81,
+      "to": 90,
+      "name": "寂灭长夜",
+      "emoji": "🌑",
+      "powerMult": 1.77,
+      "spawnBias": {
+        "monster": 1.5,
+        "elite": 1.8,
+        "curse": 1.8,
+        "campfire": 0.5,
+        "food": 0.6,
+        "empty": 0.4
+      },
       "intro": "光在这里熄灭了。整章牌阵浸在墨一样的黑暗里，只有怪物的眼睛在发光。这是真王座设下的最后一道防线——让挑战者在长夜中耗尽勇气。",
       "outro": "长夜的主宰倒下时，黑暗如潮水般退去。晨光中，真正的命运王座静静矗立在十张牌之外——它已经等了你很久。"
     },
     {
-      "n": 10, "from": 91, "to": 100, "name": "真·命运王座", "emoji": "👑", "powerMult": 2.0,
-      "spawnBias": { "elite": 2.0, "monster": 1.4, "shrine": 1.8, "empty": 0.3, "blessing": 1.5 },
+      "n": 10,
+      "from": 91,
+      "to": 100,
+      "name": "真·命运王座",
+      "emoji": "👑",
+      "powerMult": 1.9,
+      "spawnBias": {
+        "elite": 2,
+        "monster": 1.4,
+        "shrine": 1.8,
+        "empty": 0.3,
+        "blessing": 1.5
+      },
       "intro": "最后十张牌。每一张都镌刻着此前所有冒险者的名字——他们都倒在了这里。王座上的存在缓缓起身：「你就是走完镜子背后之路的人？让我看看你的命运。」",
       "outro": "真正的王座空了。"
     }
   ],
   "endless": {
-    "name": "无尽牌阵", "emoji": "🌌",
+    "name": "无尽牌阵",
+    "emoji": "🌌",
     "intro": "你没有停下。真王座身后，牌阵仍在向北生成——没有尽头，没有守关者名单，只有越来越强的敌人和越走越远的传说。"
   }
 }

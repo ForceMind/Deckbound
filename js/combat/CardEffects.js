@@ -42,7 +42,6 @@ async function fightHandler(ctx, card) {
   }
 
   if (result.win) {
-    ctx.player.changePower(result.powerGain);
     ctx.player.changeGold(result.goldGain);
     const ups = ctx.player.addExp(result.expGain);
     ctx.game.stats.kills += 1;
@@ -63,7 +62,7 @@ async function fightHandler(ctx, card) {
       ctx.ui.toast(t('toast.skillHarvest', { n: heal }));
     }
     const key = result.crit ? 'toast.fightWinCrit' : 'toast.fightWin';
-    ctx.ui.toast(t(key, { name: card.name, power: result.powerGain, gold: result.goldGain, exp: result.expGain }));
+    ctx.ui.toast(t(key, { name: card.name, gold: result.goldGain, exp: result.expGain }));
     for (const lv of ups) ctx.ui.toast(t('toast.levelUp', { n: lv }));
     return { won: true };
   }

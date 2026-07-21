@@ -71,7 +71,7 @@ export class CombatView {
       monsterEl.classList.add('loser');
       resultEl.className = 'combat-result victory';
       resultEl.textContent = t('combat.victory');
-      this.animator.floatNum(playerEl, t('combat.powerGain', { n: result.powerGain }), 'pow');
+      this.animator.floatNum(playerEl, t('combat.expGain', { n: result.expGain }), 'pow');
       this.animator.flyCoins(monsterEl, Math.min(8, Math.max(3, Math.round(result.goldGain / 4))));
     } else {
       sound.play('lose');

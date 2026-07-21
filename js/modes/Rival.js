@@ -22,8 +22,28 @@ export class Rival {
     this.power = p.power;
     this.energy = p.energy;
     this.maxEnergy = p.maxEnergy;
+    this.exp = 0;
+    this.level = 1;
     this.dead = false;
     this.centerCol = Math.floor(this.config.grid.cols / 2);
+  }
+
+  get expToNext() {
+    const c = this.config.exp;
+    return Math.round(c.baseToNext * Math.pow(c.growth, this.level - 1));
+  }
+
+  /** 与玩家同曲线的经验升级（AI 镜像模型） */
+  addExp(n) {
+    this.exp += n;
+    const c = this.config.exp;
+    while (this.exp >= this.expToNext) {
+      this.exp -= this.expToNext;
+      this.level += 1;
+      this.maxHp += c.levelUp.maxHp;
+      this.hp = Math.min(this.maxHp, this.hp + c.levelUp.maxHp);
+      this.power += c.levelUp.power ?? 0;
+    }
   }
 
   get floor() {
@@ -109,7 +129,9 @@ export class Rival {
         const tier = card.data.tier ?? (card.data.mirror ? 'mirror' : 'monster');
         const enemyPower = card.data.mirror ? Math.max(1, this.power + this.rng.int(-1, 2)) : card.power;
         if (this.power >= enemyPower) {
-          this.power += cfg.powerGain[tier] ?? cfg.powerGain.monster;
+          // 经验驱动：击杀给经验，战力由升级提供
+          const tierMult = this.config.exp.tierMult[tier] ?? 1;
+          this.addExp(Math.ceil(enemyPower * tierMult));
           return { type: 'kill', tier, name: card.name };
         }
         this.hp -= Math.max(1, cfg.defeatDamageBase + (enemyPower - this.power));
