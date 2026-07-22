@@ -15,9 +15,14 @@ export function rollGear(data, rng, opts = {}) {
   }
   if (item.crit) item.crit = Math.round(item.crit * (1 + (mult - 1) * 0.5) * 100) / 100;
   item.price = Math.round(proto.price * mult);
-  const rarityName = data.rarities[rarity]?.name;
-  item.displayName = rarity !== 'common' && rarityName ? `${proto.name}（${rarityName}）` : proto.name;
+  item.displayName = gearName(item, data.rarities);
   return { kind, item };
+}
+
+/** 装备显示名带稀有度后缀（同名不同稀有度不混淆），冒险与大厅统一 */
+export function gearName(item, rarities) {
+  const r = rarities[item.rarity];
+  return r && item.rarity !== 'common' ? `${item.name}（${r.name}）` : item.name;
 }
 
 /** 装备一句话属性（大厅界面通用） */
