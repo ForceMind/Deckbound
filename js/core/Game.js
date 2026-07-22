@@ -13,6 +13,7 @@ import { TutorialView } from '../ui/TutorialView.js';
 import { Rival } from '../modes/Rival.js';
 import { checkAchievements } from './Achievements.js';
 import { sound } from './Sound.js';
+import { sellPrice } from './GearFactory.js';
 
 /**
  * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
