@@ -3,6 +3,26 @@ import { t } from '../core/I18n.js';
 import { sound } from '../core/Sound.js';
 
 /**
+ * 对决舞台 HTML —— 冒险战斗与大厅玩法（竞技场/狩猎）共用的骨架。
+ * left/right: { emoji, name, power }；opts.ids 生成滚动用的 id（仅冒险战斗需要），
+ * opts.stageClass 附加 class（如 'clash'）。
+ */
+export function combatStage(left, right, opts = {}) {
+  const side = (c, id) => `
+    <div class="combatant"${opts.ids ? ` id="${id}"` : ''}>
+      <span class="fighter-emoji">${c.emoji}</span>
+      <div class="fighter-name">${c.name}</div>
+      <div class="fighter-power"${opts.ids ? ` id="${id}-power"` : ''}>${c.power}</div>
+    </div>`;
+  return `
+    <div class="combat-stage${opts.stageClass ? ` ${opts.stageClass}` : ''}">
+      ${side(left, 'cb-player')}
+      <div class="combat-vs">${t('combat.vs')}</div>
+      ${side(right, 'cb-monster')}
+    </div>`;
+}
+
+/**
  * 战斗演出 —— 点击怪物立即开战（无二次确认），全程自动：
  * 双方亮相 → 战力数字滚动 → 碰撞震动 → Victory / Defeat。
  * 总时长约 3 秒（config.combat.animMs）。
@@ -31,19 +51,11 @@ export class CombatView {
     box.classList.add('combat-panel');
     box.innerHTML = `
       <h2>${t('combat.title')}</h2>
-      <div class="combat-stage">
-        <div class="combatant" id="cb-player">
-          <span class="fighter-emoji">${player.playerClass?.emoji ?? '🧑'}</span>
-          <div class="fighter-name">${t('combat.you')}${result.crit ? t('combat.crit') : ''}</div>
-          <div class="fighter-power" id="cb-player-power">0</div>
-        </div>
-        <div class="combat-vs">${t('combat.vs')}</div>
-        <div class="combatant" id="cb-monster">
-          <span class="fighter-emoji">${card.emoji}</span>
-          <div class="fighter-name">${card.name}</div>
-          <div class="fighter-power" id="cb-monster-power">0</div>
-        </div>
-      </div>
+      ${combatStage(
+        { emoji: player.playerClass?.emoji ?? '🧑', name: `${t('combat.you')}${result.crit ? t('combat.crit') : ''}`, power: 0 },
+        { emoji: card.emoji, name: card.name, power: 0 },
+        { ids: true },
+      )}
       <div class="combat-result" id="cb-result"></div>`;
 
     const stage = box.querySelector('.combat-stage');

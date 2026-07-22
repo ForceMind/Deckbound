@@ -2,6 +2,7 @@ import { t } from '../core/I18n.js';
 import { rollGear, gearStat } from '../core/GearFactory.js';
 import { wait } from '../anim/Animator.js';
 import { sound } from '../core/Sound.js';
+import { combatStage } from '../ui/CombatView.js';
 
 /**
  * ⚔️ 竞技场 —— 押注金币与 AI 对手战力对决（三轮两胜）。
@@ -46,11 +47,10 @@ export class Arena {
     const box = modal.showRaw();
     box.innerHTML = `
       <h2>${t('arena.title')}</h2>
-      <div class="combat-stage">
-        <div class="combatant"><span class="fighter-emoji">${this.hub.classEmoji}</span><div class="fighter-name">${t('combat.you')}</div><div class="fighter-power">${hero.effectivePower}</div></div>
-        <div class="combat-vs">${t('combat.vs')}</div>
-        <div class="combatant"><span class="fighter-emoji">${oppEmoji}</span><div class="fighter-name">${oppName}</div><div class="fighter-power">${oppPower}</div></div>
-      </div>
+      ${combatStage(
+        { emoji: this.hub.classEmoji, name: t('combat.you'), power: hero.effectivePower },
+        { emoji: oppEmoji, name: oppName, power: oppPower },
+      )}
       <div id="arena-rounds" style="min-height:70px"></div>
       <div class="combat-result" id="arena-result"></div>`;
     const roundsEl = box.querySelector('#arena-rounds');

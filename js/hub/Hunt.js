@@ -2,6 +2,7 @@ import { t } from '../core/I18n.js';
 import { rollGear } from '../core/GearFactory.js';
 import { wait } from '../anim/Animator.js';
 import { sound } from '../core/Sound.js';
+import { combatStage } from '../ui/CombatView.js';
 
 /**
  * 🐉 首领狩猎 —— 付入场费挑战强化版首领，胜利掉落高稀有装备与金币。
@@ -47,11 +48,11 @@ export class Hunt {
     box.classList.add('combat-panel');
     box.innerHTML = `
       <h2>${t('hunt.fightTitle', { name: boss.name })}</h2>
-      <div class="combat-stage clash">
-        <div class="combatant"><span class="fighter-emoji">${this.hub.classEmoji}</span><div class="fighter-name">${t('combat.you')}</div><div class="fighter-power">${hero.effectivePower}</div></div>
-        <div class="combat-vs">${t('combat.vs')}</div>
-        <div class="combatant"><span class="fighter-emoji">${boss.emoji}</span><div class="fighter-name">${boss.name}</div><div class="fighter-power">${bossPower}</div></div>
-      </div>
+      ${combatStage(
+        { emoji: this.hub.classEmoji, name: t('combat.you'), power: hero.effectivePower },
+        { emoji: boss.emoji, name: boss.name, power: bossPower },
+        { stageClass: 'clash' },
+      )}
       <div class="combat-result" id="hunt-result"></div>`;
     await wait(1600);
 
