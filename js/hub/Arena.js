@@ -37,8 +37,8 @@ export class Arena {
     const oppName = rng.pick([t('arena.opp1'), t('arena.opp2'), t('arena.opp3'), t('arena.opp4')]);
     const oppEmoji = rng.pick(['🥷', '🧝', '🧙‍♂️', '🤺', '🧌']);
     const weights = tier === 0 ? { common: 50, rare: 35, epic: 15 } : tier === 1 ? { rare: 45, epic: 40, legendary: 15 } : { epic: 50, legendary: 40, mythic: 10 };
-    const loot = [rollGear(data, rng, { weights })];
-    if (rng.chance(0.5)) loot.push(rollGear(data, rng, { weights }));
+    const loot = [rollGear(data, rng, { weights, depth: hero.currentFloor })];
+    if (rng.chance(0.5)) loot.push(rollGear(data, rng, { weights, depth: hero.currentFloor }));
 
     hero.changeGold(-stake);
     sound.play('combat');

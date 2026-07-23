@@ -111,13 +111,12 @@ export class ShopView {
       if (kind === 'weapon' || kind === 'armor') {
         const rarity = gen.rollRarity(world.floor);
         const proto = rng.pick(kind === 'weapon' ? data.weapons : data.armors);
-        const scaled = gen._scaleGear(proto, rarity);
-        const mult = data.rarities[rarity]?.statMult ?? 1;
+        const scaled = gen._scaleGear(proto, rarity, world.floor);
         stock.push({
           kind,
           emoji: proto.emoji,
           name: `${proto.name}（${data.rarities[rarity].name}）`,
-          price: Math.round(proto.price * mult),
+          price: scaled.price,
           desc: kind === 'weapon'
             ? t('shop.weaponDesc', { power: scaled.power, crit: Math.round(scaled.crit * 100) })
             : t('shop.armorDesc', { block: scaled.block, hp: scaled.hp }),

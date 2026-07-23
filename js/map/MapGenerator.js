@@ -1,4 +1,5 @@
 import { Card } from '../entities/Card.js';
+import { scaleGearStats } from '../core/GearFactory.js';
 
 /**
  * 地图生成器 —— 按层数动态生成一行 9 张卡。
@@ -102,12 +103,12 @@ export class MapGenerator {
       case 'weapon': {
         const rarity = this.rollRarity(floor);
         const proto = this.rng.pick(this.data.weapons);
-        return new Card('weapon', { name: proto.name, emoji: proto.emoji, rarity, data: this._scaleGear(proto, rarity) });
+        return new Card('weapon', { name: proto.name, emoji: proto.emoji, rarity, data: this._scaleGear(proto, rarity, floor) });
       }
       case 'armor': {
         const rarity = this.rollRarity(floor);
         const proto = this.rng.pick(this.data.armors);
-        return new Card('armor', { name: proto.name, emoji: proto.emoji, rarity, data: this._scaleGear(proto, rarity) });
+        return new Card('armor', { name: proto.name, emoji: proto.emoji, rarity, data: this._scaleGear(proto, rarity, floor) });
       }
       case 'food': {
         const proto = this.rng.pick(this.data.items.food);
@@ -161,15 +162,8 @@ export class MapGenerator {
     });
   }
 
-  /** 装备按稀有度放大数值 */
-  _scaleGear(proto, rarity) {
-    const mult = this.rarities[rarity]?.statMult ?? 1;
-    const scaled = { ...proto };
-    for (const key of ['power', 'block', 'hp']) {
-      if (scaled[key]) scaled[key] = Math.round(scaled[key] * mult);
-    }
-    if (scaled.crit) scaled.crit = Math.round(scaled.crit * (1 + (mult - 1) * 0.5) * 100) / 100;
-    scaled.rarity = rarity;
-    return scaled;
+  /** 装备数值：稀有度 × 深度成长（层数隐藏，仅表现为越深越强）。与大厅装备同口径 */
+  _scaleGear(proto, rarity, depth = 0) {
+    return scaleGearStats(proto, rarity, depth, this.rarities, this.config.gear);
   }
 }

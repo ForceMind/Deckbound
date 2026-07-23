@@ -72,7 +72,7 @@ export class Hunt {
       const gold = fee * 2;
       hero.changeGold(gold);
       const weights = picked < 2 ? { epic: 60, legendary: 32, mythic: 8 } : { epic: 35, legendary: 45, mythic: 20 };
-      const drop = rollGear(data, rng, { weights });
+      const drop = rollGear(data, rng, { weights, depth: hero.currentFloor });
       const how = hero.giveGear(drop.kind, drop.item);
       await modal.show({
         title: t('hunt.winTitle'),

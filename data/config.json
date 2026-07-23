@@ -42,6 +42,12 @@
   "boss": {
     "interval": 10
   },
+  "gear": {
+    "depthPowerGrowth": 0.45,
+    "depthBlockGrowth": 0.12,
+    "depthHpGrowth": 0.4,
+    "depthPriceGrowth": 0.09
+  },
   "monsterModifiers": [
     { "prefix": "虚弱的", "mult": 0.75, "weight": 12 },
     { "prefix": "",       "mult": 1.0,  "weight": 60 },

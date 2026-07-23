@@ -13,7 +13,6 @@ import { TutorialView } from '../ui/TutorialView.js';
 import { Rival } from '../modes/Rival.js';
 import { checkAchievements } from './Achievements.js';
 import { sound } from './Sound.js';
-import { sellPrice } from './GearFactory.js';
 
 /**
  * 游戏主控 —— 串联移动 / 结算 / 滚动 / 演化 / 章节故事 / 休息 / 生死的完整流程。
@@ -607,7 +606,7 @@ export class Game {
   }
 
   _sellPrice(item) {
-    return Math.max(2, Math.floor((item.price ?? 10) / 2));
+    return Math.max(2, Math.floor((item.price ?? 10) * 0.7));
   }
 
   /**

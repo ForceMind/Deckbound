@@ -40,7 +40,7 @@ export class Tower {
       if (mine >= theirs) {
         pot += cfg.baseReward + cfg.rewardPerFloor * floor;
         if (floor % cfg.gearDropEvery === 0 && rng.chance(cfg.gearDropChance)) {
-          const drop = rollGear(data, rng, { weights: { rare: 45, epic: 38, legendary: 14, mythic: 3 } });
+          const drop = rollGear(data, rng, { weights: { rare: 45, epic: 38, legendary: 14, mythic: 3 }, depth: hero.currentFloor });
           gears.push(drop);
           this.hub.toast(t('tower.gearDrop', { name: `${drop.item.emoji} ${drop.item.displayName}` }));
         }

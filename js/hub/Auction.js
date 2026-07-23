@@ -11,10 +11,10 @@ export class Auction {
   }
 
   _rollListings() {
-    const { rng, data, config } = this.hub;
+    const { rng, data, config, hero } = this.hub;
     const cfg = config.auction;
     const listings = Array.from({ length: cfg.listings }, () => {
-      const { kind, item } = rollGear(data, rng, { weights: { common: 30, rare: 35, epic: 25, legendary: 8, mythic: 2 } });
+      const { kind, item } = rollGear(data, rng, { weights: { common: 30, rare: 35, epic: 25, legendary: 8, mythic: 2 }, depth: hero.currentFloor });
       const price = Math.round(item.price * (cfg.markupMin + rng.next() * (cfg.markupMax - cfg.markupMin)));
       return { kind, item, price, sold: false };
     });

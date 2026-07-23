@@ -28,10 +28,11 @@ export class Wish {
     hero.wishCount += picked;
 
     const weights = { common: 55, rare: 28, epic: 12, legendary: 4, mythic: 1 };
-    const pulls = Array.from({ length: picked }, () => rollGear(data, rng, { weights }));
+    const depth = hero.currentFloor;
+    const pulls = Array.from({ length: picked }, () => rollGear(data, rng, { weights, depth }));
     // 十连保底：至少一件史诗+
     if (picked === 10 && !pulls.some((p) => ['epic', 'legendary', 'mythic'].includes(p.item.rarity))) {
-      pulls[rng.int(0, 9)] = rollGear(data, rng, { weights: { epic: 85, legendary: 13, mythic: 2 } });
+      pulls[rng.int(0, 9)] = rollGear(data, rng, { weights: { epic: 85, legendary: 13, mythic: 2 }, depth });
     }
 
     // 神明的额外眷顾：小概率附赠一件未拥有的神器（单抽 3%，十连 20%）
